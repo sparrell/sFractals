@@ -7,3 +7,10 @@ Build
 -----
 
     $ rebar3 compile
+
+
+Build and Test
+--------------
+
+    $ rebar3 ct
+
