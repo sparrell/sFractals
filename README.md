@@ -23,6 +23,7 @@ Plan of Attack
 1. setup git and github and use github desktop **Done**
 1. add complex number library **Done**
 1. first order learn 'common test' and add tests for complex number math **done**
+
 ...
 not sure of order of rest of these
 * function to generate math data
@@ -39,6 +40,7 @@ not sure of order of rest of these
 * creation of config data
 ..+ to feed data generation
 ..+ for user to save for recreation
+
 ...
 endstate:
 A. webserver with page that accepts inputs and then creates image
