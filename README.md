@@ -23,15 +23,17 @@ Plan of Attack
 1. setup git and github and use github desktop **Done**
 1. add complex number library **Done**
 1. first order learn 'common test' and add tests for complex number math **done**
+1. function to render color data into image **Done**
+1. make data for simple fractal
+1. function to colorize iter data
 
 ...
 not sure of order of rest of these
 * function to generate math data
-..+ initially simple (mandelbrot? julia?) "fixed" function
-..+ generalize passing potentially different functions to common core
+  + initially simple (mandelbrot? julia?) "fixed" function
++ generalize passing potentially different functions to common core
 ..+ add in a bunch of functions (incl Dynamical Plane and Parameter Plane)
 * function to generate color data from math data
-* function to render color data into image
 * turn functions into servers and establish work flow
 * supervision tree
 ..+ put graphic of tree here
