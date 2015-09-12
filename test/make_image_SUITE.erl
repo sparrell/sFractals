@@ -38,10 +38,10 @@ make1(Config) ->
     %% create a blank image with some test data on it
 
     %% get config data from init
-    TestFileName = ?config(testFileName, Config),
-    TestFileSize = ?config(testFileSize, Config),
-    Width = ?config(width, Config),
-    Height = ?config(height, Config),
+    TestFileName  = ?config(testFileName,Config),
+    TestFileSize  = ?config(testFileSize,Config),
+    Width         = ?config(width, Config),
+    Height        = ?config(height, Config),
     TestColorData = ?config(testColorData, Config),
 
     % make a image from test data
