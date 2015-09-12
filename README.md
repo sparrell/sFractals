@@ -32,16 +32,16 @@ not sure of order of rest of these
 * function to generate math data
   + initially simple (mandelbrot? julia?) "fixed" function
 + generalize passing potentially different functions to common core
-..+ add in a bunch of functions (incl Dynamical Plane and Parameter Plane)
+  + add in a bunch of functions (incl Dynamical Plane and Parameter Plane)
 * function to generate color data from math data
 * turn functions into servers and establish work flow
 * supervision tree
-..+ put graphic of tree here
+  + put graphic of tree here
 * webserver
 * html form for input on webserver
 * creation of config data
-..+ to feed data generation
-..+ for user to save for recreation
+  + to feed data generation
+  + for user to save for recreation
 
 ...
 endstate:
