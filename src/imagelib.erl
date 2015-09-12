@@ -10,7 +10,7 @@
 %% inspirations included ??
 
 %% API
--export([ makeImageFromData/1 ]).
+-export([ makeImageFromData/4 ]).
  
 %% What does a complex number look like?
 -record(complex, {r=0.0, i=0.0}).
@@ -37,7 +37,7 @@
 %% Iter is 0 or number_iterations to reach Threshold
 %% 
 
-makeImageFromData( { ColorData, Width, Height, FractalImageFileName } ) ->
+makeImageFromData( ColorData, Width, Height, FractalImageFileName ) ->
     %% this function takes the x,y,color data and creates an image
 
     %% create a blank image object
