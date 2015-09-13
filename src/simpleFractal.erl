@@ -73,42 +73,58 @@ pointbox = [ {X,Y} || X <- lists:seq(1, Width), Y <- lists:seq(1, Height) ].
 or build pointbox as you go recursively
 iter box = recurseThruRowsY of recurse thru pointsX of create real/imag and recurse to get iter count
 
-    IterCounts = makeAllRows(Width,Height,Height,XRealLeft,YImaginaryHigh,DeltaX,DeltaY,C0,Z0,FractalAlg),
-        % note the 3rd parameter is "CurrentPixelY" which starts at top
+    IterCounts = makeAllRows(Width,Height,XRealLeft,YImaginaryHigh,DeltaX,DeltaY,FractalConfig),
+        % note the 2nd parameter is "CurrentPixelY" which starts at top so starts at "Height"
 
 %% make one row at a time, starting at top and working down (incase later we might to build file on fly that way)
-%%%makeAllRows(Width,Height,X_real_left,Y_imaginary_high,DeltaX,DeltaY,C0,Z0,FractalAlg) ->
+%%%makeAllRows(Width,Height,X_real_left,Y_imaginary_high,DeltaX,DeltaY,FractalConfig) ->
 %%%    makeAllRows(extra elements including Current_Real_Y{start at Y_imaginary_high and inc by DeltaY}
 %%%                and including IterCount as accumulator{starting empty);
 
 % function head for done
-makeAllRows(_Width,_Height,CurrentPixelY,_CurrentRealX,_CurrentImaginaryY,_DeltaX,_DeltaY,_C0,_Z0,_FractalAlg,IterCounts)
+makeAllRows(_Width,CurrentPixelY,_XRealLeft,_CurrentImaginaryY,_DeltaX,_DeltaY,_FractalConfig,IterCounts)
         when CurrentPixelY >= 1 ->  % should be 1 or zero or -1??
     IterCounts;   %reached bottom so return the iteration count data
 
 % function head for not done
-makeAllRows(Width,Height,CurrentPixelY,CurrentRealX,CurrentImaginaryY,DeltaX,DeltaY,C0,Z0,FractalAlg,IterCounts) ->
+makeAllRows(Width,CurrentPixelY,XRealLeft,CurrentImaginaryY,DeltaX,DeltaY,FractalConfig,IterCounts) ->
     % reached here so need to make another row
-    makeAllRows(Width,Height,CurrentPixelY-1,CurrentRealX,CurrentImaginaryY-DeltaY,DeltaX,DeltaY,C0,Z0,FractalAlg,
-        makePoints(fill in) ).
-        % note Y-1 one since doing top down
-        % similarly Imaginary& went down by delta
-		% IterCounts is updated with the new row calculated by makePoints
+    % note Y-1 one since doing top down
+    % similarly Imaginary& went down by delta
+	% IterCounts is updated with the new row calculated by makePoints and is the returned value
+    makeAllRows(Width,CurrentPixelY-1,XRealLeft,CurrentImaginaryY-DeltaY,DeltaX,DeltaY,FractalConfig,
+        makePoints(Width,1,CurrentPixelY,XRealLeft, CurrentImaginaryY,DeltaX,FractalConfig,IterCounts) ).
     
+% function head for done with row
+makePoints(Width,CurrentPixelX,_CurrentPixelY,_CurrentRealX,_CurrentImaginaryY,_DeltaX,_FractalConfig,IterCounts)
+        when CurrentPixelX >= Width ->  % width+1? greater only?
+    IterCounts;   %reached end of line so return the iteration count data
 
+makePoints(Width,CurrentPixelX,CurrentPixelY,CurrentRealX,CurrentImaginaryY,DeltaX,FractalConfig,IterCounts) ->   
+    %reached here so need to add another pixel
+    % CurrentPixelX starts at 1 increases by 1 each recurse
+    % CurrentRealX starts at XRealLeft and increases by DeltaX each recurse
+    % IterCounts has point {X,Y,Iter} added by function computeIterationValue
+    makePoints(Width,CurrentPixelX+1,CurrentPixelY,CurrentRealX+DeltaX,CurrentImaginaryY,DeltaX,FractalConfig,
+        computeIterationValue(fillin) ).
+
+
+
+FractalConfig = {FractalAlg,C0,Z0,BailoutThreshold,MaxIterationThreshold}
 ------------
-pointbox2data(_Itermax,_ValueBound,...,_restofpointbox=[],databox) -> databox;
-pointbox2data(Itermax,ValueBound,LastRealX,DeltaX,C0,Z0,...,restofpointbox=[H|T],databox) -> 
-add H to databox, recurse on T
-H: lastRealX +deltaX = realX,
-;
-        
     
-computeIterationValue(Xreal,Yimaginary) ->
-    BailoutThreshold = 2,
-    MaxIterationThreshold = 10,
+%% Compute fractal (bounded or unbounded)
+    %% FractalConfig = {FractalAlg,C0,Z0,BailoutThreshold,MaxIterationThreshold}
+    %% FractalAlg is which algorithm (only one at moment)
+% this function clause for creating julian fractals. eventually will generalize
+computeIterationValue(Xreal,Yimaginary,{FractalAlg,C0,Z0,BailoutThreshold,MaxIterationThreshold},IterCounts) 
+    when FractalAlg = julian ->
+
     C = { complex, {r=1,i=-1}, %make a record
     Z0 = { complex, {r=Xreal,i=Yimaginary}, %make a record
     computeIterationValue(C, Z0, 0
 need guard for abs value of x/y > bailout
 maybe precompute abs value and include in call to computeIterationValue so could put guard on it
+
+    %% return IterCounts with new point added
+    [ {Xreal, Yimaginary, Count} | IterCounts ].
