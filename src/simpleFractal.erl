@@ -56,19 +56,56 @@ createPointData(Width,Height,X_real_right, X_real_left, Y_imaginary_low, Y_imagi
     %% box is bounded on top by y > y_imaginary_high and bounded on bottom by y > y_imaginary_low
     %% box is width pixels wide and height pixels high
 
-    %%create the x,y box first
-    PixelBox = createPixelBox(Width,Height)),
-
     %% step is floating range divided by number of pixels
     DeltaX = (X_real_left - X_real_right) / Width,
     DeltaY = (Y_imaginary_high - Y_imaginary_low) / Height,
 
     %% define horizontal and vertical steps in floating point
-    PointBox = [ { {X,Y}, {X_real_right + X*DeltaX, Y_imaginary_low + Y*DeltaY} ||
-        X <- lists:seq(1, Width), Y <- lists:seq(1, Height) ],
+    %PointBox = [ { {X,Y}, {X_real_right + X*DeltaX, Y_imaginary_low + Y*DeltaY} ||
+    %    X <- lists:seq(1, Width), Y <- lists:seq(1, Height) ],
         
     %% define horizontal and vertical steps in floating point, and compute iteration value
-    IterBox = [ { {X,Y}, computeIterationValue(X_real_right + X*DeltaX, Y_imaginary_low + Y*DeltaY) }
-        || X <- lists:seq(1, Width), Y <- lists:seq(1, Height) ],
+    [ { {X,Y}, computeIterationValue(X_real_right + X*DeltaX, Y_imaginary_low + Y*DeltaY) }
+        || X <- lists:seq(1, Width), Y <- lists:seq(1, Height) ].
+or shouldthis be recursive function walking thru x,y to get adds instead of multiply
+pointbox = [ {X,Y} || X <- lists:seq(1, Width), Y <- lists:seq(1, Height) ].
+-------------
+or build pointbox as you go recursively
+iter box = recurseThruRowsY of recurse thru pointsX of create real/imag and recurse to get iter count
+
+    IterCounts = makeAllRows(Width,Height,Height,XRealLeft,YImaginaryHigh,DeltaX,DeltaY,C0,Z0,FractalAlg),
+        % note the 3rd parameter is "CurrentPixelY" which starts at top
+
+%% make one row at a time, starting at top and working down (incase later we might to build file on fly that way)
+%%%makeAllRows(Width,Height,X_real_left,Y_imaginary_high,DeltaX,DeltaY,C0,Z0,FractalAlg) ->
+%%%    makeAllRows(extra elements including Current_Real_Y{start at Y_imaginary_high and inc by DeltaY}
+%%%                and including IterCount as accumulator{starting empty);
+
+% function head for done
+makeAllRows(_Width,_Height,CurrentPixelY,_CurrentRealX,_CurrentImaginaryY,_DeltaX,_DeltaY,_C0,_Z0,_FractalAlg,IterCounts)
+        when CurrentPixelY >= 1 ->  % should be 1 or zero or -1??
+    IterCounts;   %reached bottom so return the iteration count data
+
+% function head for not done
+makeAllRows(Width,Height,CurrentPixelY,CurrentRealX,CurrentImaginaryY,DeltaX,DeltaY,C0,Z0,FractalAlg,IterCounts) ->
+    % reached here so need to make another row
+    newIterCounts = makePoints(fill in),
+    makeAllRows(Width,Height,XRealLeft,YImaginaryHigh,DeltaX,DeltaY,C0,Z0,FractalAlg,CurrentPixelY,CurrentRealY,IterCounts) ->
+    
+
+------------
+pointbox2data(_Itermax,_ValueBound,...,_restofpointbox=[],databox) -> databox;
+pointbox2data(Itermax,ValueBound,LastRealX,DeltaX,C0,Z0,...,restofpointbox=[H|T],databox) -> 
+add H to databox, recurse on T
+H: lastRealX +deltaX = realX,
+;
         
     
+computeIterationValue(Xreal,Yimaginary) ->
+    BailoutThreshold = 2,
+    MaxIterationThreshold = 10,
+    C = { complex, {r=1,i=-1}, %make a record
+    Z0 = { complex, {r=Xreal,i=Yimaginary}, %make a record
+    computeIterationValue(C, Z0, 0
+need guard for abs value of x/y > bailout
+maybe precompute abs value and include in call to computeIterationValue so could put guard on it
