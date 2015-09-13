@@ -89,8 +89,11 @@ makeAllRows(_Width,_Height,CurrentPixelY,_CurrentRealX,_CurrentImaginaryY,_Delta
 % function head for not done
 makeAllRows(Width,Height,CurrentPixelY,CurrentRealX,CurrentImaginaryY,DeltaX,DeltaY,C0,Z0,FractalAlg,IterCounts) ->
     % reached here so need to make another row
-    newIterCounts = makePoints(fill in),
-    makeAllRows(Width,Height,XRealLeft,YImaginaryHigh,DeltaX,DeltaY,C0,Z0,FractalAlg,CurrentPixelY,CurrentRealY,IterCounts) ->
+    makeAllRows(Width,Height,CurrentPixelY-1,CurrentRealX,CurrentImaginaryY-DeltaY,DeltaX,DeltaY,C0,Z0,FractalAlg,
+        makePoints(fill in) ).
+        % note Y-1 one since doing top down
+        % similarly Imaginary& went down by delta
+		% IterCounts is updated with the new row calculated by makePoints
     
 
 ------------
