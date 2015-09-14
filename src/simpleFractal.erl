@@ -65,7 +65,7 @@ createPointData(Width,Height,X_real_right, X_real_left, Y_imaginary_low, Y_imagi
     %    X <- lists:seq(1, Width), Y <- lists:seq(1, Height) ],
         
     %% define horizontal and vertical steps in floating point, and compute iteration value
-    [ { {X,Y}, computeIterationValue(X_real_right + X*DeltaX, Y_imaginary_low + Y*DeltaY) }
+    [ { {X,Y}, addOnePoint(X_real_right + X*DeltaX, Y_imaginary_low + Y*DeltaY) }
         || X <- lists:seq(1, Width), Y <- lists:seq(1, Height) ].
 or shouldthis be recursive function walking thru x,y to get adds instead of multiply
 pointbox = [ {X,Y} || X <- lists:seq(1, Width), Y <- lists:seq(1, Height) ].
@@ -104,9 +104,9 @@ makePoints(Width,CurrentPixelX,CurrentPixelY,CurrentRealX,CurrentImaginaryY,Delt
     %reached here so need to add another pixel
     % CurrentPixelX starts at 1 increases by 1 each recurse
     % CurrentRealX starts at XRealLeft and increases by DeltaX each recurse
-    % IterCounts has point {X,Y,Iter} added by function computeIterationValue
+    % IterCounts has point {X,Y,Iter} added by function addOnePoint
     makePoints(Width,CurrentPixelX+1,CurrentPixelY,CurrentRealX+DeltaX,CurrentImaginaryY,DeltaX,FractalConfig,
-        computeIterationValue(fillin) ).
+        addOnePoint(fillin) ).
 
 
 
@@ -117,14 +117,30 @@ FractalConfig = {FractalAlg,C0,Z0,BailoutThreshold,MaxIterationThreshold}
     %% FractalConfig = {FractalAlg,C0,Z0,BailoutThreshold,MaxIterationThreshold}
     %% FractalAlg is which algorithm (only one at moment)
 % this function clause for creating julian fractals. eventually will generalize
-computeIterationValue(Xreal,Yimaginary,{FractalAlg,C0,Z0,BailoutThreshold,MaxIterationThreshold},IterCounts) 
+addOnePoint(Xreal,Yimaginary,{FractalAlg,C0,Z0,BailoutThreshold,MaxIterationThreshold},IterCounts) 
     when FractalAlg = julian ->
 
     C = { complex, {r=1,i=-1}, %make a record
     Z0 = { complex, {r=Xreal,i=Yimaginary}, %make a record
-    computeIterationValue(C, Z0, 0
+    computeIterationValue(C, Z0, 0   ...
 need guard for abs value of x/y > bailout
-maybe precompute abs value and include in call to computeIterationValue so could put guard on it
+maybe precompute abs value and include in call to addOnePoint so could put guard on it
 
     %% return IterCounts with new point added
     [ {Xreal, Yimaginary, Count} | IterCounts ].
+
+%% computeIterationValue computes fractal value and returns iteration count
+%% function clause for exceeding iteration count
+computeIterationValue(C, Z0, iterCount, MaxIterationThreshold, ... )
+        when iterCount >= MaxIterationThreshold ->   % reached iteration limit so return count=limit
+    MaxIterationThreshold;
+%% function clause for exceeding bound
+computeIterationValue(CReal,CImaginary, ZReal,ZImaginary, iterCount, MaxIterationThreshold ) 
+        when ((ZReal*ZReal)+(ZImaginary*ZImaginary)) > BailoutThreshold -> %bailout exceeded so return iterCount
+    iterCount;
+%% function clause for recursing further
+computeIterationValue(CReal,CImaginary, ZReal,ZImaginary, iterCount, MaxIterationThreshold ) ->
+    ZRealNew = (ZReal*ZReal) - (ZImaginary*ZImaginary) + CReal,
+    ZImaginaryNew = 2 * ZReal * ZImaginary + CImaginary,
+    computeIterationValue(CReal,CImaginary, (ZReal*ZReal) - (ZImaginary*ZImaginary) + CReal, (2 * ZReal * ZImaginary) + CImaginary, iterCount+1, MaxIterationThreshold ).
+
