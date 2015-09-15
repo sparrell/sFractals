@@ -9,43 +9,56 @@
 %% try to make simple fractal data and then turn into color data and then make image
 
 %% API
--export([ simplFrac/1, /4 ]).
+-export([ simplFrac/1 ]).
  
-%%ColorData = imagelib:colorizeData(IterationCountData),
-
-%%imagelib:makeImageFromData( ColorData, Width, Height, FractalImageFileName ) ->
-    %% this function takes the x,y,color data and creates an image
 
 
 % create a simple fractal
 simplFrac(_) ->
 
-    %% FractalConfig = {FractalAlg,C0,Z0,BailoutThreshold,MaxIterationThreshold}
+    %% FractalConfig = {FractalAlg,CReal,CImaginary, ZReal,ZImaginary,BailoutThreshold,MaxIterationThreshold}
     %% simple config
-    FractalConfig = {julian,C0,Z0,BailoutThreshold,MaxIterationThreshold}
+    FractalConfig = {julian,1,-1, 0,0,4,100},
+        %% FractalAlg = julian
+        %% CReal = 1
+        %% CImaginary = -1
+        %% ZReal = 0 (don't care for Julian)
+        %% ZImaginary = 0 (don't care for Julian)
+        %% BailoutThreshold = 4
+        %% MaxIterationThreshold = 100
+    FractalImageFileName = "./myFirstFractal.png",
+    Width = 100,
+    Height = 100,
 
     %% first create julian data set with some hardcoded configs (add configing later)
-    IterationCountData = createPointData(Width,Height,X_real_right, X_real_left, Y_imaginary_low, Y_imaginary_high),
+        %% XRealRight = 3.0 
+        %% XRealLeft = -3.0
+        %% YImaginaryLow = -3.0
+        %% YImaginaryHigh = 3.0
+    IterationCountData = createPointData(Width,Height,-3.0, 3.0, -3.0, 3.0, FractalConfig),
 
     %% print some stats on distribution of counts
     %% need to do
 
     %% colorize the data
+    OtherParameters = {0,0},
     ColorData = imagelib:colorizeData(IterationCountData,OtherParameters),
+
+    %% take the x,y,color data and creates an image
+    imagelib:makeImageFromData( ColorData, Width, Height, FractalImageFileName ),
 
     ok.
 
 
-createPointData(Width,Height,X_real_right, X_real_left, Y_imaginary_low, Y_imaginary_high) 
-    when X_real_right < X_real_left,
-    when Y_imaginary_low < Y_imaginary_high ->
-    %% box is bounded on left by x > x_real_left and bounded on right by x < x_real_right
-    %% box is bounded on top by y > y_imaginary_high and bounded on bottom by y > y_imaginary_low
+createPointData(Width,Height, XRealLeft, XRealRight, YImaginaryLow, YImaginaryHigh, FractalConfig) 
+    when XRealLeft < XRealRight, YImaginaryLow < YImaginaryHigh ->
+    %% box is bounded on left by x > XRealLeft and bounded on right by x < XRealRight
+    %% box is bounded on top by y > YImaginaryHigh and bounded on bottom by y > YImaginaryLow
     %% box is width pixels wide and height pixels high
 
     %% step is floating range divided by number of pixels
-    DeltaX = (X_real_left - X_real_right) / Width,
-    DeltaY = (Y_imaginary_high - Y_imaginary_low) / Height,
+    DeltaX = (XRealLeft - XRealRight) / Width,
+    DeltaY = (YImaginaryHigh - YImaginaryLow) / Height,
 
     makeAllRows(Width,Height,XRealLeft,YImaginaryHigh,DeltaX,DeltaY,FractalConfig,[]).
         %% note the 2nd parameter is "CurrentPixelY" which starts at top so starts at "Height"
@@ -91,20 +104,21 @@ addOnePoint(Xreal,Yimaginary,{FractalAlg,CReal,CImaginary, ZReal,ZImaginary,Bail
     when FractalAlg == julian ->
 
     %% return IterCounts with new point added. Note 3rd item in tuple is Count, and 4th item in compute call is initial iteration
-    [ {Xreal, Yimaginary, computeIterationValue(CReal,CImaginary,ZReal,ZImaginary,0, MaxIterationThreshold ) } | IterCounts ].
+    [ {Xreal, Yimaginary, computeIterationValue(CReal,CImaginary,ZReal,ZImaginary,0, MaxIterationThreshold, BailoutThreshold ) } | IterCounts ].
 
 %% computeIterationValue computes fractal value and returns iteration count
 %% function clause for exceeding iteration count
-computeIterationValue(CReal,CImaginary, ZReal,ZImaginary, iterCount, MaxIterationThreshold )
-        when iterCount >= MaxIterationThreshold ->   % reached iteration limit so return count=limit
+computeIterationValue(_CReal, _CImaginary, _ZReal,_ZImaginary, 
+            IterCount, MaxIterationThreshold, _BailoutThreshold )
+        when IterCount >= MaxIterationThreshold ->   % reached iteration limit so return count=limit
     MaxIterationThreshold;
 %% function clause for exceeding bound
-computeIterationValue(CReal,CImaginary, ZReal,ZImaginary, iterCount, MaxIterationThreshold ) 
+computeIterationValue(_CReal,_CImaginary, ZReal,ZImaginary, IterCount, 
+            _MaxIterationThreshold, BailoutThreshold ) 
         when ((ZReal*ZReal)+(ZImaginary*ZImaginary)) > BailoutThreshold -> %bailout exceeded so return iterCount
-    iterCount;
+    IterCount;
 %% function clause for recursing further
-computeIterationValue(CReal,CImaginary, ZReal,ZImaginary, iterCount, MaxIterationThreshold ) ->
-    ZRealNew = (ZReal*ZReal) - (ZImaginary*ZImaginary) + CReal,
-    ZImaginaryNew = 2 * ZReal * ZImaginary + CImaginary,
-    computeIterationValue(CReal,CImaginary, (ZReal*ZReal) - (ZImaginary*ZImaginary) + CReal, (2 * ZReal * ZImaginary) + CImaginary, iterCount+1, MaxIterationThreshold ).
+computeIterationValue(CReal,CImaginary, ZReal,ZImaginary, IterCount, 
+        MaxIterationThreshold, BailoutThreshold ) ->
+    computeIterationValue(CReal,CImaginary, (ZReal*ZReal) - (ZImaginary*ZImaginary) + CReal, (2 * ZReal * ZImaginary) + CImaginary, IterCount+1, MaxIterationThreshold, BailoutThreshold ).
 
