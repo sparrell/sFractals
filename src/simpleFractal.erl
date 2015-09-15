@@ -18,10 +18,10 @@ simplFrac(_) ->
 
     %% FractalConfig = {FractalAlg,CReal,CImaginary, ZReal,ZImaginary,BailoutThreshold,MaxIterationThreshold}
     %% simple config
-    FractalConfig = {julian,1,-1, 0,0,4,100},
+    FractalConfig = {julian,0.5,-0.5, 0,0,4,100},
         %% FractalAlg = julian
-        %% CReal = 1
-        %% CImaginary = -1
+        %% CReal = 0.5
+        %% CImaginary = -0.5
         %% ZReal = 0 (don't care for Julian)
         %% ZImaginary = 0 (don't care for Julian)
         %% BailoutThreshold = 4
@@ -57,28 +57,30 @@ createPointData(Width,Height, XRealLeft, XRealRight, YImaginaryLow, YImaginaryHi
     %% box is width pixels wide and height pixels high
 
     %% step is floating range divided by number of pixels
-    DeltaX = (XRealLeft - XRealRight) / Width,
+    DeltaX = (XRealRight - XRealLeft) / Width,
     DeltaY = (YImaginaryHigh - YImaginaryLow) / Height,
 
-    makeAllRows(Width,Height,XRealLeft,YImaginaryHigh,DeltaX,DeltaY,FractalConfig,[]).
-        %% note the 2nd parameter is "CurrentPixelY" which starts at top so starts at "Height"
-        %% note the 8th parameter is "IterCounts" which starts as empty list
-		%% makeAllRows returns InterCount which in turn createPointData returns
+    makeAllRows(Width,Height,1,XRealLeft,YImaginaryLow,DeltaX,DeltaY,FractalConfig,[]).
+        %% note the 3rd parameter is "CurrentPixelY" which starts at bottom
+        %% note the 9th parameter is "IterCounts" which starts as empty list
+		%% makeAllRows returns InterCount, which is then returned by createPointData 
 
-%% make one row at a time, starting at top and working down (incase later we might to build file on fly that way)
+%% make one row at a time, starting at bottom and working up 
+%%  note builds list from tail so this yeilds highest Y nearest front 
+%%  which is useful in case later we might to build file on fly that way 'from top'
 
 % function head for done
-makeAllRows(_Width,CurrentPixelY,_XRealLeft,_CurrentImaginaryY,_DeltaX,_DeltaY,_FractalConfig,IterCounts)
-        when CurrentPixelY =< 0 ->  % should be 1 or zero or -1??
+makeAllRows(_Width,Height, CurrentPixelY,_XRealLeft,_CurrentImaginaryY,_DeltaX,_DeltaY,_FractalConfig,IterCounts)
+        when CurrentPixelY > Height ->  
     IterCounts;   %reached bottom so return the iteration count data
 
 % function head for not-done so recurse
-makeAllRows(Width,CurrentPixelY,XRealLeft,CurrentImaginaryY,DeltaX,DeltaY,FractalConfig,IterCounts) ->
+makeAllRows(Width,Height,CurrentPixelY,XRealLeft,CurrentImaginaryY,DeltaX,DeltaY,FractalConfig,IterCounts) ->
     % reached here so need to make another row
     % note Y-1 one since doing top down
     % similarly Imaginary& went down by delta
 	% IterCounts is updated with the new row calculated by makePoints and is the returned value
-    makeAllRows(Width,CurrentPixelY-1,XRealLeft,CurrentImaginaryY-DeltaY,DeltaX,DeltaY,FractalConfig,
+    makeAllRows(Width,Height,CurrentPixelY+1,XRealLeft,CurrentImaginaryY+DeltaY,DeltaX,DeltaY,FractalConfig,
         makePoints(Width,1,CurrentPixelY,XRealLeft, CurrentImaginaryY,DeltaX,FractalConfig,IterCounts) ).
     
 % function head for done-with-row
