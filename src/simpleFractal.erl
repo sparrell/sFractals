@@ -27,8 +27,8 @@ simplFrac(_) ->
         %% BailoutThreshold = 4
         %% MaxIterationThreshold = 100
     FractalImageFileName = "./myFirstFractal.png",
-    Width = 100,
-    Height = 100,
+    Width = 10,
+    Height = 10,
 
     %% first create julian data set with some hardcoded configs (add configing later)
         %% XRealRight = 3.0 
@@ -41,14 +41,14 @@ simplFrac(_) ->
     %% need to do
 
     %% colorize the data
-    OtherParameters = {0,0},
-    ColorData = imagelib:colorizeData(IterationCountData,OtherParameters),
+%%  OtherParameters = {0,0},
+%%  ColorData = imagelib:colorizeData(IterationCountData,OtherParameters),
 
     %% take the x,y,color data and creates an image
-    imagelib:makeImageFromData( ColorData, Width, Height, FractalImageFileName ),
+%%  imagelib:makeImageFromData( ColorData, Width, Height, FractalImageFileName ),
 
-    ok.
-
+%%  ok.
+    IterationCountData.
 
 createPointData(Width,Height, XRealLeft, XRealRight, YImaginaryLow, YImaginaryHigh, FractalConfig) 
     when XRealLeft < XRealRight, YImaginaryLow < YImaginaryHigh ->
@@ -83,7 +83,7 @@ makeAllRows(Width,CurrentPixelY,XRealLeft,CurrentImaginaryY,DeltaX,DeltaY,Fracta
     
 % function head for done-with-row
 makePoints(Width,CurrentPixelX,_CurrentPixelY,_CurrentRealX,_CurrentImaginaryY,_DeltaX,_FractalConfig,IterCounts)
-        when CurrentPixelX >= Width ->  % width+1? greater only?
+        when CurrentPixelX > Width ->  
     IterCounts;   %reached end of line so return the iteration count data
 
 % function head for not-done so recurse
@@ -93,18 +93,20 @@ makePoints(Width,CurrentPixelX,CurrentPixelY,CurrentRealX,CurrentImaginaryY,Delt
     % CurrentRealX starts at XRealLeft and increases by DeltaX each recurse
     % IterCounts has point {X,Y,Iter} added by function addOnePoint
     makePoints(Width,CurrentPixelX+1,CurrentPixelY,CurrentRealX+DeltaX,CurrentImaginaryY,DeltaX,FractalConfig,
-        addOnePoint(CurrentRealX,CurrentImaginaryY,FractalConfig,IterCounts) ).
+        addOnePoint(CurrentPixelX,CurrentPixelY,CurrentRealX,CurrentImaginaryY,FractalConfig,IterCounts) ).
         %% note addOnePoint returns the new value of IterCounts into the recursive call
 
 %% Compute fractal (bounded or unbounded)
     %% FractalConfig = {FractalAlg,CReal,CImaginary, ZReal,ZImaginary,BailoutThreshold,MaxIterationThreshold}
     %% FractalAlg is which algorithm (only one at moment)
 % this function clause for creating julian fractals. eventually will generalize
-addOnePoint(Xreal,Yimaginary,{FractalAlg,CReal,CImaginary, ZReal,ZImaginary,BailoutThreshold,MaxIterationThreshold},IterCounts) 
+addOnePoint(CurrentPixelX,CurrentPixelY,Xreal,Yimaginary,{FractalAlg,CReal,CImaginary, ZReal,ZImaginary,BailoutThreshold,MaxIterationThreshold},IterCounts) 
     when FractalAlg == julian ->
 
     %% return IterCounts with new point added. Note 3rd item in tuple is Count, and 4th item in compute call is initial iteration
-    [ {Xreal, Yimaginary, computeIterationValue(CReal,CImaginary,ZReal,ZImaginary,0, MaxIterationThreshold, BailoutThreshold ) } | IterCounts ].
+    [ {CurrentPixelX, CurrentPixelY,
+        computeIterationValue(CReal,CImaginary,Xreal,Yimaginary,
+            0, MaxIterationThreshold, BailoutThreshold ) } | IterCounts ].
 
 %% computeIterationValue computes fractal value and returns iteration count
 %% function clause for exceeding iteration count
