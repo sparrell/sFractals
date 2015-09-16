@@ -13,6 +13,22 @@
  
 %% test config 1 - eventually make parameterized and move this to test dir
 testConfig1() ->
+    % return map of config parameters
+    TC = #{ fractalAlg => julian,  % Fractal Algorithm is julian
+       fractalImageFileName => "./julian10.10.dot5.dot5.4.100.png",  %image file created
+       width => 10, % width=10
+       height => 10, % height=10
+       cReal => 0.5, % real portion of C0
+       cImaginary => -0.5, % imaginary portion of C0
+       zReal => -0.1, %real portion of Z0 (don't care for Julian)
+       zImaginary => -0.1, %imaginary portion of Z0 (don't care for Julian)
+       xRealRight => 3.0,
+       xRealLeft => -3.0,
+       yImaginaryLow => -3.0,
+       yImaginaryHigh => 3.0,
+       bailoutThreshold => 4,
+       maxIterationThreshold => 100 },
+
     % return dict of config parameters
 
     %% put list of key/values into dict and return it
@@ -109,7 +125,7 @@ makePoints(Width,CurrentPixelX,CurrentPixelY,CurrentRealX,CurrentImaginaryY,Delt
     % CurrentPixelX starts at 1 increases by 1 each recurse
     % CurrentRealX starts at XRealLeft and increases by DeltaX each recurse
     % IterCounts has point {X,Y,Iter} added by function addOnePoint
-    {ok, FractalAlg} = dict:find(fractalAlg,Config),
+    FractalAlg= maps:get(fractalAlg,ConfigMap),
     makePoints(Width,CurrentPixelX+1,CurrentPixelY,CurrentRealX+DeltaX,CurrentImaginaryY,DeltaX,FractalConfig,
         addOnePoint(CurrentPixelX,
                     CurrentPixelY,
@@ -134,10 +150,10 @@ addOnePoint(CurrentPixelX,
             Config) 
     when FractalAlg == julian ->
 
-    { ok, CReal } = dict:find(cReal,Config),
-    { ok, CImaginary } = dict:find(cImaginary,Config),
-    { ok, MaxIterationThreshold } = dict:find(maxIterationThreshold,Config),
-    { ok, BailoutThreshold } = dict:find(bailoutThreshold,Config),
+    CReal = dict:fetch(cReal,Config),
+    CImaginary = dict:fetch(cImaginary,Config),
+    MaxIterationThreshold = dict:fetch(maxIterationThreshold,Config),
+    BailoutThreshold = dict:fetch(bailoutThreshold,Config),
     %% return IterCounts with new point added. Note 3rd item in tuple is Count, and 4th item in compute call is initial iteration
     Count = computeIterationValue(CReal,
                                   CImaginary,
