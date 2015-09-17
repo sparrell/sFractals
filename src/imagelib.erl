@@ -17,13 +17,13 @@ makeImageFromData( ColorData, Config ) ->
     %% this function takes the x,y,color data and creates an image
 
     %% create a blank image object
-    FractalImage = egd:create( dict:find(width,Config), dict:find(height,Config)),
+    FractalImage = egd:create( maps:get(width,Config), maps:get(height,Config)),
 
     %% call function to recurse thru list adding each point
     addAllData(FractalImage, ColorData),
     
     %%  render and save in file
-    egd:save(egd:render(FractalImage, png), dict:find(fractalImageFileName,Config)),
+    egd:save(egd:render(FractalImage, png), maps:get(fractalImageFileName,Config)),
 
     %% clean up (is this needed?)
     egd:destroy(FractalImage).

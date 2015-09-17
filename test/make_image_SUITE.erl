@@ -37,8 +37,8 @@ make1(Config) ->
 
     %% map of image config parameters
     ImageMap = #{ fractalImageFileName => TestFileName, %image file created
-                  width => 10, % width=10
-                  height => 10 % height=10
+                  width => 150, % width=10
+                  height => 100 % height=10
                 },
 
 
