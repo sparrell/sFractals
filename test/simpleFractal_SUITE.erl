@@ -16,7 +16,7 @@
 %% tests to run
 all() ->
     [testNewImaginaryC,testNewRealC,testNewImaginaryZ,testNewRealZ,
-     testExceedIter, testExceedBound, testAddOnePoint].
+     testExceedIter, testExceedBound, testAddOnePoint, testMakePointsEnd].
 
 %% timeout if no reply in a minute
 suite() -> 
@@ -127,7 +127,7 @@ testAddOnePoint(Config) ->
        maxIterationThreshold => ?config(maxIterationThreshold, Config) },
     %% start with empty IterCounts
     IterCounts = [ ],
-    % test adding pint at (13,14) of 3
+    % test adding point at (13,14) of 2
     [{13,14,2}] = simpleFractal:addOnePoint(CurrentPixelX,
                                CurrentPixelY,
                                XReal,
@@ -136,4 +136,17 @@ testAddOnePoint(Config) ->
                                IterCounts,
                                ConfigMap),
     ok.
+
+testMakePointsEnd(Config) ->
+    % test end of line
+    [ {1,2,3} ] = simpleFractal:makePoints(10,    % width = 10
+                                 11,      % CurrentPixelX = 11 (ie greater than width)
+                                 2,       % CurrentPixelY = don't care for this test
+                                 3.0,     % CurrentRealX = don't care for this test
+                                 4.0,     % CurrentImaginaryY = don't care for this test
+                                 0.2,     % DeltaX = don't care for this test
+                                 [ {1,2,3} ], % IterCounts = test data that should go thru unchanged
+                                 #{}),    % ConfigMap = don't care for this test
+    ok.
+
 
