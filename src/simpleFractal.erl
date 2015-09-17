@@ -8,8 +8,11 @@
 -author("Duncan Sparrell").
 %% try to make simple fractal data and then turn into color data and then make image
 
-%% API
+%% public API
 -export([ simplFrac/1,testConfig1/0,testOne/0 ]).
+
+%% expose functions for test
+-export([ newImaginaryC/1 ]).
  
 %% test config 1 - eventually make parameterized and move this to test dir
 testConfig1() ->
