@@ -19,7 +19,7 @@ init_per_suite(Config) ->
     %% return config with new test data added
     [ {someAtom,someValue} | Config ].
 
-make1(Config) ->
+make1(_Config) ->
     %% create a blank image with some test data on it
 
     %% set up some test data and expectations

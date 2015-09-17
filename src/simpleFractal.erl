@@ -12,7 +12,8 @@
 -export([ simplFrac/1,testConfig1/0,testOne/0 ]).
 
 %% expose functions for test
--export([ newImaginaryC/1 ]).
+-export([ newImaginaryC/1,newRealC/1,newImaginaryZ/1,newRealZ/1,
+          computeIterationValue/8, addOnePoint/7 ]).
  
 %% test config 1 - eventually make parameterized and move this to test dir
 testConfig1() ->
