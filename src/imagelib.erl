@@ -10,7 +10,7 @@
 %% inspirations included ??
 
 %% API
--export([ makeImageFromData/2, colorizeData/3 ]).
+-export([ makeImageFromData/2, colorizeData/3, analyzeData/1 ]).
 %% need to add function to colorize iter data
  
 makeImageFromData( ColorData, Config ) ->
@@ -70,3 +70,10 @@ colorizeData(CountData,ColorAlg, Parameters,ColorData)
         _  -> egd:color({0,0,0})  %%everything else black
     end,
     colorizeData(NewCountData,ColorAlg, Parameters,[ {X,Y,Color} | ColorData]).
+
+% public api
+analyzeData(CountData) ->
+    % go thru grabbing 3rd element (the value) and count them in a dictionary. return the dict
+    lists:foldl(fun( {_,_,V}, OldDict ) -> orddict:update_counter(V,1, OldDict) end,
+         orddict:new(),
+         CountData).

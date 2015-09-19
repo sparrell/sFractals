@@ -6,10 +6,10 @@
 -export([all/0,suite/0,init_per_suite/1]).
 
 %% Test cases
--export([make1/1]).
+-export([make1/1,testAnalyze/1]).
 
 all() ->
-    [make1].
+    [make1,testAnalyze].
 
 suite() -> 
     [{timetrap,{minutes,1}}].
@@ -78,3 +78,8 @@ make1(_Config) ->
     ok.
 
 
+testAnalyze(_Config) ->
+    % create some test data and check historgram comes out right
+    TestCountData = [ {100,101,0}, {102,103,1}, {105,106,1}, {103,102,1}, {100,106,2} ],
+    [{0,1},{1,3},{2,1}] = imagelib:analyzeData( TestCountData ),
+    ok.
