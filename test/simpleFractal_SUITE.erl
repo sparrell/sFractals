@@ -17,7 +17,7 @@
 all() ->
     [testNewImaginaryC,testNewRealC,testNewImaginaryZ,testNewRealZ,
      testExceedIter, testExceedBound, testAddOnePoint, testMakePointsEnd,
-     testMakePoints,makeFractal1, makeFractal2].
+     testMakePoints,makeFractal1 ].
 
 %% timeout if no reply in a minute
 suite() -> 
@@ -194,34 +194,6 @@ makeFractal1(_Config) ->
     { ok, { file_info, OutputFileSize, _reg, _rw, _t1, _t2, _t3, 
             _, _, _, _, _, _, _ } } =file:read_file_info(TestFileName),
     114 = OutputFileSize,
-
-    ok.
-makeFractal2(_Config) ->
-    %% setup some test data
-    TestFileName = "./julian1k.1k.dotX.dotY.4.100.png",
-    
-    TestConfig2 = #{ fractalAlg => julian,  % Fractal Algorithm is julian
-       fractalImageFileName => TestFileName,  %image file created
-       width => 1000, % width=1k
-       height => 1000, % height=1k
-       cReal => 0.5, % real portion of C0
-       cImaginary => -0.5, % imaginary portion of C0
-       zReal => -0.1, %real portion of Z0 (don't care for Julian)
-       zImaginary => -0.1, %imaginary portion of Z0 (don't care for Julian)
-       xRealRight => 3.0,
-       xRealLeft => -3.0,
-       yImaginaryLow => -3.0,
-       yImaginaryHigh => 3.0,
-       bailoutThreshold => 4,
-       maxIterationThreshold => 11 },
-
-    % make an fractal image file
-    simpleFractal:simplFrac(TestConfig2),
-
-    % did file get created and is it right size
-    { ok, { file_info, OutputFileSize, _reg, _rw, _t1, _t2, _t3, 
-            _, _, _, _, _, _, _ } } =file:read_file_info(TestFileName),
-    27421 = OutputFileSize,
 
     ok.
 

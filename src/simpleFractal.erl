@@ -9,50 +9,15 @@
 %% try to make simple fractal data and then turn into color data and then make image
 
 %% public API
--export([ simplFrac/1,testConfig1/0,testOne/0 ]).
+-export([ simplFrac/1, createPointData/3 ]).
 
 %% expose functions for test
 -export([ newImaginaryC/1,newRealC/1,newImaginaryZ/1,newRealZ/1,
           computeIterationValue/8, addOnePoint/7, makePoints/8 ]).
  
-%% test config 1 - eventually make parameterized and move this to test dir
-testConfig1() ->
-    % return map of config parameters
-    #{ fractalAlg => julian,  % Fractal Algorithm is julian
-       fractalImageFileName => "./julian10.10.dot5.dot5.4.100.png",  %image file created
-       width => 10, % width=10
-       height => 10, % height=10
-       cReal => 0.5, % real portion of C0
-       cImaginary => -0.5, % imaginary portion of C0
-       zReal => -0.1, %real portion of Z0 (don't care for Julian)
-       zImaginary => -0.1, %imaginary portion of Z0 (don't care for Julian)
-       xRealRight => 3.0,
-       xRealLeft => -3.0,
-       yImaginaryLow => -3.0,
-       yImaginaryHigh => 3.0,
-       bailoutThreshold => 4,
-       maxIterationThreshold => 100 }.
-
-%% test1 - first simple fractal
-testOne() ->
-    simplFrac(testConfig1()).
-
-
 
 % create a simple fractal
 simplFrac(ConfigMap) ->
-
-    %% simple config
-    %%FractalConfig = {julian,0.5,-0.5, 0,0,4,100},
-    %%Width = 10,
-    %%Height = 10,
-
-    %% first create julian data set with some hardcoded configs (add configing later)
-        %% XRealRight = 3.0 
-        %% XRealLeft = -3.0
-        %% YImaginaryLow = -3.0
-        %% YImaginaryHigh = 3.0
-    %%IterationCountData = createPointData(Width,Height,-3.0, 3.0, -3.0, 3.0, ConfigMap),
 
     %% create box of data for every X,Y
     Width           = maps:get(width,ConfigMap),
