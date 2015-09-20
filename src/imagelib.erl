@@ -45,31 +45,32 @@ addOnePoint(FractalImage, {X, Y, ColorValue}) ->
 % take count data and turn into colors based on color algorithm and parameters
 colorizeData(CountData,ColorAlg, Parameters) 
     when ColorAlg == simplest ->
+    ColorDict = orddict:from_list( [ {0, egd:color({255,255,255})},   % white
+                                     {1, egd:color({0,255,255})},   %cyan
+                                     {2, egd:color({0,0,255})},  % blue
+                                     {3, egd:color({255,0,0})},  % red
+                                     {4, egd:color({0,255,0})},  % green
+                                     {5, egd:color({255,255,0})}, % yellow
+                                     {6, egd:color({210,180,140})}, %tan
+                                     {7, egd:color({240,128,128})}, %lightcoral
+                                     {8, egd:color({255,165,0})}, %orange
+                                     {9, egd:color({128,128,0})}, %olive
+                                     {10, egd:color({255,0,255})}, %fuschia
+                                     {11, egd:color({0,0,0})}  %black
+                                    ] ),
+  
     %% simplest alg is counts 0 thru 10 map to 11 colors (all others white)
-    colorizeData(CountData,ColorAlg, Parameters, []).  %% accumulator is ColorData
+    colorizeData(CountData,ColorAlg, Parameters, [],ColorDict).  %% accumulator is ColorData
 
-colorizeData([],_ColorAlg, _Parameters, ColorData) -> % CountData empty so work is done
+colorizeData([],_ColorAlg, _Parameters, ColorData,_ColorMap) -> % CountData empty so work is done
     ColorData;
-colorizeData(CountData,ColorAlg, Parameters,ColorData) 
+colorizeData(CountData,ColorAlg, Parameters,ColorData,ColorDict) 
         when ColorAlg == simplest ->
-        %% simplest alg is counts 0 thru 10 map to 11 colors (all others white)
+        %% simplest alg is counts 0 thru 11 map to 12 colors 
     [ {X,Y,Count} | NewCountData ] = CountData,    %get point at head of list
     % convert Count to Color
-    Color = case Count of
-        0  -> egd:color({255,255,255});   % white
-        1  -> egd:color({0,255,255});   %cyan
-        2  -> egd:color({0,0,255});  % blue
-        3  -> egd:color({255,0,0});  % red
-        4  -> egd:color({0,255,0});  % green
-        5  -> egd:color({255,255,0}); % yellow
-        6  -> egd:color({210,180,140}); %tan
-        7  -> egd:color({240,128,128}); %lightcoral
-        8  -> egd:color({255,165,0}); %orange
-        9  -> egd:color({128,128,0}); %olive
-        10 -> egd:color({255,0,255}); %fuschia
-        _  -> egd:color({0,0,0})  %%everything else black
-    end,
-    colorizeData(NewCountData,ColorAlg, Parameters,[ {X,Y,Color} | ColorData]).
+    Color = orddict:fetch(Count,ColorDict),
+    colorizeData(NewCountData,ColorAlg, Parameters,[ {X,Y,Color} | ColorData], ColorDict).
 
 % public api
 analyzeData(CountData) ->
