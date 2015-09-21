@@ -94,7 +94,5 @@ makePng(_Config) ->
                   colorAlg => simplest 
                 },
 
-    ColorData = [0,1,2],   % don't care for now
-
-    imagelib:makePng( ColorData, ConfigMap ),
+    imagelib:makePng( ConfigMap ),
     ok.

@@ -10,7 +10,9 @@
 %% inspirations included ??
 
 %% API
--export([ makeImageFromData/2, colorizeData/3, analyzeData/1, makePng/2 ]).
+-export([ makeImageFromData/2, colorizeData/3, analyzeData/1, makePng/1,
+          finishPng/1, addRow/2, startPng/1 ]).
+
 %% need to add function to colorize iter data
  
 makeImageFromData( ColorData, Config ) ->
@@ -79,7 +81,7 @@ analyzeData(CountData) ->
          orddict:new(),
          CountData).
 
-makePng( ColorData, ConfigMap ) ->
+makePng( ConfigMap ) ->
     Width  = maps:get(width, ConfigMap),
     Height = maps:get(height,ConfigMap),
     PngFileName = maps:get(fractalImageFileName,ConfigMap),
@@ -132,7 +134,30 @@ append_row(#{size := {Width, _Height}} = Png, Y) ->
     png:append(Png, {row, Row}),
     append_row(Png, Y + 1).
 
+%%%%
+%% 3-part API - startPng, addRow, finishPng
+%%%%
 
+%% Open the png file and return the png object
+startPng( ConfigMap ) ->
+    Width  = maps:get(width, ConfigMap),
+    Height = maps:get(height,ConfigMap),
+    PngFileName = maps:get(fractalImageFileName,ConfigMap),
+    ColorAlg = maps:get(colorAlg,ConfigMap),
 
+    ColorPalette = makeColorPalette(ColorAlg),
 
+    {ok, PngFile} = file:open(PngFileName, [write]),
+    png:create(#{size => {Width, Height},
+                       mode => {indexed, 8},
+                       file => PngFile,
+                       palette => ColorPalette}).
+
+%% add a row to Png and return new Png
+addRow(RowData, Png ) ->
+    png:append(Png, {row, RowData}).
+
+%% Finish up closing Png
+finishPng( Png ) ->
+    ok = png:close(Png).
 
