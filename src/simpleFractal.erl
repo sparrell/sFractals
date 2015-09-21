@@ -40,7 +40,7 @@ simplFrac(ConfigMap) ->
                                           ConfigMap),
 
     %% print some stats on distribution of counts
-    %% need to do
+    io:format("stats~n~p~n", [imagelib:analyzeData(IterationCountData) ] ),
 
     %% colorize the data using simplest alg
     ColorData = imagelib:colorizeData(IterationCountData,simplest,ConfigMap),

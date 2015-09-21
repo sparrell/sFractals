@@ -13,13 +13,13 @@ main(_) ->
     makeFractal( config1() ),
     makeFractal( config2() ),
 
-    eprof:start(),
-    eprof:start_profiling([self()]),
+    %%eprof:start(),
+    %%eprof:start_profiling([self()]),
     makeFractal( config3() ),
-    eprof:stop_profiling(),
-    eprof:analyze(total),
+    %%eprof:stop_profiling(),
+    %%eprof:analyze(total),
 
-    makeFractal( config4() ),
+    %%makeFractal( config4() ),
     ok.
 
 % time making each fractal
