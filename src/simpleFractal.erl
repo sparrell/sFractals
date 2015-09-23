@@ -9,12 +9,111 @@
 %% try to make simple fractal data and then turn into color data and then make image
 
 %% public API
--export([ simplFrac/1, createPointData/3 ]).
+-export([ simplFrac/1, createPointData/3, makeFractalPng/1 ]).
 
 %% expose functions for test
 -export([ newImaginaryC/1,newRealC/1,newImaginaryZ/1,newRealZ/1,
           computeIterationValue/8, addOnePoint/7, makePoints/8 ]).
  
+%% public API for making fractal
+%% explain ConfigMap params needed here
+%% note palette must have values for all counts (eg set max iter according to size of palette or vice versa)
+%%
+makeFractalPng(ConfigMap) ->
+
+    %% create height rows of width columns of pixels
+    Width           = maps:get(width,ConfigMap),
+    Height          = maps:get(height,ConfigMap),
+    %% each pixel has a corresonding complex number defined by corners of the box
+    XRealRight      = maps:get(xRealRight,ConfigMap),
+    XRealLeft       = maps:get(xRealLeft,ConfigMap),
+    YImaginaryLow   = maps:get(yImaginaryLow,ConfigMap),
+    YImaginaryHigh  = maps:get(yImaginaryHigh,ConfigMap),
+    %% box is bounded on left by x > XRealLeft and bounded on right by x < XRealRight
+    %% box is bounded on top by y > YImaginaryHigh and bounded on bottom by y > YImaginaryLow
+    %% box is width pixels wide and height pixels high
+
+    %% step is floating range divided by number of pixels
+    DeltaX = (XRealRight - XRealLeft) / Width,
+    DeltaY = (YImaginaryHigh - YImaginaryLow) / Height,
+
+    %% initialize the png
+    ThisPng = imageLib:startPng( ConfigMap ),
+
+    %% recurse thru the rows
+    ok = computeFractalData( [],    % start with empty row data
+                        ThisPng,                          % png object
+                        Width, XRealRight, DeltaX, Width, % start at right hand side (point 1 at head)
+                        1, YImaginaryLow, DeltaY,Height,   %% start on first row
+                        ConfigMap),
+
+    %% finalize the png
+    imageLib:finishPng( ThisPng ),
+
+    ok.
+
+% clause when height is reached 
+computeFractalData( _RowData,
+               #{size := {_, Height}},       % when PNG is height high
+               _XPix, _XR, _DeltaX, _Width,  
+               YPix, _YI, _DeltaY, Height,  % only height matters
+               _ConfigMap)
+        when YPix > Height ->
+               
+    %% pixels all made already so done
+    ok;
+
+% clause when row is complete (xpix = -1) but height not reached - process row and recurse
+computeFractalData( RowData,                   % row data computed so far
+               ThisPng,                   % png object
+               XPix, _XR, DeltaX, Width,   % info for points in a row
+               YPix, YI, DeltaY, Height,  % info for rows
+               ConfigMap)
+        when XPix < 0, YPix =< Height ->
+
+    %% add row to png
+    imageLib:addRow( RowData, ThisPng ),
+
+    %% recurse
+    NewRowData = [],                                 % reset data for row to empty
+    NewXPix    = width,                              % reset to end of line
+    NewXR      = maps:get(xRealRight,ConfigMap),     % reset to end of line
+    NewYPix    = YPix + 1,                           % increment row
+    NewYI      = YI+DeltaY,                          % increment row
+    computeFractalData( NewRowData,
+                   ThisPng,                          % png object
+                   NewXPix, NewXR, DeltaX, Width,
+                   NewYPix, NewYI, DeltaY,Height,
+                   ConfigMap);
+
+% clause when row is incomplete - add another point and recurse
+computeFractalData( RowData,                   % row data computed so far
+               ThisPng,                   % png object
+               XPix, XR, DeltaX, Width,   % info for points in a row
+               YPix, YI, DeltaY, Height,  % info for rows
+               ConfigMap)
+        when XPix >= 0, YPix =< Height ->
+
+    %% get iteration count for this point
+    NewPoint = computeIterationValue( maps:get(fractalAlg,ConfigMap),
+                                      maps:get(cReal,ConfigMap),
+                                      maps:get(cImaginary,ConfigMap),
+                                      XR,
+                                      YI,
+                                      0,          %iteration count starts at zero
+                                      maps:get(maxIterationThreshold,ConfigMap),
+                                      maps:get(bailoutThreshold,ConfigMap)
+                                      ),
+                           
+    NewRowData = [ NewPoint | RowData ],
+    NewXPix    = XPix - 1,                           % decrement moving left building row
+    NewXR      = XR - DeltaX,                        % decrease XR to the left
+    computeFractalData( NewRowData,
+                   ThisPng,                          % png object
+                   NewXPix, NewXR, DeltaX, Width,
+                   YPix, YI, DeltaY,Height,
+                   ConfigMap).
+
 
 % create a simple fractal
 simplFrac(ConfigMap) ->
