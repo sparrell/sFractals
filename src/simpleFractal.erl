@@ -69,7 +69,7 @@ computeFractalData( RowData,                   % row data computed so far
                XPix, _XR, DeltaX, Width,   % info for points in a row
                YPix, YI, DeltaY, Height,  % info for rows
                ConfigMap)
-        when XPix < 0, YPix =< Height ->
+        when XPix =< 0, YPix =< Height ->
 
     %% add row to png
     imagelib:addRow( RowData, ThisPng ),

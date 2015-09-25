@@ -12,14 +12,49 @@
 -mode(compile).
 
 main(_) ->
-    makeFractal2( config1() ),
-    makeFractal2( config2() ),
-    makeFractal2( config3() ),
-    makeFractal2( config4() ),
-    %makeFractal( config1() ),
-    %makeFractal( config2() ),
-    %makeFractal( config3() ),
-    %%makeFractal( config4() ),
+    %base config
+    ConfigMap1 = config1(),
+    makeFractal( ConfigMap1 ),
+
+    % new file name
+    Change1 = #{fractalImageFileName => "./m2.julian.0010.0010.dot5.dot5.4.11.png"},
+    ConfigMap1b = maps:merge(ConfigMap1, Change1),
+    makeFractal2( ConfigMap1b ),
+
+    Change2 = #{fractalImageFileName => "./m1.julian.0100.0100.dot5.dot5.4.11.png",
+                width => 100, 
+                height => 100},
+    ConfigMap2 = maps:merge(ConfigMap1b, Change2),
+    makeFractal( ConfigMap2 ),
+
+    Change3 = #{fractalImageFileName => "./m2.julian.0100.0100.dot5.dot5.4.11.png"},
+    ConfigMap2b = maps:merge(ConfigMap2,Change3),
+    makeFractal2( ConfigMap2b ),
+
+    %ConfigMap3 = config3(),
+    %makeFractal( ConfigMap3 ),
+
+    %ConfigMap3b = maps:put(fractalImageFileName, "./m2.julian.0200.0200.dot5.dot5.4.11.png",ConfigMap3),  % new file name
+    %makeFractal2( ConfigMap3b ),
+
+    %ConfigMap4 = config4(),
+    %makeFractal( ConfigMap4 ),
+
+    %ConfigMap4b = maps:put(fractalImageFileName, "./m2.julian.1000.1000.dot5.dot5.4.11.png",ConfigMap4),  % new file name
+    %makeFractal2( ConfigMap4b ),
+
+    Change4 = #{fractalImageFileName => "./m2.julian.1k.1k.dot5.dot5.4.11.png",
+                width  => 1000, 
+                height => 1000},
+    ConfigMap4 = maps:merge(ConfigMap2b,Change4),
+    makeFractal2( ConfigMap4 ),
+
+    Change5 = #{fractalImageFileName => "./m2.julian.4k.4k.dot5.dot5.4.11.png",
+                width  => 4000, 
+                height => 4000},
+    ConfigMap5 = maps:merge(ConfigMap4,Change5),
+    makeFractal2( ConfigMap5 ),
+
     ok.
 
 % time making each fractal
@@ -55,7 +90,7 @@ makeFractal(Config) ->
 config1() ->
     % return map of config parameters
     #{ fractalAlg => julian,  % Fractal Algorithm is julian
-       fractalImageFileName => "./julian.0010.0010.dot5.dot5.4.100.png",  %image file created
+       fractalImageFileName => "./m1.julian.0010.0010.dot5.dot5.4.11.png",  %image file created
        colorAlg => simplest,  % 0-11 map to colors
        width => 10,           % width=10
        height => 10,          % height=10
@@ -68,13 +103,13 @@ config1() ->
        yImaginaryLow => -3.0,
        yImaginaryHigh => 3.0,
        bailoutThreshold => 4,
-       maxIterationThreshold => 100 }.
+       maxIterationThreshold => 11 }.
 
 %% config 2 
 config2() ->
     % return map of config parameters
     #{ fractalAlg => julian,  % Fractal Algorithm is julian
-       fractalImageFileName => "./julian.0100.0100.dot5.dot5.4.11.png",  %image file created
+       fractalImageFileName => "./m1.julian.0100.0100.dot5.dot5.4.11.png",  %image file created
        colorAlg => simplest,  % 0-11 map to colors
        width => 100, % width=10
        height => 100, % height=10
@@ -93,7 +128,7 @@ config2() ->
 config3() ->
     % return map of config parameters
     #{ fractalAlg => julian,  % Fractal Algorithm is julian
-       fractalImageFileName => "./julian.0200.0200.dot5.dot5.4.11.png",  %image file created
+       fractalImageFileName => "./m1.julian.0200.0200.dot5.dot5.4.11.png",  %image file created
        colorAlg => simplest,  % 0-11 map to colors
        width => 200, % width=10
        height => 200, % height=10
@@ -112,7 +147,7 @@ config3() ->
 config4() ->
     % return map of config parameters
     #{ fractalAlg => julian,  % Fractal Algorithm is julian
-       fractalImageFileName => "./julian.1000.1000.dot5.dot5.4.11.png",  %image file created
+       fractalImageFileName => "./m1.julian.1000.1000.dot5.dot5.4.11.png",  %image file created
        colorAlg => simplest,  % 0-11 map to colors
        width => 1000, % 
        height => 1000, % 
