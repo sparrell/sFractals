@@ -148,13 +148,12 @@ startPng( ConfigMap ) ->
     ColorPalette = makeColorPalette(ColorAlg),
 
     {ok, PngFile} = file:open(PngFileName, [write]),
-    X = 3,  %filler to see if line changes
-    Png = png:create(#{size => {Width, Height},
+
+    %% return Png
+    png:create(#{size => {Width, Height},
                        mode => {indexed, 8},
                        file => PngFile,
-                       palette => ColorPalette}),
-    %% return Png
-    Png.
+                       palette => ColorPalette}).
 
 %% add a row to Png and return new Png
 addRow(RowData, Png ) ->
