@@ -38,7 +38,7 @@ makeFractalPng(ConfigMap) ->
     DeltaY = (YImaginaryHigh - YImaginaryLow) / Height,
 
     %% initialize the png
-    ThisPng = imageLib:startPng( ConfigMap ),
+    ThisPng = imagelib:startPng( ConfigMap ),
 
     %% recurse thru the rows
     ok = computeFractalData( [],    % start with empty row data
@@ -48,7 +48,7 @@ makeFractalPng(ConfigMap) ->
                         ConfigMap),
 
     %% finalize the png
-    imageLib:finishPng( ThisPng ),
+    imagelib:finishPng( ThisPng ),
 
     ok.
 
@@ -72,7 +72,7 @@ computeFractalData( RowData,                   % row data computed so far
         when XPix < 0, YPix =< Height ->
 
     %% add row to png
-    imageLib:addRow( RowData, ThisPng ),
+    imagelib:addRow( RowData, ThisPng ),
 
     %% recurse
     NewRowData = [],                                 % reset data for row to empty
