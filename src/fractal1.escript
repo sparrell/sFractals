@@ -13,9 +13,9 @@
 
 main(_) ->
     makeFractal2( config1() ),
-    %makeFractal2( config2() ),
-    %makeFractal2( config3() ),
-    %%makeFractal2( config4() ),
+    makeFractal2( config2() ),
+    makeFractal2( config3() ),
+    makeFractal2( config4() ),
     %makeFractal( config1() ),
     %makeFractal( config2() ),
     %makeFractal( config3() ),

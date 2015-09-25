@@ -76,7 +76,7 @@ computeFractalData( RowData,                   % row data computed so far
 
     %% recurse
     NewRowData = [],                                 % reset data for row to empty
-    NewXPix    = width,                              % reset to end of line
+    NewXPix    = Width,                              % reset to end of line
     NewXR      = maps:get(xRealRight,ConfigMap),     % reset to end of line
     NewYPix    = YPix + 1,                           % increment row
     NewYI      = YI+DeltaY,                          % increment row
