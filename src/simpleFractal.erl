@@ -12,7 +12,8 @@
 -export([ simplFrac/1, 
           createPointData/3, 
           makeFractalPng/1,
-          computeFractalData/11  %create a block of fractal data
+          computeFractalData/11,  %create a block of fractal data
+          makePngFromData/2       % create a Png from block of fractal data
           ]).
 
 %% expose functions for test
@@ -20,6 +21,30 @@
           computeIterationValue/8, addOnePoint/7, makePoints/8 ]).
  
 %% public API for making fractal
+
+makePngFromData(Rows,ConfigMap) ->       % create a Png from block of fractal data
+    %% initialize the png
+    ThisPng = imagelib:startPng( ConfigMap ),
+
+    %% add all the rows, one at a time, to the image
+    addRows(ThisPng,Rows),
+
+    %% finalize the png
+    imagelib:finishPng( ThisPng ),
+
+    ok.
+
+addRows(_ThisPng, []) ->
+    %% no rows left so done
+    ok;
+
+addRows(ThisPng, [ThisRow | RestOfRows ] ) ->
+    %% add row to png
+    imagelib:addRow( ThisRow, ThisPng ),
+
+    %%recurse
+    addRows(ThisPng, RestOfRows).
+
 %% explain ConfigMap params needed here
 %% note palette must have values for all counts (eg set max iter according to size of palette or vice versa)
 %%
