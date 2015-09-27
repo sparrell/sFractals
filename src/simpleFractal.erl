@@ -9,7 +9,11 @@
 %% try to make simple fractal data and then turn into color data and then make image
 
 %% public API
--export([ simplFrac/1, createPointData/3, makeFractalPng/1,computeFractalData2/11 ]).
+-export([ simplFrac/1, 
+          createPointData/3, 
+          makeFractalPng/1,
+          computeFractalData/11  %create a block of fractal data
+          ]).
 
 %% expose functions for test
 -export([ newImaginaryC/1,newRealC/1,newImaginaryZ/1,newRealZ/1,
@@ -41,7 +45,7 @@ makeFractalPng(ConfigMap) ->
     ThisPng = imagelib:startPng( ConfigMap ),
 
     %% recurse thru the rows
-    ok = computeFractalData( [],    % start with empty row data
+    ok = computeRowAtATime( [],    % start with empty row data
                         ThisPng,                          % png object
                         Width, XRealRight, DeltaX, Width, % start at right hand side (point 1 at head)
                         1, YImaginaryLow, DeltaY,Height,   %% start on first row
@@ -53,7 +57,7 @@ makeFractalPng(ConfigMap) ->
     ok.
 
 %%%%%%%%
-%% computeFractalData2/11 API
+%% computeFractalData/11 API
 %%        Rows         - a list of the rows(lines) of data, starts empty and builds until height reached, built top down
 %%        ThisRow      - a list of the points(count value) in a row/line, starts empty and builds R->L until width reached
 %%        XPix         - the integer X value of the pixel 
@@ -67,7 +71,7 @@ makeFractalPng(ConfigMap) ->
 %%        ConfigMap    - config info
 %%%%%%%%
 % clause when height is reached, return the rows of data
-computeFractalData2( Rows, _ThisRow,
+computeFractalData( Rows, _ThisRow,
                _XPix, _XR, _DeltaX, _Width,  
                YPix, _YI, _DeltaY, Height,  % only height matters
                _ConfigMap)
@@ -77,7 +81,7 @@ computeFractalData2( Rows, _ThisRow,
     Rows;
 
 % clause when row is complete (xpix = -1) but height not reached - process row and recurse
-computeFractalData2( Rows, ThisRow,        % row data computed so far
+computeFractalData( Rows, ThisRow,        % row data computed so far
                XPix, _XR, DeltaX, Width,  % info for points in a row
                YPix, YI, DeltaY, Height,  % info for rows
                ConfigMap)
@@ -92,12 +96,12 @@ computeFractalData2( Rows, ThisRow,        % row data computed so far
     NewXR      = maps:get(xRealRight,ConfigMap),     % reset to end of line
     NewYPix    = YPix + 1,                           % increment row
     NewYI      = YI+DeltaY,                          % increment row
-    computeFractalData2( NewRows, NewRowData,
+    computeFractalData( NewRows, NewRowData,
                    NewXPix, NewXR, DeltaX, Width,
                    NewYPix, NewYI, DeltaY,Height,
                    ConfigMap);
 
-computeFractalData2( Rows, RowData,       % row data computed so far
+computeFractalData( Rows, RowData,       % row data computed so far
                XPix, XR, DeltaX, Width,   % info for points in a row
                YPix, YI, DeltaY, Height,  % info for rows
                ConfigMap)
@@ -117,7 +121,7 @@ computeFractalData2( Rows, RowData,       % row data computed so far
     NewRowData = [ NewPoint | RowData ],
     NewXPix    = XPix - 1,                           % decrement moving left building row
     NewXR      = XR - DeltaX,                        % decrease XR to the left
-    computeFractalData2( Rows, NewRowData,
+    computeFractalData( Rows, NewRowData,
                    NewXPix, NewXR, DeltaX, Width,
                    YPix, YI, DeltaY,Height,
                    ConfigMap).
@@ -127,7 +131,7 @@ computeFractalData2( Rows, RowData,       % row data computed so far
 
 %%%%%%%%%%%%%%%%%%%%%
 % clause when height is reached 
-computeFractalData( _RowData,
+computeRowAtATime( _RowData,
                #{size := {_, Height}},       % when PNG is height high
                _XPix, _XR, _DeltaX, _Width,  
                YPix, _YI, _DeltaY, Height,  % only height matters
@@ -138,7 +142,7 @@ computeFractalData( _RowData,
     ok;
 
 % clause when row is complete (xpix = -1) but height not reached - process row and recurse
-computeFractalData( RowData,                   % row data computed so far
+computeRowAtATime( RowData,                   % row data computed so far
                ThisPng,                   % png object
                XPix, _XR, DeltaX, Width,   % info for points in a row
                YPix, YI, DeltaY, Height,  % info for rows
@@ -154,14 +158,14 @@ computeFractalData( RowData,                   % row data computed so far
     NewXR      = maps:get(xRealRight,ConfigMap),     % reset to end of line
     NewYPix    = YPix + 1,                           % increment row
     NewYI      = YI+DeltaY,                          % increment row
-    computeFractalData( NewRowData,
+    computeRowAtATime( NewRowData,
                    ThisPng,                          % png object
                    NewXPix, NewXR, DeltaX, Width,
                    NewYPix, NewYI, DeltaY,Height,
                    ConfigMap);
 
 % clause when row is incomplete - add another point and recurse
-computeFractalData( RowData,                   % row data computed so far
+computeRowAtATime( RowData,                   % row data computed so far
                ThisPng,                   % png object
                XPix, XR, DeltaX, Width,   % info for points in a row
                YPix, YI, DeltaY, Height,  % info for rows
@@ -182,7 +186,7 @@ computeFractalData( RowData,                   % row data computed so far
     NewRowData = [ NewPoint | RowData ],
     NewXPix    = XPix - 1,                           % decrement moving left building row
     NewXR      = XR - DeltaX,                        % decrease XR to the left
-    computeFractalData( NewRowData,
+    computeRowAtATime( NewRowData,
                    ThisPng,                          % png object
                    NewXPix, NewXR, DeltaX, Width,
                    YPix, YI, DeltaY,Height,
