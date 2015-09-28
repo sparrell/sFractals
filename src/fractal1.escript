@@ -1,6 +1,7 @@
 #!/usr/bin/env escript
 %% -*- erlang -*-
-%%! -pa /Users/duncan/MyDev/GitHub/sFractals/_build/test/lib/sFractals/ebin /Users/duncan/MyDev/GitHub/sFractals/_build/test/lib/png/ebin
+%%! -pa ../_build/test/lib/sFractals/ebin ../_build/test/lib/png/ebin
+%% assumes running out of _build
 
 %%%-------------------------------------------------------------------
 %%% @author Duncan Sparrell
