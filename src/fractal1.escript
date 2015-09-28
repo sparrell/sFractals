@@ -12,24 +12,42 @@
 -mode(compile).
 
 main(_) ->
-    %base config
+
+    % simple fractal
+
+    %% base config
     ConfigMap1 = config1(),
-    makeFractal( ConfigMap1 ),
+
+    % create the data
+    io:format("data config1~n"),
+    Rows = simpleFractal:computeFractalData( ConfigMap1 ),
+    %io:format("~p~n",[Rows]),
+    io:format("rendering config1~n"),
+    %% make image from data
+    simpleFractal:makePngFromData(Rows,ConfigMap1),
+
+
+    % new file name
+    Change1a = #{fractalImageFileName => "./m1a.julian.0010.0010.dot5.dot5.4.11.png"},
+    ConfigMap1a = maps:merge(ConfigMap1, Change1a),
+    %makeFractal( ConfigMap1a ),
 
     % new file name
     Change1 = #{fractalImageFileName => "./m2.julian.0010.0010.dot5.dot5.4.11.png"},
     ConfigMap1b = maps:merge(ConfigMap1, Change1),
-    makeFractal2( ConfigMap1b ),
+    %makeFractal2( ConfigMap1b ),
 
     Change2 = #{fractalImageFileName => "./m1.julian.0100.0100.dot5.dot5.4.11.png",
                 width => 100, 
                 height => 100},
     ConfigMap2 = maps:merge(ConfigMap1b, Change2),
-    makeFractal( ConfigMap2 ),
+    %makeFractal( ConfigMap2 ),
+    Rows2 = simpleFractal:computeFractalData( ConfigMap2 ),
+    simpleFractal:makePngFromData(Rows2,ConfigMap2),
 
     Change3 = #{fractalImageFileName => "./m2.julian.0100.0100.dot5.dot5.4.11.png"},
     ConfigMap2b = maps:merge(ConfigMap2,Change3),
-    makeFractal2( ConfigMap2b ),
+    %makeFractal2( ConfigMap2b ),
 
     %ConfigMap3 = config3(),
     %makeFractal( ConfigMap3 ),
@@ -47,14 +65,20 @@ main(_) ->
                 width  => 1000, 
                 height => 1000},
     ConfigMap4 = maps:merge(ConfigMap2b,Change4),
-    makeFractal2( ConfigMap4 ),
+    %makeFractal2( ConfigMap4 ),
 
     Change5 = #{fractalImageFileName => "./m2.julian.4k.4k.dot5.dot5.4.11.png",
                 width  => 4000, 
                 height => 4000},
     ConfigMap5 = maps:merge(ConfigMap4,Change5),
-    makeFractal2( ConfigMap5 ),
+    %makeFractal2( ConfigMap5 ),
 
+    % create the data
+    io:format("data config5~n"),
+    Rows5 = simpleFractal:computeFractalData( ConfigMap5 ),
+    io:format("rendering config1~n"),
+    %% make image from data
+    simpleFractal:makePngFromData(Rows5,ConfigMap5),
     ok.
 
 % time making each fractal
