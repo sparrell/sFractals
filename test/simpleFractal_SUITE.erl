@@ -17,7 +17,8 @@
 all() ->
     [testNewImaginaryC,testNewRealC,testNewImaginaryZ,testNewRealZ,
      testExceedIter, testExceedBound, testAddOnePoint, testMakePointsEnd,
-     testMakePoints,makeFractal1 ].
+     testMakePoints,makeFractal1, testComputeFractalData2Finish,
+     testComputeFractalData2EOL, testComputeFractalData2addRow ].
 
 %% timeout if no reply in a minute
 suite() -> 
@@ -196,4 +197,128 @@ makeFractal1(_Config) ->
     114 = OutputFileSize,
 
     ok.
+
+testComputeFractalData2Finish(_Config) ->
+    %% test finish clause
+
+    %% setup some test config and test data
+    TestConfig1 = #{ fractalAlg => julian,  % Fractal Algorithm is julian
+       fractalImageFileName => './FinishTest.png',  %image file created
+       width => 10, % width=10
+       height => 5, 
+       cReal => 0.5, % real portion of C0
+       cImaginary => -0.5, % imaginary portion of C0
+       zReal => -0.1, %real portion of Z0 (don't care for Julian)
+       zImaginary => -0.1, %imaginary portion of Z0 (don't care for Julian)
+       xRealRight => 3.0,
+       xRealLeft => -3.0,
+       yImaginaryLow => -3.0,
+       yImaginaryHigh => 3.0,
+       bailoutThreshold => 4,
+       maxIterationThreshold => 11 },
+
+    % data that doesn't matter for this test
+    ThisRow = [ ],
+    XPix = 3,
+    XR = 0.5,
+    DeltaX = 0.1,
+    Width = 10,
+    YI = 0.5,
+    DeltaY = 0.1,
+
+    % data that matters for the test
+    RowsIn = [ [0],[0],[0],[0],[0] ],  % has five rows
+    YPix = 0,
+    Height = 5,
+
+    % see if computeFractalData correctly comes back when rows are full
+    RowsOut = simpleFractal:computeFractalData( RowsIn, ThisRow,
+               XPix, XR, DeltaX, Width,  
+               YPix, YI, DeltaY, Height,  % only height matters
+               TestConfig1),
+
+    % test correct answer came back
+    RowsIn = RowsOut.
+
+testComputeFractalData2EOL(_Config) ->
+    % test end of row works correctly
+
+    %% setup some test config and test data
+    ConfigMap = #{ fractalAlg => julian,  % Fractal Algorithm is julian
+       fractalImageFileName => './EolTest.png',  %image file created
+       width => 5, % width=10
+       height => 5, 
+       cReal => 0.5, % real portion of C0
+       cImaginary => -0.5, % imaginary portion of C0
+       zReal => -0.1, %real portion of Z0 (don't care for Julian)
+       zImaginary => -0.1, %imaginary portion of Z0 (don't care for Julian)
+       xRealRight => 3.0,
+       xRealLeft => -3.0,
+       yImaginaryLow => -3.0,
+       yImaginaryHigh => 3.0,
+       bailoutThreshold => 4,
+       maxIterationThreshold => 11 },
+
+    % data that doesn't matter for this test
+    XR = 0.5,
+    DeltaX = 0.1,
+    Width = 5,
+    YI = 0.5,
+    DeltaY = 0.1,
+    Height = 5,
+
+    % data that matters for the test
+    RowsIn = [ [0],[0],[0] ],  % has 3 rows
+    ThisRow = [ 1,2,3,4,5 ],
+    YPix = 1,    % last row (so wont compute more)
+    XPix = 0,    % testing reached begin of row
+
+    % see if computeFractalData correctly comes back at end of row
+    RowsOut = simpleFractal:computeFractalData( RowsIn, ThisRow,
+               XPix, XR, DeltaX, Width,  
+               YPix, YI, DeltaY, Height,  % only height matters
+               ConfigMap),
+
+    %% is output what was expected?
+    [ ThisRow | RowsIn ] = RowsOut.
+
+testComputeFractalData2addRow(_Config) ->
+    % test computing a row of data works right
+    %% setup some test config and test data
+    ConfigMap = #{ fractalAlg => julian,  % Fractal Algorithm is julian
+       fractalImageFileName => './EolTest.png',  %image file created
+       width => 5, 
+       height => 5, 
+       cReal => 0.1, % real portion of C0
+       cImaginary => -0.1, % imaginary portion of C0
+       zReal => -0.1, %real portion of Z0 (don't care for Julian)
+       zImaginary => -0.1, %imaginary portion of Z0 (don't care for Julian)
+       xRealRight => 0.1,
+       xRealLeft => -0.1,
+       yImaginaryLow => -3.0,
+       yImaginaryHigh => 3.0,
+       bailoutThreshold => 4,
+       maxIterationThreshold => 11 },
+
+    % data for test computations
+    XR = 0.0,
+    DeltaX = 0.1,
+    Width = 5,
+    YI = 0.0,
+    DeltaY = 0.1,
+    Height = 5,
+
+    RowsIn = [ [0],[0],[0] ],  % has 3 rows
+    ThisRow = [ 0,0,0,0,0 ],
+    YPix = 2,    % 1 row to go
+    XPix = 0,
+
+    % see if computeFractalData computes more data
+    RowsOut = simpleFractal:computeFractalData( RowsIn, ThisRow,
+               XPix, XR, DeltaX, Width,  
+               YPix, YI, DeltaY, Height,  
+               ConfigMap),
+
+    %% is output what was expected?
+    [[11,11,11,11,11],[0,0,0,0,0],[0],[0],[0]] = RowsOut.
 
