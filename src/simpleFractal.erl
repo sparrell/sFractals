@@ -9,8 +9,7 @@
 %% try to make simple fractal data and then turn into color data and then make image
 
 %% public API
--export([ simplFrac/1, 
-          createPointData/3, 
+-export([ createPointData/3, 
           makeFractalPng/1,
           computeFractalData/1,   %create a block of fractal data
           makePngFromData/2       % create a Png from block of fractal data
@@ -257,39 +256,6 @@ computeRowAtATime( RowData,                   % row data computed so far
                    ConfigMap).
 
 
-% create a simple fractal
-simplFrac(ConfigMap) ->
-
-    %% create box of data for every X,Y
-    Width           = maps:get(width,ConfigMap),
-    Height          = maps:get(height,ConfigMap),
-    XRealRight      = maps:get(xRealRight,ConfigMap),
-    XRealLeft       = maps:get(xRealLeft,ConfigMap),
-    YImaginaryLow   = maps:get(yImaginaryLow,ConfigMap),
-    YImaginaryHigh  = maps:get(yImaginaryHigh,ConfigMap),
-    %% box is bounded on left by x > XRealLeft and bounded on right by x < XRealRight
-    %% box is bounded on top by y > YImaginaryHigh and bounded on bottom by y > YImaginaryLow
-    %% box is width pixels wide and height pixels high
-
-    %% step is floating range divided by number of pixels
-    DeltaX = (XRealRight - XRealLeft) / Width,
-    DeltaY = (YImaginaryHigh - YImaginaryLow) / Height,
-
-    %% create the count data
-    IterationCountData = createPointData( {XRealLeft,DeltaX,Width},       %info for points in a row
-                                          {YImaginaryLow,DeltaY,Height},  %info for rows
-                                          ConfigMap),
-
-    %% print some stats on distribution of counts
-    io:format("stats~n~p~n", [imagelib:analyzeData(IterationCountData) ] ),
-
-    %% colorize the data using simplest alg
-    ColorData = imagelib:colorizeData(IterationCountData,simplest,ConfigMap),
-
-    %% take the x,y,color data and creates an image
-    imagelib:makeImageFromData( ColorData, ConfigMap ),
-
-    ok.
 
 createPointData( {XRealLeft,DeltaX,Width}, {YImaginaryLow,DeltaY,Height}, ConfigMap)
         when DeltaX > 0, DeltaY > 0 ->
