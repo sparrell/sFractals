@@ -2,7 +2,8 @@
 %% -*- erlang -*-
 %%! -pa ../_build/test/lib/sFractals/ebin ../_build/test/lib/png/ebin
 %% assumes running out of _build
-%% output image in test
+%% output image ../examples/example6.png
+%% output data ../examples/example6.erltxt
 
 %%%-------------------------------------------------------------------
 %%% @author Duncan Sparrell
@@ -19,7 +20,8 @@ main(_) ->
 
     %% base config
     ConfigMap = #{ fractalAlg => julian,  % Fractal Algorithm is julian
-                    fractalImageFileName => "test/example6.png",  %image file created
+                    fractalImageFileName => "../examples/example6.png",  %image file created
+                    dataFileName  => "../examples/example6.erltxt",  %put data here
                     colorAlg => simplest,  % 0-11 map to colors
                     width => 10,           % width=10
                     height => 10,          % height=10
@@ -38,16 +40,13 @@ main(_) ->
     %~statistics(runtime),
     %~statistics(wall_clock),
 
-    % create the data
+    % create the data and put in file
     %~io:format("computing data~n"),
-    Rows = simpleFractal:computeFractalData( ConfigMap ),
-
-    %% write a file with row data
-    file:write_file('./test/example6.txt',io_lib:fwrite("~p.\n",[Rows])),
+    ok = simpleFractal:computeFractalDataIntoFile( ConfigMap ),
 
     %% make image from data
     %~io:format("rendering image~n"),
-    simpleFractal:makePngFromData(Rows,ConfigMap),
+%%    simpleFractal:makePngFromData(Rows,ConfigMap),
 
     %~{_, TimeRun} = statistics(runtime),
     %~{_, TimeWall} = statistics(wall_clock),
