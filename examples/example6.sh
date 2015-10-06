@@ -21,7 +21,7 @@ main(_) ->
     %% base config
     ConfigMap = #{ fractalAlg => julian,  % Fractal Algorithm is julian
                     fractalImageFileName => "../examples/example6.png",  %image file created
-                    dataFileName  => "../examples/example6.erltxt",  %put data here
+                    dataFileName  => "../examples/example6.erl.txt",  %put data here
                     colorAlg => simplest,  % 0-11 map to colors
                     width => 10,           % width=10
                     height => 10,          % height=10
@@ -46,7 +46,7 @@ main(_) ->
 
     %% make image from data
     %~io:format("rendering image~n"),
-%%    simpleFractal:makePngFromData(Rows,ConfigMap),
+    simpleFractal:makePngFromDataFile(ConfigMap),
 
     %~{_, TimeRun} = statistics(runtime),
     %~{_, TimeWall} = statistics(wall_clock),

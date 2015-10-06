@@ -11,9 +11,10 @@
 %% public API
 -export([ createPointData/3, 
           makeFractalPng/1,
-          computeFractalData/1,   %create a block of fractal data
-          computeFractalDataIntoFile/1,   %create a block of fractal data and write to file
-          makePngFromData/2       % create a Png from block of fractal data
+          computeFractalData/1,           % create a block of fractal data
+          computeFractalDataIntoFile/1,   % create a block of fractal data and write to file
+          makePngFromData/2,              % create a Png from block of fractal data
+          makePngFromDataFile/1           % create a Png from block of fractal data in a file
           ]).
 
 %% expose functions for test
@@ -22,6 +23,13 @@
           computeFractalData/11,computeFractalDataIntoFile/11 ]).
  
 %% public API for making fractal
+makePngFromDataFile(ConfigMap) ->       % create a Png from file of fractal data
+    %% get the data
+    {ok, Rows} = file:consult( maps:get( dataFileName,ConfigMap) ),
+
+    %% make the png
+    makePngFromData(Rows,ConfigMap).
+
 
 makePngFromData(Rows,ConfigMap) ->       % create a Png from block of fractal data
     %% initialize the png
