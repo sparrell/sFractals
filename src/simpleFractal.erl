@@ -9,8 +9,7 @@
 %% try to make simple fractal data and then turn into color data and then make image
 
 %% public API
--export([ createPointData/3, 
-          makeFractalPng/1,
+-export([ 
           computeFractalData/1,           % create a block of fractal data
           computeFractalDataIntoFile/1,   % create a block of fractal data and write to file
           makePngFromData/2,              % create a Png from block of fractal data
@@ -53,42 +52,6 @@ addRows(ThisPng, [ThisRow | RestOfRows ] ) ->
 
     %%recurse
     addRows(ThisPng, RestOfRows).
-
-%% explain ConfigMap params needed here
-%% note palette must have values for all counts (eg set max iter according to size of palette or vice versa)
-%%
-makeFractalPng(ConfigMap) ->
-
-    %% create height rows of width columns of pixels
-    Width           = maps:get(width,ConfigMap),
-    Height          = maps:get(height,ConfigMap),
-    %% each pixel has a corresonding complex number defined by corners of the box
-    XRealRight      = maps:get(xRealRight,ConfigMap),
-    XRealLeft       = maps:get(xRealLeft,ConfigMap),
-    YImaginaryLow   = maps:get(yImaginaryLow,ConfigMap),
-    YImaginaryHigh  = maps:get(yImaginaryHigh,ConfigMap),
-    %% box is bounded on left by x > XRealLeft and bounded on right by x < XRealRight
-    %% box is bounded on top by y > YImaginaryHigh and bounded on bottom by y > YImaginaryLow
-    %% box is width pixels wide and height pixels high
-
-    %% step is floating range divided by number of pixels
-    DeltaX = (XRealRight - XRealLeft) / Width,
-    DeltaY = (YImaginaryHigh - YImaginaryLow) / Height,
-
-    %% initialize the png
-    ThisPng = imagelib:startPng( ConfigMap ),
-
-    %% recurse thru the rows
-    ok = computeRowAtATime( [],    % start with empty row data
-                        ThisPng,                          % png object
-                        Width, XRealRight, DeltaX, Width, % start at right hand side (point 1 at head)
-                        1, YImaginaryLow, DeltaY,Height,   %% start on first row
-                        ConfigMap),
-
-    %% finalize the png
-    imagelib:finishPng( ThisPng ),
-
-    ok.
 
 %%%%%%%%
 %% computeFractalData/1 API
@@ -276,7 +239,7 @@ computeFractalDataIntoFile( DataFile, ThisRow,        % row data computed so far
         when XPix =< 0, YPix >= 0 ->
 
     % add row to file
-    io:format(DataFile,"~p.~n",[ThisRow]),
+    io:format(DataFile,"~w.~n",[ThisRow]),
 
     % reset to begining of next row 
     NewRowData = [],                                 % reset data for row to empty
@@ -382,16 +345,6 @@ computeRowAtATime( RowData,                   % row data computed so far
 
 
 
-createPointData( {XRealLeft,DeltaX,Width}, {YImaginaryLow,DeltaY,Height}, ConfigMap)
-        when DeltaX > 0, DeltaY > 0 ->
-
-    CurrentPixelY = 1,   % start at bottom and work up (so head of list will be top row)
-    IterCounts = [],     % start with empty data box
-    %% makeAllRows returns InterCount, which is then returned by createPointData 
-    makeAllRows( {XRealLeft,DeltaX,Width}, 
-                 {YImaginaryLow,DeltaY,Height,CurrentPixelY},
-                 IterCounts, 
-                 ConfigMap).
 
 %% make one row at a time, starting at bottom and working up 
 %%  note builds list from tail so this yeilds highest Y nearest front 
