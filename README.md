@@ -16,6 +16,12 @@ Build and Test
 
     $ rebar3 ct
 
+Module Relationships
+--------------
+Put Pic here
+![modules] (https://raw.githubusercontent.com/sparrell/sFractals/data-file-server/src/simpleFractalModules.jpg)
+
+
 Plan of Attack
 --------------
 
@@ -44,8 +50,9 @@ not sure of order of rest of these
   + for user to save for re-creating
 
 ...
+
 endstate:
-A. webserver with page that accepts inputs and then creates image
-B. data generation server and image render servers
-C. supervision trees
+* webserver with page that accepts inputs and then creates image
+* data generation server and image render servers
+* supervision trees
     
