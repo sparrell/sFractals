@@ -16,9 +16,10 @@
 %% tests to run
 all() ->
     [testNewImaginaryC,testNewRealC,testNewImaginaryZ,testNewRealZ,
-     testExceedIter, testExceedBound, testAddOnePoint, testMakePointsEnd,
-     testMakePoints, testComputeFractalData2Finish,
-     testComputeFractalData2EOL, testComputeFractalData2addRow ].
+     testExceedIter, testExceedBound, 
+     testComputeFractalData2Finish,
+     testComputeFractalData2EOL, testComputeFractalData2addRow,
+     testMakeDataFile ].
 
 %% timeout if no reply in a minute
 suite() -> 
@@ -115,58 +116,6 @@ testExceedBound(Config) ->
                                                IterCount,             
                                                MaxIterationThreshold, 
                                                BailoutThreshold ),
-    ok.
-
-testAddOnePoint(Config) ->
-    % initialize some test data
-    CurrentPixelX = 13,
-    CurrentPixelY = 14,
-    {FractalAlg, CReal, CImaginary, XReal, YImaginary } = getCZconfig(Config),
-    ConfigMap = #{ fractalAlg => FractalAlg, 
-       cReal => CReal,
-       cImaginary => CImaginary,
-       bailoutThreshold => ?config(bailoutThreshold, Config),
-       maxIterationThreshold => ?config(maxIterationThreshold, Config) },
-    %% start with empty IterCounts
-    IterCounts = [ ],
-    % test adding point at (13,14) of 2
-    [{13,14,2}] = simpleFractal:addOnePoint(CurrentPixelX,
-                               CurrentPixelY,
-                               XReal,
-                               YImaginary,
-                               FractalAlg,
-                               IterCounts,
-                               ConfigMap),
-    ok.
-
-testMakePointsEnd(_Config) ->
-    % test end of line
-    [ {1,2,3} ] = simpleFractal:makePoints(10,    % width = 10
-                                           11,      % CurrentPixelX = 11 (ie greater than width)
-                                           2,       % CurrentPixelY = don't care for this test
-                                           3.0,     % CurrentRealX = don't care for this test
-                                           4.0,     % CurrentImaginaryY = don't care for this test
-                                           0.2,     % DeltaX = don't care for this test
-                                           [ {1,2,3} ], % IterCounts = test data = output unchanged
-                                           #{}),    % ConfigMap = don't care for this test
-    ok.
-
-testMakePoints(Config) ->
-    % initialize some test data
-    ConfigMap = #{ fractalAlg => ?config(fractalAlg, Config), 
-                   cReal => ?config(cReal, Config),
-                   cImaginary => ?config(cImaginary, Config),
-                   bailoutThreshold => ?config(bailoutThreshold, Config),
-                   maxIterationThreshold => ?config(maxIterationThreshold, Config) },
-    % make a valid row
-    [{3,2,2},{2,2,3},{1,2,5}] = simpleFractal:makePoints(3,    % width = 3
-                                 1,      % CurrentPixelX = 1 = start at begining of line
-                                 2,       % CurrentPixelY 
-                                 0.3,     % CurrentRealX 
-                                 0.4,     % CurrentImaginaryY 
-                                 0.2,     % DeltaX 
-                                 [ ],      % IterCounts = start empty
-                                 ConfigMap),    
     ok.
 
 testComputeFractalData2Finish(_Config) ->
@@ -293,3 +242,63 @@ testComputeFractalData2addRow(_Config) ->
     %% is output what was expected?
     [[11,11,11,11,11],[0,0,0,0,0],[0],[0],[0]] = RowsOut.
 
+testMakeDataFile(_Config) ->
+    %% example config
+    FractalImageFileName = "./testMakeDataFile.png",  %image file created
+    DataFileName         = "./testMakeDataFile.erl.txt",  %put data here
+    ConfigMap = #{ fractalAlg => julian,  % Fractal Algorithm is julian
+                   fractalImageFileName => FractalImageFileName,
+                   dataFileName         => DataFileName,
+                   colorAlg => simplest,  % 0-11 map to colors
+                   width => 10,           % width=10
+                   height => 10,          % height=10
+                   cReal => 0.5,          % real portion of C0
+                   cImaginary => -0.5,    % imaginary portion of C0
+                   zReal => -0.1,         % real portion of Z0 (na Julian)
+                   zImaginary => -0.1,    % imaginary portion of Z0 (na Julian)
+                   xRealRight => 3.0,
+                   xRealLeft => -3.0,
+                   yImaginaryLow => -3.0,
+                   yImaginaryHigh => 3.0,
+                   bailoutThreshold => 4,
+                   maxIterationThreshold => 11 },
+    %% reference test data
+    RefData = [ [0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,1,1,1,0,0,0,0],
+                [0,0,1,1,4,3,1,0,0,0],
+                [0,1,1,3,10,4,2,1,0,0],
+                [0,1,1,3,5,3,1,1,0,0],
+                [0,1,2,4,10,3,1,1,0,0],
+                [0,0,1,3,4,1,1,0,0,0],
+                [0,0,0,1,1,1,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0] ],
+    RefFileSize = 153,
+    RefPngData = <<137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,10,
+             0,0,0,10,8,3,0,0,0,186,236,63,143,0,0,0,36,80,76,84,69,
+             255,255,255,0,255,255,0,0,255,255,0,0,0,255,0,255,255,
+             0,210,180,140,240,128,128,255,165,0,128,128,0,255,0,
+             255,0,0,0,205,64,91,207,0,0,0,48,73,68,65,84,120,156,
+             99,96,192,5,24,25,25,225,44,22,102,70,40,139,153,139,
+             133,137,17,202,100,101,134,40,97,100,98,225,130,50,25,
+             24,153,89,144,244,49,162,26,201,0,0,17,8,0,86,73,146,
+             186,65,0,0,0,0,73,69,78,68,174,66,96,130>>,
+
+    %% create data and put in file
+    ok = simpleFractal:computeFractalDataIntoFile( ConfigMap ),
+
+    %% is it right data? (compare test file to reference data)
+    { ok, RefData} = file:consult(DataFileName),
+
+    %% make png
+    simpleFractal:makePngFromDataFile(ConfigMap),
+
+    %% is png right size?
+    { ok, { file_info, OutputFileSize, _reg,_rw,_t1,_t2,_t3,_,_,_,_,_,_,_} } =
+            file:read_file_info(FractalImageFileName),
+    RefFileSize  = OutputFileSize,
+
+    %% is png right content?
+    { ok, RefPngData} = file:read_file(FractalImageFileName),
+
+    ok.

@@ -2,7 +2,7 @@
 %% -*- erlang -*-
 %%! -pa ../_build/test/lib/sFractals/ebin ../_build/test/lib/png/ebin
 %% assumes running out of _build
-%% output image in test
+%% output image ../examples directory
 
 %%%-------------------------------------------------------------------
 %%% @author Duncan Sparrell
@@ -19,7 +19,7 @@ main(_) ->
 
     %% base config
     ConfigMap = #{ fractalAlg => julian,  % Fractal Algorithm is julian
-                    fractalImageFileName => "test/example1.png",  %image file created
+                    fractalImageFileName => "../examples/example1.png",  %image file created
                     colorAlg => simplest,  % 0-11 map to colors
                     width => 10,           % width=10
                     height => 10,          % height=10
