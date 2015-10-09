@@ -16,8 +16,8 @@
 %% tests to run
 all() ->
     [testNewImaginaryC,testNewRealC,testNewImaginaryZ,testNewRealZ,
-     testExceedIter, testExceedBound, testAddOnePoint, testMakePointsEnd,
-     testMakePoints, testComputeFractalData2Finish,
+     testExceedIter, testExceedBound, 
+     testComputeFractalData2Finish,
      testComputeFractalData2EOL, testComputeFractalData2addRow,
      testMakeDataFile ].
 
@@ -116,58 +116,6 @@ testExceedBound(Config) ->
                                                IterCount,             
                                                MaxIterationThreshold, 
                                                BailoutThreshold ),
-    ok.
-
-testAddOnePoint(Config) ->
-    % initialize some test data
-    CurrentPixelX = 13,
-    CurrentPixelY = 14,
-    {FractalAlg, CReal, CImaginary, XReal, YImaginary } = getCZconfig(Config),
-    ConfigMap = #{ fractalAlg => FractalAlg, 
-       cReal => CReal,
-       cImaginary => CImaginary,
-       bailoutThreshold => ?config(bailoutThreshold, Config),
-       maxIterationThreshold => ?config(maxIterationThreshold, Config) },
-    %% start with empty IterCounts
-    IterCounts = [ ],
-    % test adding point at (13,14) of 2
-    [{13,14,2}] = simpleFractal:addOnePoint(CurrentPixelX,
-                               CurrentPixelY,
-                               XReal,
-                               YImaginary,
-                               FractalAlg,
-                               IterCounts,
-                               ConfigMap),
-    ok.
-
-testMakePointsEnd(_Config) ->
-    % test end of line
-    [ {1,2,3} ] = simpleFractal:makePoints(10,    % width = 10
-                                           11,      % CurrentPixelX = 11 (ie greater than width)
-                                           2,       % CurrentPixelY = don't care for this test
-                                           3.0,     % CurrentRealX = don't care for this test
-                                           4.0,     % CurrentImaginaryY = don't care for this test
-                                           0.2,     % DeltaX = don't care for this test
-                                           [ {1,2,3} ], % IterCounts = test data = output unchanged
-                                           #{}),    % ConfigMap = don't care for this test
-    ok.
-
-testMakePoints(Config) ->
-    % initialize some test data
-    ConfigMap = #{ fractalAlg => ?config(fractalAlg, Config), 
-                   cReal => ?config(cReal, Config),
-                   cImaginary => ?config(cImaginary, Config),
-                   bailoutThreshold => ?config(bailoutThreshold, Config),
-                   maxIterationThreshold => ?config(maxIterationThreshold, Config) },
-    % make a valid row
-    [{3,2,2},{2,2,3},{1,2,5}] = simpleFractal:makePoints(3,    % width = 3
-                                 1,      % CurrentPixelX = 1 = start at begining of line
-                                 2,       % CurrentPixelY 
-                                 0.3,     % CurrentRealX 
-                                 0.4,     % CurrentImaginaryY 
-                                 0.2,     % DeltaX 
-                                 [ ],      % IterCounts = start empty
-                                 ConfigMap),    
     ok.
 
 testComputeFractalData2Finish(_Config) ->
