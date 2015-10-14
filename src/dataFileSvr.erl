@@ -42,29 +42,29 @@ stop() ->
 addARow( {RowNumber, Row} ) ->
     %% add a row to stored row data at position given
     %% fix later once structure works
-    io:format("addARow: ~s, ~s~n", [RowNumber, Row] ),
+    io:format("addARow: ~p, ~p~n", [RowNumber, Row] ),
     gen_server:cast(?MODULE, {addARow, {RowNumber, Row} }). 
 
 rowStatus() ->
     %% print status of where at
     %% fix later once structure works
-    io:format("rowStatus: ~n" ),
+    io:format("rowStatus client: ~n" ),
     gen_server:call(?MODULE, {rowStatus, junkForNow }). 
 
 %% server functions
 init(ConfigMap) ->     % initialization
     NumRowsLeft = 4000,                   % start with hardcoded (clean up later)  Number of Rows left to be received
     RowData = [],                         % start with empty row list
-    {NumRowsLeft, RowData, ConfigMap }.   % return tuple for LoopData
+    { ok, {NumRowsLeft, RowData, ConfigMap} }.   % return tuple for LoopData
 
 %% sync requests
 handle_call( {rowStatus, junkForNow }, _From, LoopData ) ->
     %% fix later
-    io:format("rowStatus: got here~n"),
-    {reply, "got to rowStatus", LoopData}.
+    io:format("rowStatus svr: got here~n"),
+    {reply, "reply to rowStatus", LoopData}.
 
 %% async requests 
-handle_cast(addARow, LoopData) ->
+handle_cast( {addARow,Input2Func},  LoopData) ->
     io:format("handleCast:addARow: got here~n"),
     {noreply, LoopData};
 handle_cast(stop, LoopData) ->
@@ -72,7 +72,7 @@ handle_cast(stop, LoopData) ->
     {stop, normal, LoopData}.
 
 terminate(Reason, _LoopData) -> 
-    io:format("terminating: ~s ~n", [Reason] ).
+    io:format("terminating: ~p ~n", [Reason] ).
 
 handle_info(_Message, LoopData) -> {noreply, LoopData}.      % for later
 
