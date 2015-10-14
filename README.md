@@ -18,7 +18,7 @@ Build and Test
 
 Module Relationships
 --------------
-Put Pic here
+
 ![modules] (https://raw.githubusercontent.com/sparrell/sFractals/data-file-server/src/simpleFractalModules.jpg)
 
 
