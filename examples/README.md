@@ -6,7 +6,7 @@ The "examples" directory contains several example erlang scripts to create some 
 Times
 -----
 
-    For calibration purposes, 
+For calibration purposes, 
 here are the unscientifically measured run times for the various examples 
 (eg so you'll not freak if when example 7 takes much longer.
 
@@ -23,7 +23,9 @@ here are the unscientifically measured run times for the various examples
 Example 1
 -----
 
-    explain
+A really simple Julian fractal. The configuration is in example1.ecfg. It is only 10 pixels by 10 pixels with a depth of 11 (ie 11 colors)
+
+![modules] (https://raw.githubusercontent.com/sparrell/sFractals/data-file-server/examples/example1.png)
 
 
 Example 2
@@ -31,5 +33,44 @@ Example 2
 
     diff from ex 1
 
+Example 3
+-----
+
+    explain
+
+
+Example 4
+--------------
+
+    diff from ex 1
+
+Example 5
+-----
+
+    explain
+
+
+Example 6
+--------------
+
+    diff from ex 1
+
+Example 7
+-----
+
+still a work in progress
+
+
+Example 8
+--------------
+
+still a work in progress
+
+
+
+Example 9
+--------------
+
+still a work in progress
 
 
