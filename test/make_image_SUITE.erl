@@ -29,7 +29,7 @@ makePng(_Config) ->
     %% create some test data and config
     %% need to do
 
-    ConfigMap = #{ fractalImageFileName => "firstPng.png", %image file created
+    ConfigMap = #{ imageFileName => "firstPng.png", %image file created
                   width => 150, 
                   height => 100,
                   colorAlg => simplest 
@@ -42,7 +42,7 @@ testMakePng(_Config) ->
     %% create some test data and config
     TestFileName = "secondPng.png",
     TestFileSize = 189,
-    ConfigMap = #{ fractalImageFileName => TestFileName, %image file created
+    ConfigMap = #{ imageFileName => TestFileName, %image file created
                   width => 120, 
                   height => 100,
                   colorAlg => simplest 

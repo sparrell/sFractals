@@ -123,7 +123,7 @@ testComputeFractalData2Finish(_Config) ->
 
     %% setup some test config and test data
     TestConfig1 = #{ fractalAlg => julian,  % Fractal Algorithm is julian
-       fractalImageFileName => './FinishTest.png',  %image file created
+       imageFileName => './FinishTest.png',  %image file created
        width => 10, % width=10
        height => 5, 
        cReal => 0.5, % real portion of C0
@@ -165,7 +165,7 @@ testComputeFractalData2EOL(_Config) ->
 
     %% setup some test config and test data
     ConfigMap = #{ fractalAlg => julian,  % Fractal Algorithm is julian
-       fractalImageFileName => './EolTest.png',  %image file created
+       imageFileName => './EolTest.png',  %image file created
        width => 5, % width=10
        height => 5, 
        cReal => 0.5, % real portion of C0
@@ -206,7 +206,7 @@ testComputeFractalData2addRow(_Config) ->
     % test computing a row of data works right
     %% setup some test config and test data
     ConfigMap = #{ fractalAlg => julian,  % Fractal Algorithm is julian
-       fractalImageFileName => './EolTest.png',  %image file created
+       imageFileName => './EolTest.png',  %image file created
        width => 5, 
        height => 5, 
        cReal => 0.1, % real portion of C0
@@ -247,7 +247,7 @@ testMakeDataFile(_Config) ->
     FractalImageFileName = "./testMakeDataFile.png",  %image file created
     DataFileName         = "./testMakeDataFile.erl.txt",  %put data here
     ConfigMap = #{ fractalAlg => julian,  % Fractal Algorithm is julian
-                   fractalImageFileName => FractalImageFileName,
+                   imageFileName => FractalImageFileName,
                    dataFileName         => DataFileName,
                    colorAlg => simplest,  % 0-11 map to colors
                    width => 10,           % width=10

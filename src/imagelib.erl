@@ -24,7 +24,7 @@ analyzeData(CountData) ->
 makePng( ConfigMap ) ->
     Width  = maps:get(width, ConfigMap),
     Height = maps:get(height,ConfigMap),
-    PngFileName = maps:get(fractalImageFileName,ConfigMap),
+    PngFileName = maps:get(imageFileName,ConfigMap),
     ColorAlg = maps:get(colorAlg,ConfigMap),
 
     ColorPalette = makeColorPalette(ColorAlg),
@@ -140,7 +140,7 @@ append_row(#{size := {Width, _Height}} = Png, Y) ->
 startPng( ConfigMap ) ->
     Width  = maps:get(width, ConfigMap),
     Height = maps:get(height,ConfigMap),
-    PngFileName = maps:get(fractalImageFileName,ConfigMap),
+    PngFileName = maps:get(imageFileName,ConfigMap),
     ColorAlg = maps:get(colorAlg,ConfigMap),
 
     ColorPalette = makeColorPalette(ColorAlg),
