@@ -18,11 +18,11 @@
           start/1,     % start the server with config info
           stop/0,      % stop
           addARow/1,   % add a row of data
-          rowStatus/0  % print status of where at
+          rowStatus/0,  % print status of where at
+          writeDataFile/0  % write file
           ]).
 
 %% server public API
-%% expose functions for test
 -export([ init/1,             % init
           handle_call/3,      % sync requests
           handle_cast/2,      % async requests 
@@ -37,12 +37,12 @@ start(ConfigMap) ->
     gen_server:start_link( {local, ?MODULE}, ?MODULE, ConfigMap, [] ).
 
 stop() ->
+    io:format("stopping dataFileSvr ~n" ),
     gen_server:cast( ?MODULE, stop ).
 
 addARow( {RowNumber, Row} ) ->
     %% add a row to stored row data at position given
-    %% fix later once structure works
-    io:format("addARow: ~p, ~p~n", [RowNumber, Row] ),
+    io:format("addARow client: ~p, ~p~n", [RowNumber, Row] ),
     gen_server:cast(?MODULE, {addARow, {RowNumber, Row} }). 
 
 rowStatus() ->
@@ -51,22 +51,63 @@ rowStatus() ->
     io:format("rowStatus client: ~n" ),
     gen_server:call(?MODULE, {rowStatus, junkForNow }). 
 
+writeDataFile() ->
+    %% called once all data reaches server 
+    %% should svr figure when to write out itself?
+    %% validate enough rows?
+    %% wait for more if not? timeout?
+    gen_server:cast(?MODULE, writeDataFile). 
+
 %% server functions
 init(ConfigMap) ->     % initialization
-    NumRowsLeft = 4000,                   % start with hardcoded (clean up later)  Number of Rows left to be received
-    RowData = [],                         % start with empty row list
-    { ok, {NumRowsLeft, RowData, ConfigMap} }.   % return tuple for LoopData
+    io:format("starting dataFileSvr ~n" ),
+
+    NumRowsLeft = maps:get(height,ConfigMap),  % Number of Rows left to be received starts at height
+
+    RowData = [],                              % start with empty row list
+
+    { ok, {NumRowsLeft, RowData, ConfigMap} }. % return tuple for LoopData
 
 %% sync requests
-handle_call( {rowStatus, junkForNow }, _From, LoopData ) ->
+handle_call( {rowStatus, junkForNow}, _From, {NumRowsLeft, RowData, ConfigMap} ) ->
     %% fix later
-    io:format("rowStatus svr: got here~n"),
-    {reply, "reply to rowStatus", LoopData}.
+    io:format("rowStatus svr: got here with ~p, ~p~n", [NumRowsLeft, RowData] ),
+    {reply, "reply to rowStatus", {NumRowsLeft, RowData, ConfigMap}}.
 
 %% async requests 
-handle_cast( {addARow,Input2Func},  LoopData) ->
-    io:format("handleCast:addARow: got here~n"),
-    {noreply, LoopData};
+handle_cast( {addARow, {RowNumber, RowToAdd}}, {NumRowsLeft, RowData, ConfigMap})
+        when NumRowsLeft > 0 ->
+    %% this case when crunching thru the rows and not at last one yet
+    io:format("handleCast svr:addARow: got here, NumRowsLeft=~p~n",[NumRowsLeft]),
+    NewNumRowsLeft = NumRowsLeft - 1,
+    NewRowData = [ {RowNumber, RowToAdd} | RowData ],
+    {noreply, {NewNumRowsLeft, NewRowData, ConfigMap}};
+handle_cast(writeDataFile, {NumRowsLeft, RowData, ConfigMap}) ->
+    %% this case when have everything to write
+    io:format("CastSvr:writeDataFile: got here~n"),
+    io:format("    NumRowsLeft = ~p~n",[NumRowsLeft]),
+    io:format("    RowData = ~p~n",[RowData]),
+    %% sort and make list of rows
+    %%    RowData is unsorted list of tuples of form RowNumber,Row
+    %%    Sort on RowNumbner 
+    SortedRowTuples = lists:sort(RowData),
+    io:format("CastSvr:writeDataFile: SortedRowTuples=~p~n",[SortedRowTuples]),
+    %% remove the RowNumber
+    SortedRowData = [ ThisRow || {_,ThisRow} <- SortedRowTuples],
+    io:format("CastSvr:writeDataFile: SortedRowData=~p~n",[SortedRowData]),
+    
+    %% get config and open file
+    DataFileName = maps:get(dataFileName,ConfigMap),  % where to write datafile
+    {ok,DataFile} = file:open(DataFileName, [write]),
+
+    %% write to file until out of rows
+    lists:foreach( fun(ThisRow) -> io:format(DataFile, "~w.~n",[ThisRow]) end, SortedRowData),
+
+    %% close file
+    file:close(DataFile),
+
+    %% return? stop?
+    {noreply, {NumRowsLeft, RowData, ConfigMap}};
 handle_cast(stop, LoopData) ->
     io:format("handleCast:stop: got here~n"),
     {stop, normal, LoopData}.

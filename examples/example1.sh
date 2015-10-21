@@ -18,21 +18,7 @@ main(_) ->
     % example 1
 
     %% base config
-    ConfigMap = #{ fractalAlg => julian,  % Fractal Algorithm is julian
-                    fractalImageFileName => "../examples/example1.png",  %image file created
-                    colorAlg => simplest,  % 0-11 map to colors
-                    width => 10,           % width=10
-                    height => 10,          % height=10
-                    cReal => 0.5,          % real portion of C0
-                    cImaginary => -0.5,    % imaginary portion of C0
-                    zReal => -0.1,         % real portion of Z0 (na Julian)
-                    zImaginary => -0.1,    % imaginary portion of Z0 (na Julian)
-                    xRealRight => 3.0,
-                    xRealLeft => -3.0,
-                    yImaginaryLow => -3.0,
-                    yImaginaryHigh => 3.0,
-                    bailoutThreshold => 4,
-                    maxIterationThreshold => 11 },
+    {ok, [ ConfigMap | _T ] } = file:consult("../examples/example1.ecfg"),
 
     %% uncomment %~ to give staus io
     %~statistics(runtime),
