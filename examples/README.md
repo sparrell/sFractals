@@ -88,10 +88,14 @@ Example 7 is like example 6 in that it writes out the data to file and then read
 Example 7 uses the same parameters as example 5.
 Note Example 7 takes over twice as long as example5 (but it is creating a 31M data file).
 
+![modules] (https://raw.githubusercontent.com/sparrell/sFractals/data-file-server/examples/example7.png)
+
 Example 7b
 -----
 
 Using the 31M data file from example 7, creates image using different color map.
+
+![modules] (https://raw.githubusercontent.com/sparrell/sFractals/data-file-server/examples/example7b.png)
 
 Example 8
 --------------
