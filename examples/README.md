@@ -10,16 +10,17 @@ For calibration purposes,
 here are the unscientifically measured run times for the various examples 
 (eg so you'll not freak if when example 7 takes much longer.
 
-1. Example 1 = 1s
-2. Example 2 = 13s
-3. Example 3 = 25s
-4. Example 4 = 27s
-5. Example 5 = 25s
-6. Example 6 = 1s
-6b. Example 6b = 1s
-7. Example 7 = 70s
-8. Example 8 = wip
-9. Example 9 = wip
+	Example 1 = 1s
+	Example 2 = 13s
+	Example 3 = 25s
+	Example 4 = 27s
+	Example 5 = 25s
+	Example 6 = 1s
+	Example 6b = 1s
+	Example 7 = 67s
+	Example 7b = 29s
+	Example 8 = wip
+	Example 9 = wip
 
 Example 1
 -----
@@ -52,6 +53,7 @@ Example 4
 --------------
 
 Example 4 has the same parameters as example3 except it has a depth of 16 instead of 12.
+Notice the black (reached iteration bound) of example3 fills in with more detail in example4.
 
 ![modules] (https://raw.githubusercontent.com/sparrell/sFractals/data-file-server/examples/example4.png)
 
@@ -65,7 +67,7 @@ Example 5 has the same parameters as example4 except it has a depth of 32 instea
 Example 6
 --------------
 
-Example 6 is the same as example 1 but uses differnt code that first stores the fractal data in a file.
+Example 6 is the same as example 1 but uses different code that first stores the fractal data in a file.
 This allows for different color maps without having to recreate all the fractal data.
 
 ![modules] (https://raw.githubusercontent.com/sparrell/sFractals/data-file-server/examples/example6.png)
@@ -82,8 +84,14 @@ In this trivial example it runs too fast to notice the time savings.
 Example 7
 -----
 
-still a work in progress
+Example 7 is like example 6 in that it writes out the data to file and then reads the file. 
+Example 7 uses the same parameters as example 5.
+Note Example 7 takes over twice as long as example5 (but it is creating a 31M data file).
 
+Example 7b
+-----
+
+Using the 31M data file from example 7, creates image using different color map.
 
 Example 8
 --------------
