@@ -16,6 +16,12 @@ Build and Test
 
     $ rebar3 ct
 
+Module Relationships
+--------------
+
+![modules] (https://raw.githubusercontent.com/sparrell/sFractals/data-file-server/src/simpleFractalModules.jpg)
+
+
 Plan of Attack
 --------------
 
@@ -24,8 +30,8 @@ Plan of Attack
 1. add complex number library **Done**
 1. first order learn 'common test' and add tests for complex number math **done**
 1. function to render color data into image **Done**
-1. make data for simple fractal
-1. function to colorize iter data
+1. make data for simple fractal **Done** (and refactored several times)
+1. function to colorize iter data **Done**
 
 ...
 not sure of order of rest of these
@@ -41,11 +47,12 @@ not sure of order of rest of these
 * html form for input on webserver
 * creation of config data
   + to feed data generation
-  + for user to save for recreation
+  + for user to save for re-creating
 
 ...
+
 endstate:
-A. webserver with page that accepts inputs and then creates image
-B. data generation server and image render servers
-C. supervision trees
+* webserver with page that accepts inputs and then creates image
+* data generation server and image render servers
+* supervision trees
     
