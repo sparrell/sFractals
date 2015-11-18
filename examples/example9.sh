@@ -30,5 +30,8 @@ main(_) ->
     %~io:format("rendering image~n"),
     %simpleFractal:makePngFromDataFile(ConfigMap),
 
+
+    shell:start(),
+    timer:sleep(infinity),
     ok.
 
