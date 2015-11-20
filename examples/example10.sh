@@ -22,13 +22,14 @@ main(_) ->
     %% example 10
 
     %% base config
-   {ok, [ ConfigMap | _T ] } = file:consult("../examples/example10.ecfg"),
+   %%{ok, [ ConfigMap | _T ] } = file:consult("../examples/example10.ecfg"),
+    {ok, [ ConfigMap | _T ] } = file:consult("../examples/example1.ecfg"),
 
     io:format("starting example~n"),
    
     %% setup stuff
     PathGotten = code:get_path(),
-    io:format("Path=~p ~n",[PathGotten]),
+    %%io:format("Path=~p ~n",[PathGotten]),
     EnvGotten = application:get_all_env(),
     io:format("Env=~p ~n",[EnvGotten]),
 
@@ -48,18 +49,30 @@ main(_) ->
     io:format("StartedApps=~p ~n",[StartedApps]),
 
     ModL = code:all_loaded(),
-	io:format("modules: ~p~n~n",[ModL]),
+	%%io:format("modules: ~p~n~n",[ModL]),
+
+    %%timer:sleep(3000),
+
+    {ok, PoolPid} = wpool:start_sup_pool(
+         my_pool,
+         %% use default worker
+         [{workers, 200}]),         %[{workers, 200}, {worker, {SpecFun,[]} }]),
+	io:format("PoolPid: ~p~n~n",[PoolPid]),
 
 
-    timer:sleep(3000),
-
-    wpool:start_pool(
-    my_pool,
-    [{workers, 200}, {worker, {simpleFractal,dataFileSvr,[]} }]),
+    MyMessage = {erlang,'+',[0,0] },
+    Answer = wpool:call(my_pool, MyMessage),
+	io:format("Answer: ~p~n~n",[Answer]),
+    MyMessage2 = {simpleFractal,computeFractalData,[ConfigMap] },
+    Answer2 = wpool:call(my_pool, MyMessage2),
+	io:format("Answer2: ~p~n~n",[Answer2]),
 
     io:format("actually do some stuff here ~n"),
 
-    timer:sleep(3000),
+    Stats = wpool:stats(my_pool),
+	%%io:format("stats: ~p~n~n",[Stats]),
+
+    %%timer:sleep(3000),
 
     ok.
 
@@ -68,3 +81,4 @@ start_apps() ->
     worker_pool
   ],
   [ ok = application:start(X) || X <- Apps].
+
