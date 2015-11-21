@@ -10,8 +10,9 @@
 
 %% public API
 -export([ 
+          makePng/1,                      % create fractal data and make a png
           computeRowOfFractalData/4,      % create one row of fractal data
-          computeAllRowsOfFractalData/1      % create one row of fractal data
+          computeAllRowsOfFractalData/1   % create one row of fractal data
           ]).
 
 %% expose functions for test
@@ -20,6 +21,28 @@
           computeIterationValue/8 
           ]).
  
+%%%%%%%%
+%% makePng
+%%     ConfigMap - contains config info
+%%               add parameters here to explain api
+%%%%%%%%
+
+makePng(ConfigMap) ->
+    FractalAlg = maps:get(fractalAlg,ConfigMap),
+    XList = computeXList(ConfigMap),
+    YList = computeYList(ConfigMap),
+
+    %% initialize the png
+    ThisPng = imagelib:startPng( ConfigMap ),
+
+    %% add all the rows, one at a time, to the image
+    addRowsToPng(FractalAlg, ThisPng, XList, YList, ConfigMap),
+
+    %% finalize the png
+    imagelib:finishPng( ThisPng ),
+
+    ok.
+
 %%%%%%%%
 %% computeAllRowsOfFractalData/1 API
 %%        ConfigMap    - config info
@@ -139,6 +162,32 @@ computeYList(Column, PixelY, ImgY, DeltaY) ->
     %% otherwise add another point and recurse
     NewColumn = [ {PixelY,ImgY} | Column ],
     computeYList(NewColumn, PixelY-1, ImgY-DeltaY, DeltaY).
+
+%% addRowsToPng computes fractal data one row at a time and adds to png
+addRowsToPng(_FractalAlg, _ThisPng, _XList, YList, _ConfigMap)
+        when YList == [] ->
+    %% no rows left to compute so complete
+    ok;
+
+addRowsToPng(FractalAlg, ThisPng, XList, YList, ConfigMap) ->
+    %% otherwise pop off a row, compute fractal data, add to png, recurse
+
+    %% pop off a row
+    [ {PixelY,ImgY} | NewYList ] = YList,
+
+    %% compute row of fractal data
+         RowOfFractalData = fractalHelpers:computeRowOfFractalData(FractalAlg, {PixelY,ImgY},XList,ConfigMap),
+         %%io:format("{~p,~p} Row: ~p~n", [PixelY,ImgY,RowOfFractalData]),
+         ThisRowDataOnly = [ C || {_P,_I,C} <- RowOfFractalData ],
+         %%io:format("Data: ~p~n",[ThisRowDataOnly]),
+
+    %% add to png
+    imagelib:addRow( ThisRowDataOnly, ThisPng ),
+
+    %% recurse
+    addRowsToPng(FractalAlg, ThisPng, XList, NewYList, ConfigMap).
+
+
 
 
 %% computeIterationValue computes fractal value and returns iteration count
