@@ -78,7 +78,7 @@ computeAllRowsOfFractalData(ConfigMap) ->
     FractalAlg = maps:get(fractalAlg,ConfigMap),
     XList = computeXList(ConfigMap),
     YList = computeYList(ConfigMap),
-    FractalData = [ {{PixelY,ImgY}, computeRowOfFractalData(FractalAlg, {PixelY,ImgY},XList,ConfigMap)} || 
+    FractalData = [ computeRowOfFractalData(FractalAlg, {PixelY,ImgY}, XList, ConfigMap) || 
                         {PixelY,ImgY} <- YList ],
     FractalData.
 
@@ -96,10 +96,11 @@ computeRowOfFractalData(FractalAlg, {PixelY,ImgY},XList,ConfigMap) ->
     %% given Y value for the row, and given Xlist (the x values in the row), compute the fractal values
     computeRowOfFractalData(FractalAlg, {PixelY,ImgY},XList,[], ConfigMap).
 
-computeRowOfFractalData(_FractalAlg, {_PixelY,_ImgY}, XList, RowOfFractalData, _ConfigMap) 
+computeRowOfFractalData(_FractalAlg, {PixelY,ImgY}, XList, RowOfFractalData, _ConfigMap) 
         when XList == [] ->
     %% XList empty so done, return RowOfFractalData sorted by pixel value (ie 1 first)
-    lists:sort(RowOfFractalData);
+    %%     and include Y value for use when pooling (ie if they arrive out of order)
+    { {PixelY,ImgY}, lists:sort(RowOfFractalData) };
 
 computeRowOfFractalData(FractalAlg, {PixelY,ImgY}, XList, RowOfFractalData, ConfigMap) 
             when FractalAlg == julian ->
@@ -200,7 +201,7 @@ addRowsToPng(FractalAlg, ThisPng, XList, YList, ConfigMap) ->
     [ {PixelY,ImgY} | NewYList ] = YList,
 
     %% compute row of fractal data
-         RowOfFractalData = fractalHelpers:computeRowOfFractalData(FractalAlg, {PixelY,ImgY},XList,ConfigMap),
+         RowOfFractalData = computeRowOfFractalData(FractalAlg, {PixelY,ImgY},XList,ConfigMap),
          %%io:format("{~p,~p} Row: ~p~n", [PixelY,ImgY,RowOfFractalData]),
          ThisRowDataOnly = [ C || {_P,_I,C} <- RowOfFractalData ],
          %%io:format("Data: ~p~n",[ThisRowDataOnly]),
