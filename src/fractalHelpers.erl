@@ -201,7 +201,7 @@ addRowsToPng(FractalAlg, ThisPng, XList, YList, ConfigMap) ->
     [ {PixelY,ImgY} | NewYList ] = YList,
 
     %% compute row of fractal data
-         RowOfFractalData = computeRowOfFractalData(FractalAlg, {PixelY,ImgY},XList,ConfigMap),
+         { {_Yp, _Yi}, RowOfFractalData } = computeRowOfFractalData(FractalAlg, {PixelY,ImgY},XList,ConfigMap),
          %%io:format("{~p,~p} Row: ~p~n", [PixelY,ImgY,RowOfFractalData]),
          ThisRowDataOnly = [ C || {_P,_I,C} <- RowOfFractalData ],
          %%io:format("Data: ~p~n",[ThisRowDataOnly]),
