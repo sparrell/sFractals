@@ -11,7 +11,8 @@
 %% public API
 -export([ 
           computeFractalData/1,           % create a block of fractal data
-          computeRowOfFractalData/4      % create one row of fractal data
+          computeRowOfFractalData/4,      % create one row of fractal data
+          computeAllRowsOfFractalData/1      % create one row of fractal data
           ]).
 
 %% expose functions for test
@@ -20,6 +21,21 @@
           computeIterationValue/8, 
           computeFractalData/11 ]).
  
+%%%%%%%%
+%% computeAllRowsOfFractalData/1 API
+%%        ConfigMap    - config info
+%%               add parameters here to explain api
+%%        returns Rows (list of rows where each row is list of counts, 1 per pixel)
+%%               add output format here
+%%%%%%%%
+computeAllRowsOfFractalData(ConfigMap) ->
+    FractalAlg = maps:get(fractalAlg,ConfigMap),
+    XList = computeXList(ConfigMap),
+    YList = computeYList(ConfigMap),
+    FractalData = [ {{PixelY,ImgY}, computeRowOfFractalData(FractalAlg, {PixelY,ImgY},XList,ConfigMap)} || 
+                        {PixelY,ImgY} <- YList ],
+    FractalData.
+
 %%%%%%%%
 %% computeFractalData/1 API
 %%        ConfigMap    - config info

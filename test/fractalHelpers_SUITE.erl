@@ -19,7 +19,7 @@ all() ->
      testExceedIter, testExceedBound, 
      testComputeFractalData2Finish,
      testComputeFractalData2EOL, testComputeFractalData2addRow,
-     testXList, testYList, testComputeRowOfFractalData ].
+     testXList, testYList, testComputeRowOfFractalData, testComputeFractalData ].
 
 %% timeout if no reply in a minute
 suite() -> 
@@ -298,3 +298,54 @@ testComputeRowOfFractalData(_Config) ->
     XList = fractalHelpers:computeXList(ConfigMap),
     ExpectedResult = fractalHelpers:computeRowOfFractalData(julian, {3,0},XList,ConfigMap),
     ok.
+
+testComputeFractalData(_Config) ->
+    %% setup some test config 
+    ConfigMap = #{ fractalAlg => julian,  % Fractal Algorithm is julian
+       width => 5, 
+       height => 5, 
+       cReal => 0.1, % real portion of C0
+       cImaginary => -0.1, % imaginary portion of C0
+       zReal => -0.1, %real portion of Z0 (don't care for Julian)
+       zImaginary => -0.1, %imaginary portion of Z0 (don't care for Julian)
+       xRealRight => 1.4,
+       xRealLeft => 0.8,
+       yImaginaryLow => -0.9,
+       yImaginaryHigh => 0.7,
+       maxIterationThreshold => 32,
+       bailoutThreshold => 4
+       },
+    ExpectedResult = 
+                 [{{1,-0.9000000000000001},
+                   [{5,1.4,1},
+                    {4,1.25,1},
+                    {3,1.1,1},
+                    {2,0.9500000000000002,2},
+                    {1,0.8000000000000003,2}]},
+                  {{2,-0.5000000000000001},
+                   [{5,1.4,1},
+                    {4,1.25,2},
+                    {3,1.1,2},
+                    {2,0.9500000000000002,3},
+                    {1,0.8000000000000003,7}]},
+                  {{3,-0.10000000000000009},
+                   [{5,1.4,1},
+                    {4,1.25,2},
+                    {3,1.1,3},
+                    {2,0.9500000000000002,4},
+                    {1,0.8000000000000003,32}]},
+                  {{4,0.29999999999999993},
+                   [{5,1.4,1},
+                    {4,1.25,2},
+                    {3,1.1,3},
+                    {2,0.9500000000000002,32},
+                    {1,0.8000000000000003,32}]},
+                  {{5,0.7},
+                   [{5,1.4,1},
+                    {4,1.25,1},
+                    {3,1.1,2},
+                    {2,0.9500000000000002,3},
+                    {1,0.8000000000000003,6}]}],
+    ExpectedResult = fractalHelpers:computeAllRowsOfFractalData(ConfigMap),
+    ok.
+
