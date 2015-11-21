@@ -49,14 +49,14 @@ computeRowOfFractalData(FractalAlg, {PixelY,ImgY},XList,ConfigMap) ->
     %% given Y value for the row, and given Xlist (the x values in the row), compute the fractal values
     computeRowOfFractalData(FractalAlg, {PixelY,ImgY},XList,[], ConfigMap).
 
-computeRowOfFractalData(_FractalAlg, {_PixelY,_ImgY}, XList, FractalData, _ConfigMap) 
+computeRowOfFractalData(_FractalAlg, {_PixelY,_ImgY}, XList, RowOfFractalData, _ConfigMap) 
         when XList == [] ->
-    %% XList empty so done, return FractalData
-    FractalData;
+    %% XList empty so done, return RowOfFractalData sorted by pixel value (ie 1 first)
+    lists:sort(RowOfFractalData);
 
-computeRowOfFractalData(FractalAlg, {PixelY,ImgY}, XList, FractalData, ConfigMap) 
+computeRowOfFractalData(FractalAlg, {PixelY,ImgY}, XList, RowOfFractalData, ConfigMap) 
             when FractalAlg == julian ->
-    %% otherwise pop off one x value, compute data, insert answer in FractalData, and recurse
+    %% otherwise pop off one x value, compute data, insert answer in RowOfFractalData, and recurse
     [ {PixelX, RealX} | NewXList ] = XList,   % pop off first x value, remainder is used for next iteration
     %% compute fractal value for x,y
     IterCount = computeIterationValue(FractalAlg,
@@ -68,11 +68,11 @@ computeRowOfFractalData(FractalAlg, {PixelY,ImgY}, XList, FractalData, ConfigMap
                                       maps:get(maxIterationThreshold,ConfigMap),
                                       maps:get(bailoutThreshold,ConfigMap)
                                       ),
-    %% push new value onto FractalData list
-    NewFractalData = [{PixelX, RealX, IterCount} | FractalData ],
+    %% push new value onto RowOfFractalData list
+    NewRowOfFractalData = [{PixelX, RealX, IterCount} | RowOfFractalData ],
 
     %% recurse
-    computeRowOfFractalData(FractalAlg, {PixelY,ImgY}, NewXList, NewFractalData, ConfigMap).
+    computeRowOfFractalData(FractalAlg, {PixelY,ImgY}, NewXList, NewRowOfFractalData, ConfigMap).
     
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
