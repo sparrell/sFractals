@@ -11,7 +11,7 @@
 %% public API
 -export([ 
           computeFractalData/1,           % create a block of fractal data
-          computeRowOfFractalData/1      % create one row of fractal data
+          computeRowOfFractalData/4      % create one row of fractal data
           ]).
 
 %% expose functions for test
@@ -131,11 +131,48 @@ computeFractalData( Rows, RowData,       % row data computed so far
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 %% computeRowOfFractalData computes one row of fractal data
+%%        inputs:
+%%               FractalAlg - which algorithm eg julian, mandelbrot, ...
+%%               {PixelY,ImgY} - the Y cordinate in pixels (an integer), and number (imaginary value of Z or C)
+%%               XList - the list of x coords to be computer over
+%%               ConfigMap - configuration data, values needed for:
+%%                           fractalAlg (must be same as FractalAlg)
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
-computeRowOfFractalData(ConfigMap) ->
-    %% placehoder for now
-    ok.
+computeRowOfFractalData(FractalAlg, {PixelY,ImgY},XList,ConfigMap) ->
+    %% given Y value for the row, and given Xlist (the x values in the row), compute the fractal values
+    computeRowOfFractalData(FractalAlg, {PixelY,ImgY},XList,[], ConfigMap).
+
+computeRowOfFractalData(_FractalAlg, {_PixelY,_ImgY}, XList, FractalData, _ConfigMap) 
+        when XList == [] ->
+    %% XList empty so done, return FractalData
+    FractalData;
+
+computeRowOfFractalData(FractalAlg, {PixelY,ImgY}, XList, FractalData, ConfigMap) 
+            when FractalAlg == julian ->
+    %% otherwise pop off one x value, compute data, insert answer in FractalData, and recurse
+    [ {PixelX, RealX} | NewXList ] = XList,   % pop off first x value, remainder is used for next iteration
+    %% compute fractal value for x,y
+    IterCount = computeIterationValue(FractalAlg,
+                                      maps:get(cReal,ConfigMap), %since julian, C remains constant
+                                      maps:get(cImaginary,ConfigMap), %since julian, C remains constant
+                                      RealX,                          %ZReal since julian
+                                      ImgY,                           %ZImg since julian
+                                      0,                              %IterCount = 0 to start
+                                      maps:get(maxIterationThreshold,ConfigMap),
+                                      maps:get(bailoutThreshold,ConfigMap)
+                                      ),
+    %% push new value onto FractalData list
+    NewFractalData = [{PixelX, RealX, IterCount} | FractalData ],
+
+    %% recurse
+    computeRowOfFractalData(FractalAlg, {PixelY,ImgY}, NewXList, NewFractalData, ConfigMap).
+    
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+%% ComputeXlist and ComputeYList set up x/y pixel/number data
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 %% ComputeXlist creates a row (list) of X,ZsubR,CsubR for a given fractal alg
 %%    This list, along with the Y list, create the 'box' where each dot (x,y) fractal value is computed
@@ -151,7 +188,7 @@ computeXList(ConfigMap) ->
     %% box is width pixels wide and height pixels high
 
     %% step is floating range divided by number of pixels
-    DeltaX = (XRealRight - XRealLeft) / Width,
+    DeltaX = (XRealRight - XRealLeft) / (Width-1), % note -1 since one less intervals than points
 
     %% iteratively compute the values in the list
     %%    starting at right (x=width, xreal=XRealRight) and decrementing down
@@ -165,7 +202,7 @@ computeXList(Row, PixelX, _RealX, _DeltaX)
 
 computeXList(Row, PixelX, RealX, DeltaX) ->
     %% otherwise add another point and recurse
-    NewRow = [ RealX | Row ],
+    NewRow = [ {PixelX,RealX} | Row ],
     computeXList(NewRow, PixelX-1, RealX-DeltaX, DeltaX).
 
 %% ComputeYlist creates a column (list) of Y,ZsubI,CsubI for a given fracal alg
@@ -180,7 +217,7 @@ computeYList(ConfigMap) ->
     YImaginaryHigh  = maps:get(yImaginaryHigh,ConfigMap),
     %% box is bounded on top by y > YImaginaryHigh and bounded on bottom by y > YImaginaryLow
     %% box is width pixels wide and height pixels high
-    DeltaY = (YImaginaryHigh - YImaginaryLow) / Height,
+    DeltaY = (YImaginaryHigh - YImaginaryLow) / (Height-1), % note -1 since one less intervals than points
 
     %% iteratively compute the values in the list
     %%    starting at top (y=height, yImg=YImgTop) and decrementing down
@@ -194,8 +231,8 @@ computeYList(Column, PixelY, _ImgY, _DeltaY)
 
 computeYList(Column, PixelY, ImgY, DeltaY) ->
     %% otherwise add another point and recurse
-    NewColumn = [ ImgY | Column ],
-    computeXList(NewColumn, PixelY-1, ImgY-DeltaY, DeltaY).
+    NewColumn = [ {PixelY,ImgY} | Column ],
+    computeYList(NewColumn, PixelY-1, ImgY-DeltaY, DeltaY).
 
 
 %% computeIterationValue computes fractal value and returns iteration count
