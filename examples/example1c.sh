@@ -1,6 +1,6 @@
 #!/usr/bin/env escript
 %% -*- erlang -*-
-%%! -pa ../_build/test/lib/sFractals/ebin ../_build/test/lib/png/ebin
+%%! -pa ../_build/test/lib/sFractals/ebin ../_build/test/lib/png/ebin ../_build/test/lib/worker_pool/ebin
 %% assumes running out of _build
 %% output image ../examples directory
 
@@ -15,12 +15,12 @@
 
 main(_) ->
 
-    % example 1b
+    % example 1c
 
     %% base config
-    {ok, [ ConfigMap | _T ] } = file:consult("../examples/example1b.ecfg"),
+    {ok, [ ConfigMap | _T ] } = file:consult("../examples/example1c.ecfg"),
 
     %% create the data and png
-    fractalHelpers:makePng(ConfigMap),
+    fractalHelpers:makePngUsingPool(ConfigMap),
 
     ok.

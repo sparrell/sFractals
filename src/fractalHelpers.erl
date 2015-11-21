@@ -10,7 +10,8 @@
 
 %% public API
 -export([ 
-          makePng/1,                      % create fractal data and make a png
+          makePng/1,                      % creat         e fractal data and make a png
+          makePngUsingPool/1,             % create fractal data and make a png
           computeRowOfFractalData/4,      % create one row of fractal data
           computeAllRowsOfFractalData/1   % create one row of fractal data
           ]).
@@ -37,6 +38,29 @@ makePng(ConfigMap) ->
 
     %% add all the rows, one at a time, to the image
     addRowsToPng(FractalAlg, ThisPng, XList, YList, ConfigMap),
+
+    %% finalize the png
+    imagelib:finishPng( ThisPng ),
+
+    ok.
+
+%%%%%%%%
+%% makePngUsingPool - using worker_pool for calculting fractal data
+%%     ConfigMap - contains config info
+%%               add parameters here to explain api
+%%%%%%%%
+
+makePngUsingPool(ConfigMap) ->
+    %% get config and do some setup
+    FractalAlg = maps:get(fractalAlg,ConfigMap),
+    XList = computeXList(ConfigMap),
+    YList = computeYList(ConfigMap),
+
+    %% initialize the png
+    ThisPng = imagelib:startPng( ConfigMap ),
+
+    %% add all the rows, one at a time, to the image
+    addRowsToPngUsingPool(FractalAlg, ThisPng, XList, YList, ConfigMap),
 
     %% finalize the png
     imagelib:finishPng( ThisPng ),
@@ -187,9 +211,67 @@ addRowsToPng(FractalAlg, ThisPng, XList, YList, ConfigMap) ->
     %% recurse
     addRowsToPng(FractalAlg, ThisPng, XList, NewYList, ConfigMap).
 
+%%%%%%%%%%
+%% addRowsToPngUsingPool - using worker_pool for calculating fractal data to try to do more in parrallel
+%%      add params here
+%%
+%% this routine spawns a process to get the pool calculating all the rows (which will be messaged back)
+%%      the it spawns a process to receive all the rows, and add them to the image in the right order
+%%
+%%%%%%%%%%
+addRowsToPngUsingPool(FractalAlg, ThisPng, XList, YList, ConfigMap) ->
+    %% start worker pool application
+    ok = application:start(worker_pool),
+
+    %% start a worker pool for handling fractal computations
+    %% use default worker and use default number (100) in pool
+    {ok,PoolPid} = wpool:start_sup_pool(fractal_pool,[]),
+
+    %% spawn a process to collect rows and write to png in correct order.
+    %%     this process started first so pid is known 
+    %%     self pid is included so collector can message when finished
+    %%     nextRowId is started at 1 (ie the next row to be written is the y=1 row)
+    CollectorPid = spawn(?MODULE,collectRows,{self(), 1, ThisPng, addArgs}),
+   
+    %% spawn a process to use one worker per row to calculate fractal data
+    %%     rowcollector pid is passed so workers respond correctly
 
 
+    %% wait for message from collector that all rows are collected and written
+    receive
+           finished ->
+               ok
+    after maps:get(timeout,ConfigMap) ->
+               timeout
+    end,
 
+    ok.
+    
+%%%%%%%%%%
+%% collectRows collects rows of fractal data (messaged from workerpool) and writes to png
+%%      collectRows messgages it's calling program when finished
+%% Parameters:
+%%    Calling Pid - calling programs pid so collectRows can message when done
+%%    NextRowId   - messages may arrive out of order so only write png when 'next' row arrives
+%%    Height      - done when this many rows are written
+%%    
+%%    ThisPng     - png to be written to
+%%%%%%%%%%
+collectRows(CallingPid, NextRowId, Height, ThisPng) 
+        when NextRowId > Height ->
+    %% finished so let calling program know and end
+    CallingPid ! finished;
+collectRows(CallingPid, NextRowId, Height, ThisPng) ->
+    receive
+        { whatever } ->   %% match when next row is to be written (otherwise leave messages in queue until their turn)
+            %% do stuff here
+            
+            %% go back for more messages
+            collectRows(CallingPid, NextRowId, Height, ThisPng)
+    end.
+
+
+%%%%%%%%%%
 %% computeIterationValue computes fractal value and returns iteration count
 %% function clause for exceeding iteration count
 computeIterationValue(_FractalAlg,
