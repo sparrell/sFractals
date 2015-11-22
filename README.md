@@ -16,8 +16,34 @@ Build and Test
 
     $ rebar3 ct
 
+Examples
+--------------
+
+A number of example escripts to show how it works. Look at readme in example directory for more info
+
+Program Structure
+--------------
+This is still a work in progress. 
+It grew over time so there are multiple methods of creating a fractal image as I tried various ways.
+
+Method A: As shown in example 1:
+- put configuration if a file and read it into a record for use by programs
+- simpleFractal:computeFractalData computes the fractal data
+- simpleFractal:makePngFromData creates the image
+
+Method B: As shown in example ?:
+- fill in - separate data file created (to save for other color palettes)
+
+Method C: As shown in example ?:
+- fill in - fractalHelper first way
+
+Method D: As shown in examples 1? & 5?
+- fill in - workerpool in separate processes
+
 Module Relationships
 --------------
+
+This needs updating
 
 ![modules] (https://raw.githubusercontent.com/sparrell/sFractals/data-file-server/src/simpleFractalModules.jpg)
 
@@ -32,6 +58,7 @@ Plan of Attack
 1. function to render color data into image **Done**
 1. make data for simple fractal **Done** (and refactored several times)
 1. function to colorize iter data **Done**
+1. explore processes and worker pools for creating data **Done**
 
 ...
 not sure of order of rest of these
