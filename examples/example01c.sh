@@ -15,10 +15,10 @@
 
 main(_) ->
 
-    % example 1b
+    % example 01c
 
     %% base config
-    {ok, [ ConfigMap | _T ] } = file:consult("../examples/example1b.ecfg"),
+    {ok, [ ConfigMap | _T ] } = file:consult("../examples/example01c.ecfg"),
 
     %% create the data and png
     fractalHelpers:makePng(ConfigMap),
