@@ -12,6 +12,9 @@
 -export([ 
           makePng/1,                      % creat         e fractal data and make a png
           makePngUsingPool/1,             % create fractal data and make a png
+          collectRows/4,                  % process to catch fractal data
+          createFractalWorkers/5,         % process to make workers 
+          fractalWorker/5,                % worker to create one row of fractal data
           computeRowOfFractalData/4,      % create one row of fractal data
           computeAllRowsOfFractalData/1   % create one row of fractal data
           ]).
@@ -226,7 +229,7 @@ addRowsToPngUsingPool(FractalAlg, ThisPng, XList, YList, ConfigMap) ->
 
     %% start a worker pool for handling fractal computations
     %% use default worker and use default number (100) in pool
-    {ok,PoolPid} = wpool:start_sup_pool(fractal_pool,[]),
+    {ok,_PoolPid} = wpool:start_sup_pool(fractal_pool,[]),
 
     %% spawn a process to collect rows and write to png in correct order.
     %%     this process started first so pid is known 
@@ -236,6 +239,7 @@ addRowsToPngUsingPool(FractalAlg, ThisPng, XList, YList, ConfigMap) ->
    
     %% spawn a process to use one worker per row to calculate fractal data
     %%     rowcollector pid is passed so workers respond correctly
+    spawn(?MODULE,createFractalWorkers,[CollectorPid, FractalAlg, XList, YList, ConfigMap]),
 
 
     %% wait for message from collector that all rows are collected and written
@@ -243,6 +247,7 @@ addRowsToPngUsingPool(FractalAlg, ThisPng, XList, YList, ConfigMap) ->
            finished ->
                ok
     after maps:get(timeout,ConfigMap) ->
+               io:format("~ncollectRows Timeout~n"),
                timeout
     end,
 
@@ -258,23 +263,63 @@ addRowsToPngUsingPool(FractalAlg, ThisPng, XList, YList, ConfigMap) ->
 %%    
 %%    ThisPng     - png to be written to
 %%%%%%%%%%
-collectRows(CallingPid, NextRowId, Height, ThisPng) 
+collectRows(CallingPid, NextRowId, Height, _ThisPng) 
         when NextRowId > Height ->
     %% finished so let calling program know and end
     CallingPid ! finished;
 collectRows(CallingPid, NextRowId, Height, ThisPng) ->
     receive
-        { whatever } ->   %% match when next row is to be written (otherwise leave messages in queue until their turn)
-            %% do stuff here
+        { {NextRowId,_ImgY}, RowOfFractalData } ->   %% match when next row is to be written 
+                                        %%   (otherwise leave messages in queue until their turn)
+           %% strip out just the data
+           ThisRowDataOnly = [ C || {_P,_I,C} <- RowOfFractalData ],
+           %% write data to png
+           imagelib:addRow( ThisRowDataOnly, ThisPng ),
             
             %% go back for more messages
-            collectRows(CallingPid, NextRowId, Height, ThisPng)
+            collectRows(CallingPid, NextRowId+1, Height, ThisPng)
     end.
 
+%%%%%%%%%%
+%% createFractalWorkers assigns fractal data creation to worker_pool
+%% parameters:
+%%            CollectorPid - process to message data to
+%%            FractalAlg   - which alg to use to compute fractal data (eg julian, mandelbrot, ...)
+%%            XList        - list of x values
+%%            YList        - list of y values
+%%            ConfigMap    - all the config data
+%%%%%%%%%%
+createFractalWorkers(_CollectorPid, _FractalAlg, _XList, YList, _ConfigMap) 
+        %% done if nothing left in YList
+        when YList == [] ->
+    ok;
+createFractalWorkers(CollectorPid, FractalAlg, XList, YList, ConfigMap) ->
+    % for each rowi (value in YList), kick off a worker to compute data
+    %%    cast used, output returned via a message to CollectorPid
+    %%    pop a y value to define this row, then recurse thru rest of list
+    [ {PixelY,ImgY} | NewYList ] = YList,
+    wpool:cast(fractal_pool,{?MODULE,fractalWorker,[CollectorPid, FractalAlg, XList, {PixelY,ImgY}, ConfigMap]}),
+    createFractalWorkers(CollectorPid, FractalAlg, XList, NewYList, ConfigMap).
+
+%%%%%%%%%%
+%% fractalWorker is run by worker_pool to calculate one row of data and message it to collector
+%%   parameters:
+%%              CollectorPid
+%%              FractalAlg
+%%              XList
+%%              YP
+%%              YR
+%%              ConfigMap
+%%%%%%%%%%
+fractalWorker(CollectorPid, FractalAlg, XList, {PixelY,ImgY}, ConfigMap) ->
+     %% calculate a row of fractal data
+     Row = computeRowOfFractalData(FractalAlg, {PixelY,ImgY}, XList, ConfigMap),
+     %% message data to collector (note the Y value, ie row id, is first field in Row)
+     CollectorPid ! Row.
 
 %%%%%%%%%%
 %% computeIterationValue computes fractal value and returns iteration count
-%% function clause for exceeding iteration count
+%%%%%%%%%%
 computeIterationValue(_FractalAlg,
                       _CReal, 
                       _CImaginary, 
