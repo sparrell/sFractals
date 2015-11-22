@@ -1,1 +1,17 @@
-[{<<"png">>,{pkg,<<"png">>,<<"0.1.1">>},0}].
+[{<<"eper">>,
+  {git,"git://github.com/mhald/eper.git",
+       {ref,"1db9122c043a4d70312c58c908f01f52068ce03e"}},
+  1},
+ {<<"goldrush">>,
+  {git,"git://github.com/DeadZen/goldrush.git",
+       {ref,"71e63212f12c25827e0c1b4198d37d5d018a7fec"}},
+  2},
+ {<<"lager">>,
+  {git,"git://github.com/basho/lager.git",
+       {ref,"b6b6cebcb27ccff8acc59ae775acebc2f52e4926"}},
+  1},
+ {<<"png">>,{pkg,<<"png">>,<<"0.1.1">>},0},
+ {<<"worker_pool">>,
+  {git,"https://github.com/inaka/worker_pool.git",
+       {ref,"5789bde4a95122edd1079dd0fe8fccf6dbeb92e1"}},
+  0}].
