@@ -232,7 +232,7 @@ addRowsToPngUsingPool(FractalAlg, ThisPng, XList, YList, ConfigMap) ->
     %%     this process started first so pid is known 
     %%     self pid is included so collector can message when finished
     %%     nextRowId is started at 1 (ie the next row to be written is the y=1 row)
-    CollectorPid = spawn(?MODULE,collectRows,{self(), 1, ThisPng, addArgs}),
+    CollectorPid = spawn(?MODULE,collectRows,[self(), 1, maps:get(height,ConfigMap), ThisPng] ),
    
     %% spawn a process to use one worker per row to calculate fractal data
     %%     rowcollector pid is passed so workers respond correctly
