@@ -8,7 +8,9 @@ Times
 
 For calibration purposes, 
 here are the unscientifically measured run times for the various examples 
-(eg so you'll not freak if when example 7 takes much longer.
+(eg so you'll not freak if when example 7 takes much longer).
+
+This needs updating with the differnt methods of computing fractal data
 
 	Example 1 = 1s
 	Example 2 = 13s
@@ -31,7 +33,7 @@ The x/y range (ie range of Z in the Julian Z-squared+C equation) is set wide eno
 
 Here is the image - note it's pretty small so you may need to magnify:
 
-![modules] (https://raw.githubusercontent.com/sparrell/sFractals/master/examples/example1.png)
+![modules] (https://raw.githubusercontent.com/sparrell/sFractals/master/examples/example01a.png)
 
 
 Example 2
