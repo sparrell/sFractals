@@ -15,10 +15,10 @@
 
 main(_) ->
 
-    % example 2
+    % example 02a
 
     %% base config
-    {ok, [ ConfigMap | _T ] } = file:consult("../examples/example2.ecfg"),
+    {ok, [ ConfigMap | _T ] } = file:consult("../examples/example02a.ecfg"),
 
     %% uncomment %~ to give staus io
     %~statistics(runtime),
