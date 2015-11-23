@@ -36,7 +36,6 @@ Method B: As shown in example 06b1,06b2:
 - put configuration if a file and read it into a record for use by programs
 - simpleFractal:computeFractalDataIntoFile computes the fractal data
 - simpleFractal:makePngFromDataFile creates the image
-- fill in - separate data file created (to save for other color palettes)
 
 Method C: As shown in example ?:
 - fill in - fractalHelper first way

@@ -9,11 +9,15 @@ Times
 For calibration purposes, 
 here are the unscientifically measured run times for the various examples 
 (eg so you'll not freak if when example 7 takes much longer).
+The letter represents which method (see Readme in main directory)
 
-This needs updating with the differnt methods of computing fractal data
+This needs updating with the different methods of computing fractal data
 
-	Example 1 = 1s
-	Example 2 = 13s
+	Example 1a = <1s
+	Example 1c = <1s
+	Example 1d = <1s
+	Example 2a = ~13s
+	Example 2c = ~13s
 	Example 3 = 25s
 	Example 4 = 27s
 	Example 5 = 25s
