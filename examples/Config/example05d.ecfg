@@ -1,5 +1,5 @@
 #{ fractalAlg    => julian,  % Fractal Algorithm is julian
-   imageFileName => "../examples/example05a.png",  %image file created
+   imageFileName => "../examples/Output/example05d.png",  %image file created
    colorAlg      => simple32,  % 0-31 map to colors
    width         => 4000,      % width=4k
    height        => 4000,      % height=4k
@@ -12,4 +12,5 @@
    yImaginaryLow => 0.0,
    yImaginaryHigh => 2.0,
    bailoutThreshold => 4,
-   maxIterationThreshold => 31 }.
+   maxIterationThreshold => 31,
+   timeout       => 30000 }.   % timeout after 30 sec
