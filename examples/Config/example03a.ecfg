@@ -1,5 +1,5 @@
 #{ fractalAlg    => julian,  % Fractal Algorithm is julian
-   imageFileName => "../examples/example03a.png",  %image file created
+   imageFileName => "../examples/Config/example03a.png",  %image file created
    colorAlg      => simplest,  % 0-11 map to colors
    width         => 4000,      % width=4k
    height        => 4000,      % height=4k

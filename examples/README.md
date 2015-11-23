@@ -13,13 +13,13 @@ The letter represents which method (see Readme in main directory)
 
 This needs updating with the different methods of computing fractal data
 
-	Example 1a = <1s
-	Example 1c = <1s
-	Example 1d = <1s
-	Example 2a = ~13s
-	Example 2c = ~13s
-	Example 3 = 25s
-	Example 4 = 27s
+	Example 01a = <1s
+	Example 01c = <1s
+	Example 01d = <1s
+	Example 02a = ~13s
+	Example 02c = ~13s
+	Example 03a = ~33s
+	Example 04 = 27s
 	Example 5 = 25s
 	Example 6 = 1s
 	Example 6b = 1s
