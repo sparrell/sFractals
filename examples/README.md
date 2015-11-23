@@ -19,7 +19,7 @@ This needs updating with the different methods of computing fractal data
 	Example 02a = ~13s
 	Example 02c = ~13s
 	Example 03a = ~33s
-	Example 04 = 27s
+	Example 04a = ~29s
 	Example 5 = 25s
 	Example 6 = 1s
 	Example 6b = 1s
