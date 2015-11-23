@@ -26,12 +26,16 @@ Program Structure
 This is still a work in progress. 
 It grew over time so there are multiple methods of creating a fractal image as I tried various ways.
 
-Method A: As shown in example 1:
+Method A: As shown in example 01a,02a,03a,04a,...:
 - put configuration if a file and read it into a record for use by programs
 - simpleFractal:computeFractalData computes the fractal data
 - simpleFractal:makePngFromData creates the image
 
-Method B: As shown in example ?:
+Method B: As shown in example 06b1,06b2:
+- similar to MethodA but stores data in a file so it can be read multiple times for different palettes.
+- put configuration if a file and read it into a record for use by programs
+- simpleFractal:computeFractalDataIntoFile computes the fractal data
+- simpleFractal:makePngFromDataFile creates the image
 - fill in - separate data file created (to save for other color palettes)
 
 Method C: As shown in example ?:
