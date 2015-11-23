@@ -16,10 +16,10 @@
 
 main(_) ->
 
-    % example 6b
+    % example 06b2
 
     %% base config
-    {ok, [ ConfigMap | _T ] } = file:consult("../examples/example6b.ecfg"),
+    {ok, [ ConfigMap | _T ] } = file:consult("../examples/Config/example06b2.ecfg"),
 
     %% make image from data stored previously
     simpleFractal:makePngFromDataFile(ConfigMap),
