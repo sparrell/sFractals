@@ -8,19 +8,29 @@ Times
 
 For calibration purposes, 
 here are the unscientifically measured run times for the various examples 
-(eg so you'll not freak if when example 7 takes much longer.
+(eg so you'll not freak if when example 7 takes much longer).
+The letter represents which method (see Readme in main directory)
 
-	Example 1 = 1s
-	Example 2 = 13s
-	Example 3 = 25s
-	Example 4 = 27s
-	Example 5 = 25s
-	Example 6 = 1s
-	Example 6b = 1s
-	Example 7 = 67s
-	Example 7b = 29s
-	Example 8 = wip
-	Example 9 = wip
+This needs updating with the different methods of computing fractal data
+
+	Example 01a = <1s
+	Example 01c = <1s
+	Example 01d = <1s
+	Example 02a = ~13s
+	Example 02c = ~13s
+	Example 03a = ~33s
+	Example 04a = ~29s
+	Example 05a = ~27s
+	Example 05d = ~20s
+	Example 06b1 = <1s
+	Example 06b2 = <1s
+	Example 07b1 = ~66s
+	Example 07b2 = ~29s
+	Example 08a  = ~113s
+	Example 08b1 = ~291s
+	Example 08b2 = ~136s
+	Example 08c  = wip
+	Example 08d  = wip
 
 Example 1
 -----
@@ -31,7 +41,7 @@ The x/y range (ie range of Z in the Julian Z-squared+C equation) is set wide eno
 
 Here is the image - note it's pretty small so you may need to magnify:
 
-![modules] (https://raw.githubusercontent.com/sparrell/sFractals/master/examples/example1.png)
+![modules] (https://raw.githubusercontent.com/sparrell/sFractals/master/examples/Output/example01a.png)
 
 
 Example 2
@@ -39,7 +49,7 @@ Example 2
 
 The same x/y range as example1 with the same depth of 12, but with a finer resolution of 4Kx4K.
 
-![modules] (https://raw.githubusercontent.com/sparrell/sFractals/master/examples/example2.png)
+![modules] (https://raw.githubusercontent.com/sparrell/sFractals/master/examples/Output/example02a.png)
 
 Example 3
 -----
@@ -47,7 +57,7 @@ Example 3
 The same resolution (4kx4k) as example2 with the same depth of 12, but with a smaller range of Z. 
 The x axis is the middle third of example 2 and the y axis is also one third but starting at the middle (ie 0-2 whereas example 2 was -3to+3).
 
-![modules] (https://raw.githubusercontent.com/sparrell/sFractals/master/examples/example3.png)
+![modules] (https://raw.githubusercontent.com/sparrell/sFractals/master/examples/Output/example03a.png)
 
 Example 4
 --------------
@@ -55,14 +65,14 @@ Example 4
 Example 4 has the same parameters as example3 except it has a depth of 16 instead of 12.
 Notice the black (reached iteration bound) of example3 fills in with more detail in example4.
 
-![modules] (https://raw.githubusercontent.com/sparrell/sFractals/master/examples/example4.png)
+![modules] (https://raw.githubusercontent.com/sparrell/sFractals/master/examples/Output/example04a.png)
 
 Example 5
 -----
 
 Example 5 has the same parameters as example4 except it has a depth of 32 instead of 16.
 
-![modules] (https://raw.githubusercontent.com/sparrell/sFractals/master/examples/example5.png)
+![modules] (https://raw.githubusercontent.com/sparrell/sFractals/master/examples/Output/example05a.png)
 
 Example 6
 --------------

@@ -2,7 +2,7 @@
 %% -*- erlang -*-
 %%! -pa ../_build/test/lib/sFractals/ebin ../_build/test/lib/png/ebin
 %% assumes running out of _build
-%% output image ../examples directory
+%% output ../examples
 
 %%%-------------------------------------------------------------------
 %%% @author Duncan Sparrell
@@ -15,10 +15,10 @@
 
 main(_) ->
 
-    % example 1a
+    % example 05a
 
     %% base config
-    {ok, [ ConfigMap | _T ] } = file:consult("../examples/Config/example01a.ecfg"),
+    {ok, [ ConfigMap | _T ] } = file:consult("../examples/Config/example05a.ecfg"),
 
     %% uncomment %~ to give staus io
     %~statistics(runtime),
