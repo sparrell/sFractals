@@ -6,10 +6,10 @@
 -export([all/0,suite/0,init_per_suite/1]).
 
 %% Test cases
--export([testAnalyze/1,makePng/1,testMakePng/1]).
+-export([testAnalyze/1,makePng/1,testMakePng/1,testPalette/1]).
 
 all() ->
-    [testAnalyze,makePng,testMakePng].
+    [testAnalyze,makePng,testMakePng,testPalette].
 
 suite() -> 
     [{timetrap,{minutes,1}}].
@@ -89,3 +89,52 @@ addRow(_RowData, #{size := {_Width, Height}}, Height) ->
 addRow(RowData, #{size := {_Width, _Height}} = Png, Y) ->
     png:append(Png, {row, RowData}),
     addRow(RowData, Png, Y + 1).
+
+testPalette(_Config) ->
+    %% test all the palettes load and are used (even if not used completely)
+    %% create some test data and config
+    PaletteFileSize = [ {simplest,"simplestPalette.png",12},
+                        {simplest2,"simplest2Palette.png",12},
+                        {simple16,"simple16Palette.png",16},
+                        {simple32,"simple32Palette.png",32},
+                        {blue32,"blue32Palette.png",32},
+                        {simple64,"simple64Palette.png",64} ],
+
+    makeImages(PaletteFileSize).
+
+makeImages([]) ->
+    %% empty list so done
+    ok;
+
+makeImages( [ {ColorAlg,FileName,PaletteSize} | RestOfConfig ] ) ->
+
+    Width = PaletteSize * 10,
+    
+    ConfigMap = #{ imageFileName => FileName, 
+                  width => Width, 
+                  height => 100,
+                  colorAlg => ColorAlg
+                },
+    %% create a row of data of PaletteSize bars of color, each 10 pixels wide
+    RowData = makeRowData(PaletteSize,[]),
+
+    %% get started
+    Png = imagelib:startPng( ConfigMap ),
+
+    %% add height worth of rows
+    addRows(RowData, Png),
+
+    %% finish up
+    imagelib:finishPng(Png), 
+
+    makeImages( RestOfConfig ).
+
+makeRowData(0,RowData) ->
+    %% no colors left so done, return RowData
+    RowData;
+
+makeRowData(PaletteSize,RowData) ->
+    ColorNum = PaletteSize - 1,
+    NewRowData = [ lists:duplicate(10,ColorNum) | RowData ],
+    makeRowData(PaletteSize-1,NewRowData).
+

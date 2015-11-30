@@ -24,10 +24,13 @@ This needs updating with the different methods of computing fractal data
 	Example 05d = ~20s
 	Example 06b1 = <1s
 	Example 06b2 = <1s
-	Example 7 = 67s
-	Example 7b = 29s
-	Example 8 = wip
-	Example 9 = wip
+	Example 07b1 = ~66s
+	Example 07b2 = ~29s
+	Example 08a  = ~113s
+	Example 08b1 = ~291s
+	Example 08b2 = ~136s
+	Example 08c  = wip
+	Example 08d  = wip
 
 Example 1
 -----

@@ -1,0 +1,16 @@
+#{ fractalAlg    => julian,  % Fractal Algorithm is julian
+   imageFileName => "../examples/Config/example08b1.png",  %image file created
+   dataFileName  => "../examples/Config/example08b1.erl.txt",  %data file 
+   colorAlg      => simple64,  % 0-63 map to colors
+   width         => 8000,      
+   height        => 8000,      
+   cReal         => 0.5,       % real portion of C0
+   cImaginary    => -0.5,      % imaginary portion of C0
+   zReal         => -0.1,      % real portion of Z0 (na Julian)
+   zImaginary    => -0.1,      % imaginary portion of Z0 (na Julian)
+   xRealRight    => 1.0,
+   xRealLeft     => -1.0,
+   yImaginaryLow => 0.0,
+   yImaginaryHigh => 2.0,
+   bailoutThreshold => 4,
+   maxIterationThreshold => 63 }.
