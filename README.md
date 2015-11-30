@@ -38,10 +38,14 @@ Method B: As shown in examples 06b1,06b2,08b1,08b2:
 - simpleFractal:makePngFromDataFile creates the image
 
 Method C: As shown in examples 01c,02c,08c:
-- fill in - fractalHelper first way
+- Refactored MethodA to put routines in fractalHelpers.erl, and structured so computes 1 row of data and then adds that data to png (instead of computing all the data and then starting the png)
+- put configuration if a file and read it into a record for use by programs
+- fractalHelpers:makePng computes the data by row and creates png as it goes
 
 Method D: As shown in examples 01d,05d,08d:
 - fill in - workerpool in separate processes
+- similar to method C but it creates a pool of workers to create the rows of data so they can be created in parralell. A server is started to receive the rows of data and to write to png (queing when necessary when they arrive out of order)
+- fractalHelpers:makePngUsingPool
 
 Module Relationships
 --------------
@@ -86,3 +90,4 @@ endstate:
 * data generation server and image render servers
 * supervision trees
     
+
