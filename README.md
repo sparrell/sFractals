@@ -43,9 +43,10 @@ Method C: As shown in examples 01c,02c,08c:
 - fractalHelpers:makePng computes the data by row and creates png as it goes
 
 Method D: As shown in examples 01d,05d,08d:
-- fill in - workerpool in separate processes
 - similar to method C but it creates a pool of workers to create the rows of data so they can be created in parralell. A server is started to receive the rows of data and to write to png (queing when necessary when they arrive out of order)
 - fractalHelpers:makePngUsingPool
+..+ for prep prepare a list of x-values and y-values as input
+..+ fractalHelpers:addRowsToPngUsingPool starts a worker pool
 
 Module Relationships
 --------------
