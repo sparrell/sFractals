@@ -15,10 +15,7 @@
 
 %% tests to run
 all() ->
-    [testExceedIter, testExceedBound, 
-     testComputeFractalData2Finish,
-     testComputeFractalData2EOL, testComputeFractalData2addRow,
-     testMakeDataFile ].
+    [ testComputeFractalData2EOL, testComputeFractalData2addRow, testMakeDataFile ].
 
 %% timeout if no reply in a minute
 suite() -> 
@@ -43,178 +40,6 @@ getCZconfig(Config) ->
       ?config(cImaginary, Config),
       ?config(zReal, Config),
       ?config(zImaginary, Config) }.
-
-testExceedIter(Config) ->
-    {FractalAlg, CReal, CImaginary, ZReal, ZImaginary } = getCZconfig(Config),
-    IterCount =  ?config(iterCount, Config),
-    MaxIterationThreshold = ?config(maxIterationThreshold, Config),
-    BailoutThreshold = ?config(bailoutThreshold, Config),
-    10 = simpleFractal:computeIterationValue( FractalAlg,
-                                               CReal, 
-                                               CImaginary, 
-                                               ZReal,
-                                               ZImaginary, 
-                                               11,             %note IterCountis > Max
-                                               MaxIterationThreshold, 
-                                               BailoutThreshold ),
-    % now test can go thru an iteration or two without exceeding
-    3 = simpleFractal:computeIterationValue( FractalAlg,
-                                               CReal, 
-                                               CImaginary, 
-                                               ZReal,
-                                               ZImaginary, 
-                                               IterCount,             
-                                               MaxIterationThreshold, 
-                                               BailoutThreshold ),
-    ok.
-
-testExceedBound(Config) ->
-    {FractalAlg, CReal, CImaginary, ZReal, ZImaginary } = getCZconfig(Config),
-    IterCount =  ?config(iterCount, Config),
-    MaxIterationThreshold = ?config(maxIterationThreshold, Config),
-    BailoutThreshold = ?config(bailoutThreshold, Config),
-    1 = simpleFractal:computeIterationValue( FractalAlg,
-                                               CReal, 
-                                               CImaginary, 
-                                               100,                 %exceed bailout
-                                               ZImaginary, 
-                                               IterCount,           %start at 1
-                                               MaxIterationThreshold, 
-                                               BailoutThreshold ),
-    % now test can go thru wo exceeding (although will eventually)
-    3 = simpleFractal:computeIterationValue( FractalAlg,
-                                               CReal, 
-                                               CImaginary, 
-                                               ZReal,
-                                               ZImaginary, 
-                                               IterCount,             
-                                               MaxIterationThreshold, 
-                                               BailoutThreshold ),
-    ok.
-
-testComputeFractalData2Finish(_Config) ->
-    %% test finish clause
-
-    %% setup some test config and test data
-    TestConfig1 = #{ fractalAlg => julian,  % Fractal Algorithm is julian
-       imageFileName => './FinishTest.png',  %image file created
-       width => 10, % width=10
-       height => 5, 
-       cReal => 0.5, % real portion of C0
-       cImaginary => -0.5, % imaginary portion of C0
-       zReal => -0.1, %real portion of Z0 (don't care for Julian)
-       zImaginary => -0.1, %imaginary portion of Z0 (don't care for Julian)
-       xRealRight => 3.0,
-       xRealLeft => -3.0,
-       yImaginaryLow => -3.0,
-       yImaginaryHigh => 3.0,
-       bailoutThreshold => 4,
-       maxIterationThreshold => 11 },
-
-    % data that doesn't matter for this test
-    ThisRow = [ ],
-    XPix = 3,
-    XR = 0.5,
-    DeltaX = 0.1,
-    Width = 10,
-    YI = 0.5,
-    DeltaY = 0.1,
-
-    % data that matters for the test
-    RowsIn = [ [0],[0],[0],[0],[0] ],  % has five rows
-    YPix = 0,
-    Height = 5,
-
-    % see if computeFractalData correctly comes back when rows are full
-    RowsOut = simpleFractal:computeFractalData( RowsIn, ThisRow,
-               XPix, XR, DeltaX, Width,  
-               YPix, YI, DeltaY, Height,  % only height matters
-               TestConfig1),
-
-    % test correct answer came back
-    RowsIn = RowsOut.
-
-testComputeFractalData2EOL(_Config) ->
-    % test end of row works correctly
-
-    %% setup some test config and test data
-    ConfigMap = #{ fractalAlg => julian,  % Fractal Algorithm is julian
-       imageFileName => './EolTest.png',  %image file created
-       width => 5, % width=10
-       height => 5, 
-       cReal => 0.5, % real portion of C0
-       cImaginary => -0.5, % imaginary portion of C0
-       zReal => -0.1, %real portion of Z0 (don't care for Julian)
-       zImaginary => -0.1, %imaginary portion of Z0 (don't care for Julian)
-       xRealRight => 3.0,
-       xRealLeft => -3.0,
-       yImaginaryLow => -3.0,
-       yImaginaryHigh => 3.0,
-       bailoutThreshold => 4,
-       maxIterationThreshold => 11 },
-
-    % data that doesn't matter for this test
-    XR = 0.5,
-    DeltaX = 0.1,
-    Width = 5,
-    YI = 0.5,
-    DeltaY = 0.1,
-    Height = 5,
-
-    % data that matters for the test
-    RowsIn = [ [0],[0],[0] ],  % has 3 rows
-    ThisRow = [ 1,2,3,4,5 ],
-    YPix = 1,    % last row (so wont compute more)
-    XPix = 0,    % testing reached begin of row
-
-    % see if computeFractalData correctly comes back at end of row
-    RowsOut = simpleFractal:computeFractalData( RowsIn, ThisRow,
-               XPix, XR, DeltaX, Width,  
-               YPix, YI, DeltaY, Height,  % only height matters
-               ConfigMap),
-
-    %% is output what was expected?
-    [ ThisRow | RowsIn ] = RowsOut.
-
-testComputeFractalData2addRow(_Config) ->
-    % test computing a row of data works right
-    %% setup some test config and test data
-    ConfigMap = #{ fractalAlg => julian,  % Fractal Algorithm is julian
-       imageFileName => './EolTest.png',  %image file created
-       width => 5, 
-       height => 5, 
-       cReal => 0.1, % real portion of C0
-       cImaginary => -0.1, % imaginary portion of C0
-       zReal => -0.1, %real portion of Z0 (don't care for Julian)
-       zImaginary => -0.1, %imaginary portion of Z0 (don't care for Julian)
-       xRealRight => 0.1,
-       xRealLeft => -0.1,
-       yImaginaryLow => -3.0,
-       yImaginaryHigh => 3.0,
-       bailoutThreshold => 4,
-       maxIterationThreshold => 11 },
-
-    % data for test computations
-    XR = 0.0,
-    DeltaX = 0.1,
-    Width = 5,
-    YI = 0.0,
-    DeltaY = 0.1,
-    Height = 5,
-
-    RowsIn = [ [0],[0],[0] ],  % has 3 rows
-    ThisRow = [ 0,0,0,0,0 ],
-    YPix = 2,    % 1 row to go
-    XPix = 0,
-
-    % see if computeFractalData computes more data
-    RowsOut = simpleFractal:computeFractalData( RowsIn, ThisRow,
-               XPix, XR, DeltaX, Width,  
-               YPix, YI, DeltaY, Height,  
-               ConfigMap),
-
-    %% is output what was expected?
-    [[11,11,11,11,11],[0,0,0,0,0],[0],[0],[0]] = RowsOut.
 
 testMakeDataFile(_Config) ->
     %% example config
@@ -276,3 +101,87 @@ testMakeDataFile(_Config) ->
     { ok, RefPngData} = file:read_file(FractalImageFileName),
 
     ok.
+
+testComputeFractalData2EOL(_Config) ->
+    % test end of row works correctly
+
+    %% setup some test config and test data
+    ConfigMap = #{ fractalAlg => julian,  % Fractal Algorithm is julian
+       imageFileName => './EolTest.png',  %image file created
+       width => 5, % width=10
+       height => 5, 
+       cReal => 0.5, % real portion of C0
+       cImaginary => -0.5, % imaginary portion of C0
+       zReal => -0.1, %real portion of Z0 (don't care for Julian)
+       zImaginary => -0.1, %imaginary portion of Z0 (don't care for Julian)
+       xRealRight => 3.0,
+       xRealLeft => -3.0,
+       yImaginaryLow => -3.0,
+       yImaginaryHigh => 3.0,
+       bailoutThreshold => 4,
+       maxIterationThreshold => 11 },
+
+    % data that doesn't matter for this test
+    XR = 0.5,
+    DeltaX = 0.1,
+    Width = 5,
+    YI = 0.5,
+    DeltaY = 0.1,
+    Height = 5,
+
+    % data that matters for the test
+    RowsIn = [ [0],[0],[0] ],  % has 3 rows
+    ThisRow = [ 1,2,3,4,5 ],
+    YPix = 1,    % last row (so wont compute more)
+    XPix = 0,    % testing reached begin of row
+
+
+    % see if computeFractalData correctly comes back at end of row
+    RowsOut = simpleFractal:computeFractalData( RowsIn, ThisRow,
+               XPix, XR, DeltaX, Width,  
+               YPix, YI, DeltaY, Height,  % only height matters
+               ConfigMap),
+
+    %% is output what was expected?
+    [ ThisRow | RowsIn ] = RowsOut.
+
+testComputeFractalData2addRow(_Config) ->
+    % test computing a row of data works right
+    %% setup some test config and test data
+    ConfigMap = #{ fractalAlg => julian,  % Fractal Algorithm is julian
+       imageFileName => './EolTest.png',  %image file created
+       width => 5, 
+       height => 5, 
+       cReal => 0.1, % real portion of C0
+       cImaginary => -0.1, % imaginary portion of C0
+       zReal => -0.1, %real portion of Z0 (don't care for Julian)
+       zImaginary => -0.1, %imaginary portion of Z0 (don't care for Julian)
+       xRealRight => 0.1,
+       xRealLeft => -0.1,
+       yImaginaryLow => -3.0,
+       yImaginaryHigh => 3.0,
+       bailoutThreshold => 4,
+       maxIterationThreshold => 11 },
+
+    % data for test computations
+    XR = 0.0,
+    DeltaX = 0.1,
+    Width = 5,
+    YI = 0.0,
+    DeltaY = 0.1,
+    Height = 5,
+
+    RowsIn = [ [0],[0],[0] ],  % has 3 rows
+    ThisRow = [ 0,0,0,0,0 ],
+    YPix = 2,    % 1 row to go
+    XPix = 0,
+
+
+    % see if computeFractalData computes more data
+    RowsOut = simpleFractal:computeFractalData( RowsIn, ThisRow,
+               XPix, XR, DeltaX, Width,  
+               YPix, YI, DeltaY, Height,  
+               ConfigMap),
+
+    %% is output what was expected?
+    [[11,11,11,11,11],[0,0,0,0,0],[0],[0],[0]] = RowsOut.
