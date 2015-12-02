@@ -74,22 +74,24 @@ Example 5 has the same parameters as example4 except it has a depth of 32 instea
 
 ![modules] (https://raw.githubusercontent.com/sparrell/sFractals/master/examples/Output/example05a.png)
 
-Example 6
+Example 6b1
 --------------
 
 Example 6 is the same as example 1 but uses different code that first stores the fractal data in a file.
 This allows for different color maps without having to recreate all the fractal data.
 
-![modules] (https://raw.githubusercontent.com/sparrell/sFractals/master/examples/example6.png)
+![modules] (https://raw.githubusercontent.com/sparrell/sFractals/master/examples/Output/example06b1.png)
 
-Example 6b
+The file is at https://github.com/sparrell/sFractals/blob/master/examples/Output/example06b1.erl.txt
+
+Example 6b2
 --------------
 
 Example 6b uses the data from example 6 but a differnt color map (same depth, just different colors).
 If it was large with hi-resolution then it would save significant time.
 In this trivial example it runs too fast to notice the time savings.
 
-![modules] (https://raw.githubusercontent.com/sparrell/sFractals/master/examples/example6b.png)
+![modules] (https://raw.githubusercontent.com/sparrell/sFractals/master/examples/Output/example06b2.png)
 
 Example 7
 -----
@@ -98,25 +100,22 @@ Example 7 is like example 6 in that it writes out the data to file and then read
 Example 7 uses the same parameters as example 5.
 Note Example 7 takes over twice as long as example5 (but it is creating a 31M data file).
 
-![modules] (https://raw.githubusercontent.com/sparrell/sFractals/master/examples/example7.png)
+![modules] (https://raw.githubusercontent.com/sparrell/sFractals/master/examples/Output/example07b1.png)
+
+
 
 Example 7b
 -----
 
 Using the 31M data file from example 7, creates image using different color map.
 
-![modules] (https://raw.githubusercontent.com/sparrell/sFractals/master/examples/example7b.png)
+![modules] (https://raw.githubusercontent.com/sparrell/sFractals/master/examples/Output/example07b2.png)
 
 Example 8
 --------------
 
-still a work in progress
+Example 8 uses 2x the horizontal resolution, 2x the vertical resolution, and 2x the depth (fractal iterations) to do a better comparision of methods a,b,c,d. Only one png will be displayed here (they look the same)
 
+![modules] (https://raw.githubusercontent.com/sparrell/sFractals/master/examples/Output/example08a.png)
 
-
-Example 9
---------------
-
-still a work in progress
-
-
+Note it looks the same as example 7. To see the differences, zoom into the image. It is higher resolution and contains more depth to the small interior fractals (this is not just an artifact of the resolution, without the greater depth the curves would have been smoother but there wouldn't have been more 'stuff' in the interiors).
