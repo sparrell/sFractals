@@ -29,8 +29,8 @@ This needs updating with the different methods of computing fractal data
 	Example 08a  = ~113s
 	Example 08b1 = ~291s
 	Example 08b2 = ~136s
-	Example 08c  = wip
-	Example 08d  = wip
+	Example 08c  = ~131s
+	Example 08d  = ~118s
 
 Example 1
 -----

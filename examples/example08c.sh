@@ -2,7 +2,7 @@
 %% -*- erlang -*-
 %%! -pa ../_build/test/lib/sFractals/ebin ../_build/test/lib/png/ebin
 %% assumes running out of _build
-%% output image ../examples directory
+%% output ../examples
 
 %%%-------------------------------------------------------------------
 %%% @author Duncan Sparrell
@@ -15,16 +15,14 @@
 
 main(_) ->
 
-    % example 1a
+    %% example 08c 
+    %% note 2x deep, 2x wide, 2x high
 
     %% base config
-    {ok, [ ConfigMap | _T ] } = file:consult("../examples/Config/example01a.ecfg"),
+    {ok, [ ConfigMap | _T ] } = file:consult("../examples/Config/example08c.ecfg"),
 
-    % create the data
-    Rows = simpleFractal:computeFractalData( ConfigMap ),
-
-    %% make image from data
-    simpleFractal:makePngFromData(Rows,ConfigMap),
+    %% create the data and png
+    fractalHelpers:makePng(ConfigMap),
 
     ok.
 
