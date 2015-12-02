@@ -18,8 +18,7 @@
           ]).
 
 %% expose functions for test
--export([ newImaginaryC/1,newRealC/1,newImaginaryZ/1,newRealZ/1,
-          computeIterationValue/8, 
+-export([ computeIterationValue/8, 
           computeFractalData/11 ]).
  
 %% public API for making fractal
@@ -445,10 +444,10 @@ computeIterationValue(FractalAlg,
 
     % compute new Z and C based on fractal algorithm used
     ZCParams      = {FractalAlg,CReal,CImaginary, ZReal,ZImaginary},
-    NewZReal      = newRealZ(ZCParams),
-    NewZImaginary = newImaginaryZ(ZCParams),
-    NewCReal      = newRealC(ZCParams),
-    NewCImaginary = newImaginaryC(ZCParams),
+    NewZReal      = fractalHelpers:newRealZ(ZCParams),
+    NewZImaginary = fractalHelpers:newImaginaryZ(ZCParams),
+    NewCReal      = fractalHelpers:newRealC(ZCParams),
+    NewCImaginary = fractalHelpers:newImaginaryC(ZCParams),
 
     computeIterationValue(FractalAlg,
                           NewCReal,
@@ -458,24 +457,4 @@ computeIterationValue(FractalAlg,
                           IterCount+1, 
                           MaxIterationThreshold, 
                           BailoutThreshold ).
-
-% function for creating new real value for Julian algorithm
-newRealZ({FractalAlg,CReal,_CImaginary, ZReal,ZImaginary}) 
-        when FractalAlg == julian ->
-    (ZReal*ZReal) - (ZImaginary*ZImaginary) + CReal.
-
-% function for creating new imaginary value for Julian algorithm
-newImaginaryZ({FractalAlg,_CReal,CImaginary, ZReal,ZImaginary}) 
-        when FractalAlg == julian ->
-    (2 * ZReal * ZImaginary) + CImaginary.
-
-% function for creating new real value for Julian Algorithm (ie remains unchanged)
-newRealC({FractalAlg,CReal,_CImaginary, _ZReal,_ZImaginary}) 
-        when FractalAlg == julian ->
-    CReal.
-
-% function for creating new imaginary value for Julian Algorithm (ie remains unchanged)
-newImaginaryC({FractalAlg,_CReal,CImaginary, _ZReal,_ZImaginary}) 
-        when FractalAlg == julian ->
-    CImaginary.
 

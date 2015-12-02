@@ -15,8 +15,7 @@
 
 %% tests to run
 all() ->
-    [testNewImaginaryC,testNewRealC,testNewImaginaryZ,testNewRealZ,
-     testExceedIter, testExceedBound, 
+    [testExceedIter, testExceedBound, 
      testComputeFractalData2Finish,
      testComputeFractalData2EOL, testComputeFractalData2addRow,
      testMakeDataFile ].
@@ -44,31 +43,6 @@ getCZconfig(Config) ->
       ?config(cImaginary, Config),
       ?config(zReal, Config),
       ?config(zImaginary, Config) }.
-
-testNewRealC(Config) ->
-    {FractalAlg, CReal, CImaginary, ZReal, ZImaginary } = getCZconfig(Config),
-    0.5  = simpleFractal:newRealC({FractalAlg,CReal,CImaginary, ZReal,ZImaginary}),
-    -2.0 = simpleFractal:newRealC({FractalAlg,-2.0, CImaginary, ZReal,ZImaginary}),
-    0.0  = simpleFractal:newRealC({FractalAlg,0.0, CImaginary, ZReal,ZImaginary}),
-    ok.
-
-testNewImaginaryC(Config) ->
-    {FractalAlg, CReal, CImaginary, ZReal, ZImaginary } = getCZconfig(Config),
-    0.6 = simpleFractal:newImaginaryC({FractalAlg,CReal,CImaginary, ZReal,ZImaginary}),
-    -2.0 = simpleFractal:newImaginaryC({FractalAlg,CReal,-2.0, ZReal,ZImaginary}),
-    0.0 = simpleFractal:newImaginaryC({FractalAlg,CReal,0.0, ZReal,ZImaginary}),
-    ok.
-
-testNewImaginaryZ(Config) ->
-    {FractalAlg, CReal, CImaginary, ZReal, ZImaginary } = getCZconfig(Config),
-    %round rather than deal with floating point arith precision issues
-    1.72 = round(1000*simpleFractal:newImaginaryZ({FractalAlg,CReal,CImaginary, ZReal,ZImaginary}))/1000,
-    ok.
-
-testNewRealZ(Config) ->
-    {FractalAlg, CReal, CImaginary, ZReal, ZImaginary } = getCZconfig(Config),
-    0.35 = round(1000*simpleFractal:newRealZ({FractalAlg,CReal,CImaginary, ZReal,ZImaginary}))/1000,
-    ok.
 
 testExceedIter(Config) ->
     {FractalAlg, CReal, CImaginary, ZReal, ZImaginary } = getCZconfig(Config),
