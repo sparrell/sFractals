@@ -148,5 +148,3 @@ sign(_)            -> 0.
 
 
 %% ----------------------------------------------------------------------------
-%%  Junk for testing purposes
-thisIsAJunkFunction(N) -> ok.

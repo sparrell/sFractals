@@ -12,6 +12,15 @@
 %% make images
 %% inspirations included ??
 
+%%%-------------------------------------------------------------------
+-include("colorPaletteSimplest12.hrl").
+-include("colorPaletteSimplest12b.hrl").
+-include("colorPaletteSimple16.hrl").
+-include("colorPaletteSimple32.hrl").
+-include("colorPaletteBlue32.hrl").
+-include("colorPaletteSimple64.hrl").
+%%%-------------------------------------------------------------------
+
 %% API
 -export([ analyzeData/1, makePng/1,
           finishPng/1, addRow/2, startPng/1 ]).
@@ -43,12 +52,6 @@ makePng( ConfigMap ) ->
     ok = png:close(Png),
     ok.
 
--include("colorPaletteSimplest12.hrl").
--include("colorPaletteSimplest12b.hrl").
--include("colorPaletteSimple16.hrl").
--include("colorPaletteSimple32.hrl").
--include("colorPaletteBlue32.hrl").
--include("colorPaletteSimple64.hrl").
 makeColorPalette(ColorAlg)
         when ColorAlg == simplest ->
     %% return palette of 12 colors
