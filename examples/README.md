@@ -119,3 +119,5 @@ Example 8 uses 2x the horizontal resolution, 2x the vertical resolution, and 2x 
 ![modules] (https://raw.githubusercontent.com/sparrell/sFractals/master/examples/Output/example08a.png)
 
 Note it looks the same as example 7. To see the differences, zoom into the image. It is higher resolution and contains more depth to the small interior fractals (this is not just an artifact of the resolution, without the greater depth the curves would have been smoother but there wouldn't have been more 'stuff' in the interiors).
+
+Except above statement isn't true - needs investigation
