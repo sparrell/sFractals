@@ -49,32 +49,32 @@ makePng( ConfigMap ) ->
 -include("colorPaletteSimple32.hrl").
 -include("colorPaletteBlue32.hrl").
 -include("colorPaletteSimple64.hrl").
-makeColorPalette(ColorAlg) 
+makeColorPalette(ColorAlg)
         when ColorAlg == simplest ->
     %% return palette of 12 colors
     ?SIMPLEST_PALETTE_A;
 
-makeColorPalette(ColorAlg) 
+makeColorPalette(ColorAlg)
         when ColorAlg == simplest2 ->
     %% return palette of diff 12 colors
     ?SIMPLEST_PALETTE_B;
 
-makeColorPalette(ColorAlg) 
+makeColorPalette(ColorAlg)
         when ColorAlg == simple16 ->
     %% return palette of 16 colors
     ?SIMPLE_PALETTE;
 
-makeColorPalette(ColorAlg) 
+makeColorPalette(ColorAlg)
         when ColorAlg == simple32 ->
     %% return palette of 32 colors
     ?SIMPLE32_PALETTE;
 
-makeColorPalette(ColorAlg) 
+makeColorPalette(ColorAlg)
         when ColorAlg == blue32 ->
     %% return palette of 32 colors with blue theme
     ?BLUE32_PALETTE;
 
-makeColorPalette(ColorAlg) 
+makeColorPalette(ColorAlg)
         when ColorAlg == simple64 ->
     %% return palette of 64 colors with blue theme
     ?SIMPLE64_PALETTE.
