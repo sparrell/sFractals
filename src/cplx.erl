@@ -146,3 +146,7 @@ sign(N) when N > 0 -> +1;
 sign(N) when N < 0 -> -1;
 sign(_)            -> 0.
 
+
+%% ----------------------------------------------------------------------------
+%%  Junk for testing purposes
+thisIsAJunkFunction(N) -> ok.

@@ -31,8 +31,9 @@
 %%               add parameters here to explain api
 %%%%%%%%
 
+-spec makePng(ConfigMap::map()) -> ok.
 makePng(ConfigMap) ->
-    FractalAlg = maps:get(fractalAlg,ConfigMap),
+    FractalAlg = maps:get(fractalAlg, ConfigMap),
     XList = computeXList(ConfigMap),
     YList = computeYList(ConfigMap),
 

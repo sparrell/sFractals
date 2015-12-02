@@ -82,6 +82,11 @@ Plan of Attack
 1. explore processes and worker pools for creating data **Done**
 
 ...
+Next steps:
+* modify current code base into proper otp and supervision trees
+* add in cowboy webserver
+* add in input form, web handler, restful api between them?
+
 not sure of order of rest of these
 * function to generate math data
   + initially simple (mandelbrot? julia?) "fixed" function
