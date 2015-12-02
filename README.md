@@ -1,4 +1,4 @@
-sFractals
+
 =====
 
 An OTP application to make and return fractals. 
@@ -38,10 +38,28 @@ Method B: As shown in examples 06b1,06b2,08b1,08b2:
 - simpleFractal:makePngFromDataFile creates the image
 
 Method C: As shown in examples 01c,02c,08c:
-- fill in - fractalHelper first way
+- Refactored MethodA to put routines in fractalHelpers.erl, and structured so computes 1 row of data and then adds that data to png (instead of computing all the data and then starting the png)
+- put configuration if a file and read it into a record for use by programs
+- fractalHelpers:makePng computes the data by row and creates png as it goes
 
 Method D: As shown in examples 01d,05d,08d:
-- fill in - workerpool in separate processes
+- similar to method C but it creates a pool of workers to create the rows of data so they can be created in parralell. A server is started to receive the rows of data and to write to png (queing when necessary when they arrive out of order)
+- fractalHelpers:makePngUsingPool
+  + for prep prepare a list of x-values and y-values as input
+  + fractalHelpers:addRowsToPngUsingPool starts a worker pool, starts a collector, fractalHelpers:collectRows, (to recieve each data row, potentially out of order, and write to png), and spawns one worker per row of fractal data to calculate using fractalHelpers:createFractalWorkers
+  + fractalHelpers:fractalWorker is the routine run by each worker which calls fractalHelper:computeRowOfFractalData to compute one row of data, and then fractalWorker messages the result to the collectRows
+  + computeRowOfFractalData computes each fractal data value (ie for each x,y in the row) using fractalHelpers:computeIterationValue
+  + fractalHelpers:collectRows runs as a process and gets messages from the workers. It queues the messages until the 'next' row (ie it orders them correctly) row arrives which it writes to png
+  +  when all the rows are computed and written to png, the routine finishes
+
+Fractal computation common to all methods:
+- fractalHelpers:computeIterationValue does a standard fractal computation where the x,y value represents the real/imaginary part of either Z or C depending on which fractal algorithm used. Right now just Julian is implemented but the code is structured for extension. In Julian the algorith is Z-squared plus C and x,y represents Z. C is a constant provided in the configuration data (along with the range for Z-real, Z-imaginary). 
+- computeIterationValue iterates until either 
+  + the function exceeds a magnitude threshold (called the bailout threshold and supplied in config data) or 
+  + the number of iterations exceeds a threshold (called the maxIterationThreshold and supplied in config data)
+- the value returned is the count of the iterations
+- the next set of Z,C is computed in the routines fractalHelpers:newRealZ,newImaginaryZ,newRealC,newImaginaryC which are fractal algorithm dependent (just Julian at this point)
+
 
 Module Relationships
 --------------
@@ -86,3 +104,4 @@ endstate:
 * data generation server and image render servers
 * supervision trees
     
+
