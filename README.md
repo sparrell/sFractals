@@ -48,7 +48,7 @@ Method D: As shown in examples 01d,05d,08d:
   + for prep prepare a list of x-values and y-values as input
   + fractalHelpers:addRowsToPngUsingPool starts a worker pool, starts a collector, fractalHelpers:collectRows, (to recieve each data row, potentially out of order, and write to png), and spawns one worker per row of fractal data to calculate using fractalHelpers:createFractalWorkers
   + fractalHelpers:fractalWorker is the routine run by each worker which calls fractalHelper:computeRowOfFractalData to compute one row of data, and then fractalWorker messages the result to the collectRows
-  ++ computeRowOfFractalData computes each fractal data value (ie for each x,y in the row) using fractalHelpers:computeIterationValue
+  + computeRowOfFractalData computes each fractal data value (ie for each x,y in the row) using fractalHelpers:computeIterationValue
   + fractalHelpers:collectRows runs as a process and gets messages from the workers. It queues the messages until the 'next' row (ie it orders them correctly) row arrives which it writes to png
   +  when all the rows are computed and written to png, the routine finishes
 
