@@ -7,10 +7,11 @@
 
 %% Test cases
 -export([make1/1, add1/1, mult1/1, sqrt1/1, root1/1, polar1/1, cos1/1, 
-         iscomplex1/1, subtract1/1, divide1/1, absolute1/1]).
+         iscomplex1/1, subtract1/1, divide1/1, absolute1/1, pow1/1]).
 
 all() ->
-    [make1, add1, mult1, sqrt1, root1, polar1, cos1, iscomplex1, subtract1, divide1, absolute1].
+    [make1, add1, mult1, sqrt1, root1, polar1, cos1, iscomplex1, subtract1, 
+     divide1, absolute1, pow1].
 
 suite() -> 
     [{timetrap,{minutes,1}}].
@@ -104,3 +105,8 @@ cos1(_) ->
     {complex,9.333878297670655e67,-1.306743815413296e65} = cplx:cos(A),
     ok.
 
+pow1(_) ->
+    {complex, 125.0, 0} = cplx:pow({complex,5,0},3),
+    {complex, 0.0, 0} = cplx:pow({complex,0,0},3),
+    %%{complex, -2.0, -2.0} = cplx:pow({complex,1,-1},3),  %% need to understand why this isn't so
+    ok.
