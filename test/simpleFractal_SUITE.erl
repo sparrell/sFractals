@@ -1,7 +1,7 @@
 %%%-------------------------------------------------------------------
 %%% @author Duncan Sparrell
 %%% @copyright (C) 2015, sFractal Consulting LLC
-%%% 
+%%%
 %%%-------------------------------------------------------------------
 
 -module(simpleFractal_SUITE).
@@ -15,14 +15,19 @@
 
 %% tests to run
 all() ->
-    [ testComputeFractalData2EOL, testComputeFractalData2addRow, testMakeDataFile ].
+    [
+     testComputeFractalData2EOL,
+     testComputeFractalData2addRow,
+     testMakeData,
+     testMakeDataFile
+     ].
 
 %% timeout if no reply in a minute
-suite() -> 
+suite() ->
     [{timetrap,{minutes,2}}].
 
 %% setup config parameters
-init_per_suite(Config) -> 
+init_per_suite(Config) ->
     [ {fractalAlg,julian},
       {cReal,0.5 },
       {cImaginary,0.6 },
@@ -40,6 +45,71 @@ getCZconfig(Config) ->
       ?config(cImaginary, Config),
       ?config(zReal, Config),
       ?config(zImaginary, Config) }.
+
+testMakeData(_Config) ->
+    %% example config
+    FractalImageFileName = "./testMakeData.png",  %image file created
+    DataFileName         = "./testMakeData.erl.txt",  %put data here
+    ConfigMap = #{ fractalAlg => julian,  % Fractal Algorithm is julian
+                   imageFileName => FractalImageFileName,
+                   dataFileName         => DataFileName,
+                   colorAlg => simplest,  % 0-11 map to colors
+                   width => 10,           % width=10
+                   height => 10,          % height=10
+                   cReal => 0.5,          % real portion of C0
+                   cImaginary => -0.5,    % imaginary portion of C0
+                   zReal => -0.1,         % real portion of Z0 (na Julian)
+                   zImaginary => -0.1,    % imaginary portion of Z0 (na Julian)
+                   xRealRight => 3.0,
+                   xRealLeft => -3.0,
+                   yImaginaryLow => -3.0,
+                   yImaginaryHigh => 3.0,
+                   bailoutThreshold => 4,
+                   maxIterationThreshold => 11 },
+
+    %% reference test data
+    RefData = [[0,0,0,0,0,0,0,0,0,0],
+               [0,0,0,1,1,1,0,0,0,0],
+               [0,0,1,3,4,1,1,0,0,0],
+               [0,1,2,4,10,3,1,1,0,0],
+               [0,1,1,3,5,3,1,1,0,0],
+               [0,1,1,3,10,4,2,1,0,0],
+               [0,0,1,1,4,3,1,0,0,0],
+               [0,0,0,1,1,1,0,0,0,0],
+               [0,0,0,0,0,0,0,0,0,0],
+               [0,0,0,0,0,0,0,0,0,0]],
+    RefFileSize = 150,
+    RefPngData = <<137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,10,
+                       0,0,0,10,8,3,0,0,0,186,236,63,143,0,0,0,36,80,76,84,69,
+                       255,255,255,0,255,255,0,0,255,255,0,0,0,255,0,255,255,
+                       0,210,180,140,240,128,128,255,165,0,128,128,0,255,0,
+                       255,0,0,0,205,64,91,207,0,0,0,45,73,68,65,84,120,156,
+                       99,96,64,1,140,140,140,48,22,51,11,148,205,200,196,194,
+                       197,12,97,51,50,50,179,34,152,92,44,76,80,21,140,44,
+                       204,140,24,38,96,1,0,20,175,0,86,186,174,33,152,0,0,0,
+                       0,73,69,78,68,174,66,96,130>>,
+
+    %% create data 
+    RowData = simpleFractal:computeFractalData( ConfigMap ),
+
+    %% is it right data? (compare computed data to reference data)
+    RefData = RowData,
+
+    %% make png
+    simpleFractal:makePngFromData(RowData, ConfigMap),
+
+    %% is png right size?
+    { ok, { file_info, OutputFileSize, _reg,_rw,_t1,_t2,_t3,_,_,_,_,_,_,_} } =
+            file:read_file_info(FractalImageFileName),
+    RefFileSize  = OutputFileSize,
+
+    %% is png right content?
+    { ok, RefPngData} = file:read_file(FractalImageFileName),
+
+
+
+
+    ok.
 
 testMakeDataFile(_Config) ->
     %% example config
@@ -61,6 +131,7 @@ testMakeDataFile(_Config) ->
                    yImaginaryHigh => 3.0,
                    bailoutThreshold => 4,
                    maxIterationThreshold => 11 },
+
     %% reference test data
     RefData = [ [0,0,0,0,0,0,0,0,0,0],
                 [0,0,0,0,0,0,0,0,0,0],
@@ -109,7 +180,7 @@ testComputeFractalData2EOL(_Config) ->
     ConfigMap = #{ fractalAlg => julian,  % Fractal Algorithm is julian
        imageFileName => './EolTest.png',  %image file created
        width => 5, % width=10
-       height => 5, 
+       height => 5,
        cReal => 0.5, % real portion of C0
        cImaginary => -0.5, % imaginary portion of C0
        zReal => -0.1, %real portion of Z0 (don't care for Julian)
@@ -138,7 +209,7 @@ testComputeFractalData2EOL(_Config) ->
 
     % see if computeFractalData correctly comes back at end of row
     RowsOut = simpleFractal:computeFractalData( RowsIn, ThisRow,
-               XPix, XR, DeltaX, Width,  
+               XPix, XR, DeltaX, Width,
                YPix, YI, DeltaY, Height,  % only height matters
                ConfigMap),
 
@@ -150,8 +221,8 @@ testComputeFractalData2addRow(_Config) ->
     %% setup some test config and test data
     ConfigMap = #{ fractalAlg => julian,  % Fractal Algorithm is julian
        imageFileName => './EolTest.png',  %image file created
-       width => 5, 
-       height => 5, 
+       width => 5,
+       height => 5,
        cReal => 0.1, % real portion of C0
        cImaginary => -0.1, % imaginary portion of C0
        zReal => -0.1, %real portion of Z0 (don't care for Julian)
@@ -179,8 +250,8 @@ testComputeFractalData2addRow(_Config) ->
 
     % see if computeFractalData computes more data
     RowsOut = simpleFractal:computeFractalData( RowsIn, ThisRow,
-               XPix, XR, DeltaX, Width,  
-               YPix, YI, DeltaY, Height,  
+               XPix, XR, DeltaX, Width,
+               YPix, YI, DeltaY, Height,
                ConfigMap),
 
     %% is output what was expected?
