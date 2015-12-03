@@ -6,10 +6,10 @@
 -export([all/0,suite/0,init_per_suite/1]).
 
 %% Test cases
--export([make1/1, add1/1, mult1/1, sqrt1/1, root1/1, polar1/1, cos1/1]).
+-export([make1/1, add1/1, mult1/1, sqrt1/1, root1/1, polar1/1, cos1/1,iscomplex1/1]).
 
 all() ->
-    [make1, add1, mult1, sqrt1, root1, polar1, cos1].
+    [make1, add1, mult1, sqrt1, root1, polar1, cos1, iscomplex1].
 
 suite() -> 
     [{timetrap,{minutes,1}}].
@@ -17,17 +17,25 @@ suite() ->
 init_per_suite(Config) -> 
     [ {a,{complex,1.5e8,3}}, { b,{complex,150000001.0,3} } , { c,{complex,0.0014,157.2} } | Config ].
 
+iscomplex1(_) ->
+    true = cplx:is_complex( {complex,1.5e8,3} ),
+    ok.
 make1(_) ->
           {complex,1.5e8,3} = cplx:make(15.0e7,3),
           {complex,0,-3} = cplx:make(0,-3),
           {complex,-5.7,0} = cplx:make(-5.7,0),
+          {complex,-6.2,0} = cplx:make(-6.2),
+          {complex,6,0} = cplx:make(6),
           A = {complex,2.4e3,8.6},
           8.6 = cplx:imag(A),
           2400.0 = cplx:real(A),
+          17 = cplx:real(17),
+          17.1 = cplx:real(17.1),
           ok.
 
 add1(_) ->
           {complex,150000001.0,3} = cplx:add({complex,1.5e8,3},1),
+          {complex,210.0,21.0} = cplx:add({complex,200,20.0},{complex,10.0,1}),
           ok.
 
 mult1(_) ->
