@@ -28,7 +28,21 @@ start_link() ->
 
 %% Child :: {Id,StartFunc,Restart,Shutdown,Type,Modules}
 init([]) ->
-    {ok, { {one_for_all, 0, 1}, []} }.
+    SupFlags = #{
+                 strategy => one_for_all
+                 , intensity => 0
+                 , period => 1
+                },
+    FractalSvrSpec = #{
+                     id => fractal_server
+                     , start => {fractal_server, start_link, []}
+                     , restart => permanent   % make sure always there
+                     , shutdown => brutal_kill
+                     , type => worker
+                     , module => [fractal_server]
+                     },
+    ChildSpecs = [FractalSvrSpec],
+    {ok, { SupFlags, ChildSpecs} }.
 
 %%====================================================================
 %% Internal functions

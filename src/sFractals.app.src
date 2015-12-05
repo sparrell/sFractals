@@ -4,8 +4,9 @@
   {registered, []},
   {mod, {'sFractals_app', []}},
   {applications,
-   [kernel,
-    stdlib
+   [kernel
+    , stdlib
+    , lager
    ]},
   {env,[]},
   {modules, []},
