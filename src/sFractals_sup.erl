@@ -34,12 +34,12 @@ init([]) ->
                  , period => 1
                 },
     FractalSvrSpec = #{
-                     id => sFractal_server
-                     , start => {sFractal_server, start_link, []}
+                     id => fractal_server
+                     , start => {fractal_server, start_link, []}
                      , restart => permanent   % make sure always there
                      , shutdown => brutal_kill
                      , type => worker
-                     , module => [sFractal_server]
+                     , module => [fractal_server]
                      },
     ChildSpecs = [FractalSvrSpec],
     {ok, { SupFlags, ChildSpecs} }.

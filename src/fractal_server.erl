@@ -1,4 +1,4 @@
--module(sFractal_server).
+-module(fractal_server).
 -behaviour(gen_server).
 
 %% gen svr exports
