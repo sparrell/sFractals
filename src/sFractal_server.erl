@@ -2,7 +2,13 @@
 -behaviour(gen_server).
 
 %% gen svr exports
--export( [init/1, terminate/2, handle_call/3, handle_cast/2, handle_info/2, code_change/3] ).
+-export( [init/1
+        , terminate/2
+        , handle_call/3
+        , handle_cast/2
+        , handle_info/2
+        , code_change/3
+        ] ).
 
 %% api
 -export( [start_link/0, clientComputeFractal/1] ).
