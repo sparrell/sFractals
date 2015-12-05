@@ -36,7 +36,7 @@ init([]) ->
     FractalSvrSpec = #{
                      id => sFractal_server
                      , start => {sFractal_server,start_link,[]}
-                     , restart => permanent   % will restart and make sure always there
+                     , restart => permanent   % make sure always there
                      , shutdown => brutal_kill
                      , type => worker
                      , module => [sFractal_server]

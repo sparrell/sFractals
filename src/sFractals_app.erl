@@ -9,8 +9,8 @@
 
 %% Application callbacks
 -export([start/2
-        ,start/0
-        ,stop/1]).
+        , start/0
+        , stop/1]).
 
 %%====================================================================
 %% API
