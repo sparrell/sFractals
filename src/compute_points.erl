@@ -29,7 +29,7 @@ compute_iteration_value( _FractalAlg
                        , _CImaginary
                        , _ZReal
                        , _ZImaginary
-                       , IterCount  
+                       , IterCount
                        , MaxIterationThreshold
                        , _BailoutThreshold )
         when IterCount >= MaxIterationThreshold ->
