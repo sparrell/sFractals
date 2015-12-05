@@ -4,7 +4,7 @@
 %%%
 %%%-------------------------------------------------------------------
 
--module(fractalHelpers_SUITE).
+-module(fractal_helpers_SUITE).
 -author("Duncan Sparrell").
 
 %% for test
