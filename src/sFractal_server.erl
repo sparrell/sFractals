@@ -11,29 +11,38 @@
 
 -spec init(_Args::term()) -> { ok, state() }.
 init(_) ->
+  lager:info("starting init"),
   { ok, #{} }.
 
--spec terminate(_Reason::term(),State::state()) -> ok.
+-spec terminate(Reason::term(),State::state()) -> ok.
 terminate(Reason,State) ->
+    lager:debug("terminating due to ~p with state=~p",[Reason,State]),
     ok.
 
 -spec handle_call(Request::term(),From::{pid(),term()},State::state()) -> 
         {reply,Reply::term(),NewState::state()}.
-handle_call(Request,From,State) ->
+handle_call(makeFractal,From,State) ->
+    lager:debug("got a makeFractal call from ~p", [From]),
     Reply = figureThisOutLater,
-    lager:debug("Point 1"),
+    NewState = State,
+    {reply,Reply,NewState};
+handle_call(Request,_From,State) ->
+    Reply = figureThisOutLater,
+    lager:debug("got a call of ~p", [Request]),
     NewState = State,
     {reply,Reply,NewState}.
 
 -spec handle_cast(Request::term(),State::state()) -> 
         {noreply,NewState::state()}.
 handle_cast(Request,State) ->
+    lager:debug("got a cast of ~p", [Request]),
     NewState = State,
     {noreply,NewState}.
 
 -spec handle_info(Request::term(),State::state()) -> 
         {noreply,NewState::state()}.
 handle_info(Request,State) ->
+    lager:debug("got a handle_info of ~p", [Request]),
     NewState = State,
     {noreply,NewState}.
 
