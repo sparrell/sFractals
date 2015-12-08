@@ -16,10 +16,10 @@
 %% tests to run
 all() ->
     [
-     testComputeFractalData2EOL,
-     testComputeFractalData2addRow,
-     testMakeData,
-     testMakeDataFile
+     test_compute_fractal_data_eol,
+     test_adding_row,
+     test_make_data,
+     test_make_data_file
      ].
 
 %% timeout if no reply in a minute
@@ -46,7 +46,7 @@ getCZconfig(Config) ->
       ?config(zReal, Config),
       ?config(zImaginary, Config) }.
 
-testMakeData(_Config) ->
+test_make_data(_Config) ->
     %% example config
     FractalImageFileName = "./testMakeData.png",  %image file created
     DataFileName         = "./testMakeData.erl.txt",  %put data here
@@ -96,7 +96,7 @@ testMakeData(_Config) ->
     RefData = RowData,
 
     %% make png
-    compute_fractal_data:makePngFromData(RowData, ConfigMap),
+    compute_fractal_data:make_png_from_data(RowData, ConfigMap),
 
     %% is png right size?
     { ok, { file_info, OutputFileSize, _reg,_rw,_t1,_t2,_t3,_,_,_,_,_,_,_} } =
@@ -106,12 +106,9 @@ testMakeData(_Config) ->
     %% is png right content?
     { ok, RefPngData} = file:read_file(FractalImageFileName),
 
-
-
-
     ok.
 
-testMakeDataFile(_Config) ->
+test_make_data_file(_Config) ->
     %% example config
     FractalImageFileName = "./testMakeDataFile.png",  %image file created
     DataFileName         = "./testMakeDataFile.erl.txt",  %put data here
@@ -155,13 +152,13 @@ testMakeDataFile(_Config) ->
              186,65,0,0,0,0,73,69,78,68,174,66,96,130>>,
 
     %% create data and put in file
-    ok = compute_fractal_data:computeFractalDataIntoFile( ConfigMap ),
+    ok = compute_fractal_data:compute_fractal_data_file( ConfigMap ),
 
     %% is it right data? (compare test file to reference data)
     { ok, RefData} = file:consult(DataFileName),
 
     %% make png
-    compute_fractal_data:makePngFromDataFile(ConfigMap),
+    compute_fractal_data:make_png_from_file(ConfigMap),
 
     %% is png right size?
     { ok, { file_info, OutputFileSize, _reg,_rw,_t1,_t2,_t3,_,_,_,_,_,_,_} } =
@@ -173,7 +170,7 @@ testMakeDataFile(_Config) ->
 
     ok.
 
-testComputeFractalData2EOL(_Config) ->
+test_compute_fractal_data_eol(_Config) ->
     % test end of row works correctly
 
     %% setup some test config and test data
@@ -216,7 +213,7 @@ testComputeFractalData2EOL(_Config) ->
     %% is output what was expected?
     [ ThisRow | RowsIn ] = RowsOut.
 
-testComputeFractalData2addRow(_Config) ->
+test_adding_row(_Config) ->
     % test computing a row of data works right
     %% setup some test config and test data
     ConfigMap = #{ fractalAlg => julian,  % Fractal Algorithm is julian

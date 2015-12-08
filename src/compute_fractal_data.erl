@@ -10,7 +10,7 @@
 
 %% public API
 -export([ 
-          compute_fratal_data/1,           % create a block of fractal data
+          compute_fractal_data/1,           % create a block of fractal data
           compute_fractal_data_file/1,   % create a block of fractal data and write to file
           compute_fractal_data_file2/1,   % create a block of fractal data and write to file
           make_png_from_data/2,              % create a Png from block of fractal data
@@ -18,7 +18,7 @@
           ]).
 
 %% expose functions for test
--export([ compute_fratal_data/11 ]).
+-export([ compute_fractal_data/11 ]).
  
 %% public API for making fractal
 make_png_from_file(ConfigMap) ->       % create a Png from file of fractal data
@@ -106,7 +106,7 @@ compute_fractal_data(ConfigMap) ->
 %%        ConfigMap    - config info
 %%%%%%%%
 % clause when height is reached, return the rows of data
-compute_fratal_data( Rows, _ThisRow,
+compute_fractal_data( Rows, _ThisRow,
                _XPix, _XR, _DeltaX, _Width,  
                YPix, _YI, _DeltaY, _Height,  % only height matters
                _ConfigMap)
@@ -116,7 +116,7 @@ compute_fratal_data( Rows, _ThisRow,
     Rows;
 
 % clause when row is complete  but height not reached - process row and recurse
-compute_fratal_data( Rows, ThisRow,        % row data computed so far
+compute_fractal_data( Rows, ThisRow,        % row data computed so far
                XPix, _XR, DeltaX, Width,  % info for points in a row
                YPix, YI, DeltaY, Height,  % info for rows
                ConfigMap)
@@ -136,14 +136,14 @@ compute_fratal_data( Rows, ThisRow,        % row data computed so far
                    NewYPix, NewYI, DeltaY,Height,
                    ConfigMap);
 
-compute_fratal_data( Rows, RowData,       % row data computed so far
+compute_fractal_data( Rows, RowData,       % row data computed so far
                XPix, XR, DeltaX, Width,   % info for points in a row
                YPix, YI, DeltaY, Height,  % info for rows
                ConfigMap)
         when XPix > 0, YPix > 0 ->
 
     %% get iteration count for this point
-    NewPoint = compute_fractal_data:compute_iteration_value( maps:get(fractalAlg,ConfigMap),
+    NewPoint = compute_points:compute_iteration_value( maps:get(fractalAlg,ConfigMap),
                                       maps:get(cReal,ConfigMap),
                                       maps:get(cImaginary,ConfigMap),
                                       XR,
@@ -156,7 +156,7 @@ compute_fratal_data( Rows, RowData,       % row data computed so far
     NewRowData = [ NewPoint | RowData ],
     NewXPix    = XPix - 1,                           % decrement moving left building row
     NewXR      = XR - DeltaX,                        % decrease XR to the left
-    compute_fratal_data( Rows, NewRowData,
+    compute_fractal_data( Rows, NewRowData,
                    NewXPix, NewXR, DeltaX, Width,
                    YPix, YI, DeltaY,Height,
                    ConfigMap).
@@ -258,7 +258,7 @@ compute_fractal_data_file( DataFile, RowData,       % row data computed so far
         when XPix > 0, YPix > 0 ->
 
     %% get iteration count for this point
-    NewPoint = compute_fractal_data:compute_iteration_value( maps:get(fractalAlg,ConfigMap),
+    NewPoint = compute_points:compute_iteration_value( maps:get(fractalAlg,ConfigMap),
                                       maps:get(cReal,ConfigMap),
                                       maps:get(cImaginary,ConfigMap),
                                       XR,
@@ -381,7 +381,7 @@ compute_fractal_data_file2( RowData,       % row data computed so far
         when XPix > 0, YPix > 0 ->
 
     %% get iteration count for this point
-    NewPoint = compute_fractal_data:compute_iteration_value( maps:get(fractalAlg,ConfigMap),
+    NewPoint = compute_points:compute_iteration_value( maps:get(fractalAlg,ConfigMap),
                                       maps:get(cReal,ConfigMap),
                                       maps:get(cImaginary,ConfigMap),
                                       XR,
