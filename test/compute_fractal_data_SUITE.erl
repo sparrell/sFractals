@@ -4,7 +4,7 @@
 %%%
 %%%-------------------------------------------------------------------
 
--module(simpleFractal_SUITE).
+-module(compute_fractal_data_SUITE).
 -author("Duncan Sparrell").
 
 %% for test
@@ -90,13 +90,13 @@ testMakeData(_Config) ->
                        0,73,69,78,68,174,66,96,130>>,
 
     %% create data 
-    RowData = simpleFractal:computeFractalData( ConfigMap ),
+    RowData = compute_fractal_data:compute_fractal_data( ConfigMap ),
 
     %% is it right data? (compare computed data to reference data)
     RefData = RowData,
 
     %% make png
-    simpleFractal:makePngFromData(RowData, ConfigMap),
+    compute_fractal_data:makePngFromData(RowData, ConfigMap),
 
     %% is png right size?
     { ok, { file_info, OutputFileSize, _reg,_rw,_t1,_t2,_t3,_,_,_,_,_,_,_} } =
@@ -155,13 +155,13 @@ testMakeDataFile(_Config) ->
              186,65,0,0,0,0,73,69,78,68,174,66,96,130>>,
 
     %% create data and put in file
-    ok = simpleFractal:computeFractalDataIntoFile( ConfigMap ),
+    ok = compute_fractal_data:computeFractalDataIntoFile( ConfigMap ),
 
     %% is it right data? (compare test file to reference data)
     { ok, RefData} = file:consult(DataFileName),
 
     %% make png
-    simpleFractal:makePngFromDataFile(ConfigMap),
+    compute_fractal_data:makePngFromDataFile(ConfigMap),
 
     %% is png right size?
     { ok, { file_info, OutputFileSize, _reg,_rw,_t1,_t2,_t3,_,_,_,_,_,_,_} } =
@@ -208,7 +208,7 @@ testComputeFractalData2EOL(_Config) ->
 
 
     % see if computeFractalData correctly comes back at end of row
-    RowsOut = simpleFractal:computeFractalData( RowsIn, ThisRow,
+    RowsOut = compute_fractal_data:compute_fractal_data( RowsIn, ThisRow,
                XPix, XR, DeltaX, Width,
                YPix, YI, DeltaY, Height,  % only height matters
                ConfigMap),
@@ -249,7 +249,7 @@ testComputeFractalData2addRow(_Config) ->
 
 
     % see if computeFractalData computes more data
-    RowsOut = simpleFractal:computeFractalData( RowsIn, ThisRow,
+    RowsOut = compute_fractal_data:compute_fractal_data( RowsIn, ThisRow,
                XPix, XR, DeltaX, Width,
                YPix, YI, DeltaY, Height,
                ConfigMap),
