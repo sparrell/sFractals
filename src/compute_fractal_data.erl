@@ -4,13 +4,13 @@
 %%% 
 %%%-------------------------------------------------------------------
 
--module(simpleFractal).
+-module(compute_fractal_data).
 -author("Duncan Sparrell").
 %% try to make simple fractal data and then turn into color data and then make image
 
 %% public API
 -export([ 
-          computeFractalData/1,           % create a block of fractal data
+          compute_fratal_data/1,           % create a block of fractal data
           computeFractalDataIntoFile/1,   % create a block of fractal data and write to file
           computeFractalDataIntoFile2/1,   % create a block of fractal data and write to file
           makePngFromData/2,              % create a Png from block of fractal data
@@ -18,7 +18,7 @@
           ]).
 
 %% expose functions for test
--export([ computeFractalData/11 ]).
+-export([ compute_fratal_data/11 ]).
  
 %% public API for making fractal
 makePngFromDataFile(ConfigMap) ->       % create a Png from file of fractal data
@@ -136,14 +136,14 @@ computeFractalData( Rows, ThisRow,        % row data computed so far
                    NewYPix, NewYI, DeltaY,Height,
                    ConfigMap);
 
-computeFractalData( Rows, RowData,       % row data computed so far
+compute_fratal_data( Rows, RowData,       % row data computed so far
                XPix, XR, DeltaX, Width,   % info for points in a row
                YPix, YI, DeltaY, Height,  % info for rows
                ConfigMap)
         when XPix > 0, YPix > 0 ->
 
     %% get iteration count for this point
-    NewPoint = fractalHelpers:computeIterationValue( maps:get(fractalAlg,ConfigMap),
+    NewPoint = compute_fractal_data:compute_iteration_value( maps:get(fractalAlg,ConfigMap),
                                       maps:get(cReal,ConfigMap),
                                       maps:get(cImaginary,ConfigMap),
                                       XR,
@@ -156,7 +156,7 @@ computeFractalData( Rows, RowData,       % row data computed so far
     NewRowData = [ NewPoint | RowData ],
     NewXPix    = XPix - 1,                           % decrement moving left building row
     NewXR      = XR - DeltaX,                        % decrease XR to the left
-    computeFractalData( Rows, NewRowData,
+    compute_fratal_data( Rows, NewRowData,
                    NewXPix, NewXR, DeltaX, Width,
                    YPix, YI, DeltaY,Height,
                    ConfigMap).
@@ -258,7 +258,7 @@ computeFractalDataIntoFile( DataFile, RowData,       % row data computed so far
         when XPix > 0, YPix > 0 ->
 
     %% get iteration count for this point
-    NewPoint = fractalHelpers:computeIterationValue( maps:get(fractalAlg,ConfigMap),
+    NewPoint = compute_fractal_data:compute_iteration_value( maps:get(fractalAlg,ConfigMap),
                                       maps:get(cReal,ConfigMap),
                                       maps:get(cImaginary,ConfigMap),
                                       XR,
@@ -381,7 +381,7 @@ computeFractalDataIntoFile2( RowData,       % row data computed so far
         when XPix > 0, YPix > 0 ->
 
     %% get iteration count for this point
-    NewPoint = fractalHelpers:computeIterationValue( maps:get(fractalAlg,ConfigMap),
+    NewPoint = compute_fractal_data:compute_iteration_value( maps:get(fractalAlg,ConfigMap),
                                       maps:get(cReal,ConfigMap),
                                       maps:get(cImaginary,ConfigMap),
                                       XR,
