@@ -29,7 +29,7 @@ terminate(Reason, State) ->
         {reply, Reply::term(), NewState::state()}.
 handle_call(makeFractal, From, State) ->
     lager:debug("got a makeFractal call from ~p", [From]),
-    Reply = figureThisOutLater,
+    Reply = makeFractalCallfigureThisOutLater,
     NewState = State,
     {reply, Reply, NewState};
 handle_call(Request, _From, State) ->
