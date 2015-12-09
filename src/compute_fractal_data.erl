@@ -67,8 +67,10 @@ compute_fractal_data(ConfigMap) ->
     XRealLeft       = maps:get(xRealLeft, ConfigMap),
     YImaginaryLow   = maps:get(yImaginaryLow, ConfigMap),
     YImaginaryHigh  = maps:get(yImaginaryHigh, ConfigMap),
-    %% box is bounded on left by x > XRealLeft and bounded on right by x < XRealRight
-    %% box is bounded on top by y > YImaginaryHigh and bounded on bottom by y > YImaginaryLow
+    %% box is bounded on left by x > XRealLeft
+    %%      and bounded on right by x < XRealRight
+    %% box is bounded on top by y > YImaginaryHigh 
+    %%      and bounded on bottom by y > YImaginaryLow
     %% box is width pixels wide and height pixels high
 
     %% step is floating range divided by number of pixels
@@ -93,10 +95,13 @@ compute_fractal_data(ConfigMap) ->
 
 %%%%%%%%
 %% compute_fractal_data/11 API
-%%        Rows         - a list of the rows(lines) of data, starts empty and builds until height reached, built top down
-%%        ThisRow      - a list of the points(count value) in a row/line, starts empty and builds R->L until width reached
+%%        Rows         - a list of the rows(lines) of data, starts empty 
+%%                         and builds until height reached, built top down
+%%        ThisRow      - a list of the points(count value) in a row/line, 
+%%                         starts empty and builds R->L until width reached
 %%        XPix         - the integer X value of the pixel
-%%        XR           - the real component of the floating point number for computing fractal for this XPix
+%%        XR           - the real component of the floating point number
+%%                         for computing fractal for this XPix
 %%        DeltaX       - for each pixel, XR increases by this amount
 %%        Width        - width of fractal in pixels
 %%        YPix         - the integer Y value of the pixel
