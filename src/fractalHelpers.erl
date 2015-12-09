@@ -1,7 +1,7 @@
 %%%-------------------------------------------------------------------
 %%% @author Duncan Sparrell
 %%% @copyright (C) 2015, sFractal Consulting LLC
-%%% 
+%%%
 %%%-------------------------------------------------------------------
 
 -module(fractalHelpers).
@@ -9,11 +9,11 @@
 %% routines for making fractals
 
 %% public API
--export([ 
+-export([
           makePng/1,                      % creat         e fractal data and make a png
           makePngUsingPool/1,             % create fractal data and make a png
           collectRows/4,                  % process to catch fractal data
-          createFractalWorkers/5,         % process to make workers 
+          createFractalWorkers/5,         % process to make workers
           fractalWorker/5,                % worker to create one row of fractal data
           computeRowOfFractalData/4,      % create one row of fractal data
           computeAllRowsOfFractalData/1   % create one row of fractal data
@@ -22,7 +22,7 @@
 %% expose functions for test
 -export([ computeXList/1,computeYList/1
           ]).
- 
+
 %%%%%%%%
 %% makePng
 %%     ConfigMap - contains config info
@@ -80,7 +80,7 @@ computeAllRowsOfFractalData(ConfigMap) ->
     FractalAlg = maps:get(fractalAlg,ConfigMap),
     XList = computeXList(ConfigMap),
     YList = computeYList(ConfigMap),
-    FractalData = [ computeRowOfFractalData(FractalAlg, {PixelY,ImgY}, XList, ConfigMap) || 
+    FractalData = [ computeRowOfFractalData(FractalAlg, {PixelY,ImgY}, XList, ConfigMap) ||
                         {PixelY,ImgY} <- YList ],
     FractalData.
 
@@ -98,20 +98,21 @@ computeRowOfFractalData(FractalAlg, {PixelY,ImgY},XList,ConfigMap) ->
     %% given Y value for the row, and given Xlist (the x values in the row), compute the fractal values
     computeRowOfFractalData(FractalAlg, {PixelY,ImgY},XList,[], ConfigMap).
 
-computeRowOfFractalData(_FractalAlg, {PixelY,ImgY}, XList, RowOfFractalData, _ConfigMap) 
+computeRowOfFractalData(_FractalAlg, {PixelY,ImgY}, XList, RowOfFractalData, _ConfigMap)
         when XList == [] ->
     %% XList empty so done, return RowOfFractalData sorted by pixel value (ie 1 first)
     %%     and include Y value for use when pooling (ie if they arrive out of order)
     { {PixelY,ImgY}, lists:sort(RowOfFractalData) };
 
-computeRowOfFractalData(FractalAlg, {PixelY,ImgY}, XList, RowOfFractalData, ConfigMap) 
+computeRowOfFractalData(FractalAlg, {PixelY,ImgY}, XList, RowOfFractalData, ConfigMap)
             when FractalAlg == julian ->
     %% otherwise pop off one x value, compute data, insert answer in RowOfFractalData, and recurse
     [ {PixelX, RealX} | NewXList ] = XList,   % pop off first x value, remainder is used for next iteration
     %% compute fractal value for x,y
     IterCount = compute_points:compute_iteration_value(FractalAlg,
-                                      maps:get(cReal,ConfigMap), %since julian, C remains constant
-                                      maps:get(cImaginary,ConfigMap), %since julian, C remains constant
+                                      %% since julian, C remains constant
+                                      maps:get(cReal, ConfigMap),
+                                      maps:get(cImaginary, ConfigMap),
                                       RealX,                          %ZReal since julian
                                       ImgY,                           %ZImg since julian
                                       0,                              %IterCount = 0 to start
@@ -123,7 +124,6 @@ computeRowOfFractalData(FractalAlg, {PixelY,ImgY}, XList, RowOfFractalData, Conf
 
     %% recurse
     computeRowOfFractalData(FractalAlg, {PixelY,ImgY}, NewXList, NewRowOfFractalData, ConfigMap).
-    
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 %% ComputeXlist and ComputeYList set up x/y pixel/number data
@@ -231,11 +231,11 @@ addRowsToPngUsingPool(FractalAlg, ThisPng, XList, YList, ConfigMap) ->
     {ok,_PoolPid} = wpool:start_sup_pool(fractal_pool,[]),
 
     %% spawn a process to collect rows and write to png in correct order.
-    %%     this process started first so pid is known 
+    %%     this process started first so pid is known
     %%     self pid is included so collector can message when finished
     %%     nextRowId is started at 1 (ie the next row to be written is the y=1 row)
     CollectorPid = spawn(?MODULE,collectRows,[self(), 1, maps:get(height,ConfigMap), ThisPng] ),
-   
+
     %% spawn a process to use one worker per row to calculate fractal data
     %%     rowcollector pid is passed so workers respond correctly
     spawn(?MODULE,createFractalWorkers,[CollectorPid, FractalAlg, XList, YList, ConfigMap]),
@@ -251,7 +251,7 @@ addRowsToPngUsingPool(FractalAlg, ThisPng, XList, YList, ConfigMap) ->
     end,
 
     ok.
-    
+
 %%%%%%%%%%
 %% collectRows collects rows of fractal data (messaged from workerpool) and writes to png
 %%      collectRows messgages it's calling program when finished
@@ -259,22 +259,22 @@ addRowsToPngUsingPool(FractalAlg, ThisPng, XList, YList, ConfigMap) ->
 %%    Calling Pid - calling programs pid so collectRows can message when done
 %%    NextRowId   - messages may arrive out of order so only write png when 'next' row arrives
 %%    Height      - done when this many rows are written
-%%    
+%%
 %%    ThisPng     - png to be written to
 %%%%%%%%%%
-collectRows(CallingPid, NextRowId, Height, _ThisPng) 
+collectRows(CallingPid, NextRowId, Height, _ThisPng)
         when NextRowId > Height ->
     %% finished so let calling program know and end
     CallingPid ! finished;
 collectRows(CallingPid, NextRowId, Height, ThisPng) ->
     receive
-        { {NextRowId,_ImgY}, RowOfFractalData } ->   %% match when next row is to be written 
+        { {NextRowId,_ImgY}, RowOfFractalData } ->   %% match when next row is to be written
                                         %%   (otherwise leave messages in queue until their turn)
            %% strip out just the data
            ThisRowDataOnly = [ C || {_P,_I,C} <- RowOfFractalData ],
            %% write data to png
            imagelib:addRow( ThisRowDataOnly, ThisPng ),
-            
+
             %% go back for more messages
             collectRows(CallingPid, NextRowId+1, Height, ThisPng)
     end.
@@ -288,7 +288,7 @@ collectRows(CallingPid, NextRowId, Height, ThisPng) ->
 %%            YList        - list of y values
 %%            ConfigMap    - all the config data
 %%%%%%%%%%
-createFractalWorkers(_CollectorPid, _FractalAlg, _XList, YList, _ConfigMap) 
+createFractalWorkers(_CollectorPid, _FractalAlg, _XList, YList, _ConfigMap)
         %% done if nothing left in YList
         when YList == [] ->
     ok;
