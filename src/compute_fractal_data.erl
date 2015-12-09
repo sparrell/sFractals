@@ -23,18 +23,18 @@
 %% public API for making fractal
 make_png_from_file(ConfigMap) ->       % create a Png from file of fractal data
     %% get the data
-    {ok, Rows} = file:consult( maps:get( dataFileName,ConfigMap) ),
+    {ok, Rows} = file:consult( maps:get( dataFileName, ConfigMap) ),
 
     %% make the png
-    make_png_from_data(Rows,ConfigMap).
+    make_png_from_data(Rows, ConfigMap).
 
 
-make_png_from_data(Rows,ConfigMap) ->       % create a Png from block of fractal data
+make_png_from_data(Rows, ConfigMap) ->       % create a Png from block of fractal data
     %% initialize the png
     ThisPng = imagelib:startPng( ConfigMap ),
 
     %% add all the rows, one at a time, to the image
-    addRows(ThisPng,Rows),
+    addRows(ThisPng, Rows),
 
     %% finalize the png
     imagelib:finishPng( ThisPng ),
@@ -60,13 +60,13 @@ addRows(ThisPng, [ThisRow | RestOfRows ] ) ->
 compute_fractal_data(ConfigMap) ->
     %% get config needed
     %% create height rows of width columns of pixels
-    Width           = maps:get(width,ConfigMap),
-    Height          = maps:get(height,ConfigMap),
+    Width           = maps:get(width, ConfigMap),
+    Height          = maps:get(height, ConfigMap),
     %% each pixel has a corresonding complex number defined by corners of the box
-    XRealRight      = maps:get(xRealRight,ConfigMap),
-    XRealLeft       = maps:get(xRealLeft,ConfigMap),
-    YImaginaryLow   = maps:get(yImaginaryLow,ConfigMap),
-    YImaginaryHigh  = maps:get(yImaginaryHigh,ConfigMap),
+    XRealRight      = maps:get(xRealRight, ConfigMap),
+    XRealLeft       = maps:get(xRealLeft, ConfigMap),
+    YImaginaryLow   = maps:get(yImaginaryLow, ConfigMap),
+    YImaginaryHigh  = maps:get(yImaginaryHigh, ConfigMap),
     %% box is bounded on left by x > XRealLeft and bounded on right by x < XRealRight
     %% box is bounded on top by y > YImaginaryHigh and bounded on bottom by y > YImaginaryLow
     %% box is width pixels wide and height pixels high
@@ -128,12 +128,12 @@ compute_fractal_data( Rows, ThisRow,        % row data computed so far
     % reset to begining of next row
     NewRowData = [],                                 % reset data for row to empty
     NewXPix    = Width,                              % reset to end of line
-    NewXR      = maps:get(xRealRight,ConfigMap),     % reset to end of line
+    NewXR      = maps:get(xRealRight, ConfigMap),     % reset to end of line
     NewYPix    = YPix - 1,                           % increment row
     NewYI      = YI - DeltaY,                          % increment row
     compute_fractal_data( NewRows, NewRowData,
                    NewXPix, NewXR, DeltaX, Width,
-                   NewYPix, NewYI, DeltaY,Height,
+                   NewYPix, NewYI, DeltaY, Height,
                    ConfigMap);
 
 compute_fractal_data( Rows, RowData,       % row data computed so far
@@ -143,14 +143,14 @@ compute_fractal_data( Rows, RowData,       % row data computed so far
         when XPix > 0, YPix > 0 ->
 
     %% get iteration count for this point
-    NewPoint = compute_points:compute_iteration_value( maps:get(fractalAlg,ConfigMap),
-                                      maps:get(cReal,ConfigMap),
-                                      maps:get(cImaginary,ConfigMap),
+    NewPoint = compute_points:compute_iteration_value( maps:get(fractalAlg, ConfigMap),
+                                      maps:get(cReal, ConfigMap),
+                                      maps:get(cImaginary, ConfigMap),
                                       XR,
                                       YI,
                                       0,          %iteration count starts at zero
-                                      maps:get(maxIterationThreshold,ConfigMap),
-                                      maps:get(bailoutThreshold,ConfigMap)
+                                      maps:get(maxIterationThreshold, ConfigMap),
+                                      maps:get(bailoutThreshold, ConfigMap)
                                       ),
 
     NewRowData = [ NewPoint | RowData ],
@@ -158,7 +158,7 @@ compute_fractal_data( Rows, RowData,       % row data computed so far
     NewXR      = XR - DeltaX,                        % decrease XR to the left
     compute_fractal_data( Rows, NewRowData,
                    NewXPix, NewXR, DeltaX, Width,
-                   YPix, YI, DeltaY,Height,
+                   YPix, YI, DeltaY, Height,
                    ConfigMap).
 
 
@@ -170,15 +170,15 @@ compute_fractal_data( Rows, RowData,       % row data computed so far
 %%%%%%%%
 compute_fractal_data_file(ConfigMap) ->
     %% get config needed
-    DataFileName  = maps:get(dataFileName,ConfigMap),
+    DataFileName  = maps:get(dataFileName, ConfigMap),
     %% create height rows of width columns of pixels
-    Width           = maps:get(width,ConfigMap),
-    Height          = maps:get(height,ConfigMap),
+    Width           = maps:get(width, ConfigMap),
+    Height          = maps:get(height, ConfigMap),
     %% each pixel has a corresonding complex number defined by corners of the box
-    XRealRight      = maps:get(xRealRight,ConfigMap),
-    XRealLeft       = maps:get(xRealLeft,ConfigMap),
-    YImaginaryLow   = maps:get(yImaginaryLow,ConfigMap),
-    YImaginaryHigh  = maps:get(yImaginaryHigh,ConfigMap),
+    XRealRight      = maps:get(xRealRight, ConfigMap),
+    XRealLeft       = maps:get(xRealLeft, ConfigMap),
+    YImaginaryLow   = maps:get(yImaginaryLow, ConfigMap),
+    YImaginaryHigh  = maps:get(yImaginaryHigh, ConfigMap),
     %% box is bounded on left by x > XRealLeft and bounded on right by x < XRealRight
     %% box is bounded on top by y > YImaginaryHigh and bounded on bottom by y > YImaginaryLow
     %% box is width pixels wide and height pixels high
@@ -188,7 +188,7 @@ compute_fractal_data_file(ConfigMap) ->
     DeltaY = (YImaginaryHigh - YImaginaryLow) / Height,
 
     %% open file
-    {ok,DataFile} = file:open(DataFileName, [write]),
+    {ok, DataFile} = file:open(DataFileName, [write]),
 
     %% call compute_fractal_data_file/11
     %% writing rows one at a time
@@ -243,12 +243,12 @@ compute_fractal_data_file( DataFile, ThisRow,        % row data computed so far
     % reset to begining of next row
     NewRowData = [],                                 % reset data for row to empty
     NewXPix    = Width,                              % reset to end of line
-    NewXR      = maps:get(xRealRight,ConfigMap),     % reset to end of line
+    NewXR      = maps:get(xRealRight, ConfigMap),     % reset to end of line
     NewYPix    = YPix - 1,                           % increment row
     NewYI      = YI - DeltaY,                          % increment row
     compute_fractal_data_file( DataFile, NewRowData,
                    NewXPix, NewXR, DeltaX, Width,
-                   NewYPix, NewYI, DeltaY,Height,
+                   NewYPix, NewYI, DeltaY, Height,
                    ConfigMap);
 
 compute_fractal_data_file( DataFile, RowData,       % row data computed so far
@@ -258,14 +258,14 @@ compute_fractal_data_file( DataFile, RowData,       % row data computed so far
         when XPix > 0, YPix > 0 ->
 
     %% get iteration count for this point
-    NewPoint = compute_points:compute_iteration_value( maps:get(fractalAlg,ConfigMap),
-                                      maps:get(cReal,ConfigMap),
-                                      maps:get(cImaginary,ConfigMap),
+    NewPoint = compute_points:compute_iteration_value( maps:get(fractalAlg, ConfigMap),
+                                      maps:get(cReal, ConfigMap),
+                                      maps:get(cImaginary, ConfigMap),
                                       XR,
                                       YI,
                                       0,          %iteration count starts at zero
-                                      maps:get(maxIterationThreshold,ConfigMap),
-                                      maps:get(bailoutThreshold,ConfigMap)
+                                      maps:get(maxIterationThreshold, ConfigMap),
+                                      maps:get(bailoutThreshold, ConfigMap)
                                       ),
 
     NewRowData = [ NewPoint | RowData ],
@@ -273,7 +273,7 @@ compute_fractal_data_file( DataFile, RowData,       % row data computed so far
     NewXR      = XR - DeltaX,                        % decrease XR to the left
     compute_fractal_data_file( DataFile, NewRowData,
                    NewXPix, NewXR, DeltaX, Width,
-                   YPix, YI, DeltaY,Height,
+                   YPix, YI, DeltaY, Height,
                    ConfigMap).
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -288,13 +288,13 @@ compute_fractal_data_file( DataFile, RowData,       % row data computed so far
 compute_fractal_data_file2(ConfigMap) ->
     %% get config needed
     %% create height rows of width columns of pixels
-    Width           = maps:get(width,ConfigMap),
-    Height          = maps:get(height,ConfigMap),
+    Width           = maps:get(width, ConfigMap),
+    Height          = maps:get(height, ConfigMap),
     %% each pixel has a corresonding complex number defined by corners of the box
-    XRealRight      = maps:get(xRealRight,ConfigMap),
-    XRealLeft       = maps:get(xRealLeft,ConfigMap),
-    YImaginaryLow   = maps:get(yImaginaryLow,ConfigMap),
-    YImaginaryHigh  = maps:get(yImaginaryHigh,ConfigMap),
+    XRealRight      = maps:get(xRealRight, ConfigMap),
+    XRealLeft       = maps:get(xRealLeft, ConfigMap),
+    YImaginaryLow   = maps:get(yImaginaryLow, ConfigMap),
+    YImaginaryHigh  = maps:get(yImaginaryHigh, ConfigMap),
     %% box is bounded on left by x > XRealLeft and bounded on right by x < XRealRight
     %% box is bounded on top by y > YImaginaryHigh and bounded on bottom by y > YImaginaryLow
     %% box is width pixels wide and height pixels high
@@ -304,7 +304,7 @@ compute_fractal_data_file2(ConfigMap) ->
     DeltaY = (YImaginaryHigh - YImaginaryLow) / Height,
 
     %% start server
-    {ok,Pid} = dataFileSvr:start(ConfigMap),
+    {ok, Pid} = dataFileSvr:start(ConfigMap),
 
     %% call compute_fractal_data_file2/11
     %% writing rows one at a time
@@ -366,12 +366,12 @@ compute_fractal_data_file2( ThisRow,        % row data computed so far
     % reset to begining of next row
     NewRowData = [],                                 % reset data for row to empty
     NewXPix    = Width,                              % reset to end of line
-    NewXR      = maps:get(xRealRight,ConfigMap),     % reset to end of line
+    NewXR      = maps:get(xRealRight, ConfigMap),     % reset to end of line
     NewYPix    = YPix - 1,                           % increment row
     NewYI      = YI - DeltaY,                          % increment row
     compute_fractal_data_file2( NewRowData,
                    NewXPix, NewXR, DeltaX, Width,
-                   NewYPix, NewYI, DeltaY,Height,
+                   NewYPix, NewYI, DeltaY, Height,
                    ConfigMap);
 
 compute_fractal_data_file2( RowData,       % row data computed so far
@@ -381,14 +381,14 @@ compute_fractal_data_file2( RowData,       % row data computed so far
         when XPix > 0, YPix > 0 ->
 
     %% get iteration count for this point
-    NewPoint = compute_points:compute_iteration_value( maps:get(fractalAlg,ConfigMap),
-                                      maps:get(cReal,ConfigMap),
-                                      maps:get(cImaginary,ConfigMap),
+    NewPoint = compute_points:compute_iteration_value( maps:get(fractalAlg, ConfigMap),
+                                      maps:get(cReal, ConfigMap),
+                                      maps:get(cImaginary, ConfigMap),
                                       XR,
                                       YI,
                                       0,          %iteration count starts at zero
-                                      maps:get(maxIterationThreshold,ConfigMap),
-                                      maps:get(bailoutThreshold,ConfigMap)
+                                      maps:get(maxIterationThreshold, ConfigMap),
+                                      maps:get(bailoutThreshold, ConfigMap)
                                       ),
  
     NewRowData = [ NewPoint | RowData ],
@@ -396,5 +396,5 @@ compute_fractal_data_file2( RowData,       % row data computed so far
     NewXR      = XR - DeltaX,                        % decrease XR to the left
     compute_fractal_data_file2( NewRowData,
                    NewXPix, NewXR, DeltaX, Width,
-                   YPix, YI, DeltaY,Height,
+                   YPix, YI, DeltaY, Height,
                    ConfigMap).
