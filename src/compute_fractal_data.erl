@@ -264,7 +264,7 @@ compute_fractal_data_file( DataFile, ThisRow,        % row data computed so far
         when XPix =< 0, YPix >= 0 ->
 
     % add row to file
-    io:format(DataFile,"~w.~n",[ThisRow]),
+    io:format(DataFile, "~w.~n", [ThisRow]),
 
     % reset to begining of next row
     NewRowData = [],                               % reset data for row to empty

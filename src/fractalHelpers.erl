@@ -20,7 +20,7 @@
           ]).
 
 %% expose functions for test
--export([ computeXList/1,computeYList/1
+-export([ computeXList/1, computeYList/1
           ]).
 
 %%%%%%%%
@@ -54,7 +54,7 @@ makePng(ConfigMap) ->
 
 makePngUsingPool(ConfigMap) ->
     %% get config and do some setup
-    FractalAlg = maps:get(fractalAlg,ConfigMap),
+    FractalAlg = maps:get(fractalAlg, ConfigMap),
     XList = computeXList(ConfigMap),
     YList = computeYList(ConfigMap),
 
@@ -77,78 +77,97 @@ makePngUsingPool(ConfigMap) ->
 %%               add output format here
 %%%%%%%%
 computeAllRowsOfFractalData(ConfigMap) ->
-    FractalAlg = maps:get(fractalAlg,ConfigMap),
+    FractalAlg = maps:get(fractalAlg, ConfigMap),
     XList = computeXList(ConfigMap),
     YList = computeYList(ConfigMap),
-    FractalData = [ computeRowOfFractalData(FractalAlg, {PixelY,ImgY}, XList, ConfigMap) ||
-                        {PixelY,ImgY} <- YList ],
+    FractalData = [ computeRowOfFractalData(FractalAlg, {PixelY, ImgY}, XList, ConfigMap) ||
+                        {PixelY, ImgY} <- YList ],
     FractalData.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 %% computeRowOfFractalData computes one row of fractal data
 %%        inputs:
 %%               FractalAlg - which algorithm eg julian, mandelbrot, ...
-%%               {PixelY,ImgY} - the Y cordinate in pixels (an integer), and number (imaginary value of Z or C)
+%%               {PixelY, ImgY} - the Y cordinate in pixels (an integer), and number (imaginary value of Z or C)
 %%               XList - the list of x coords to be computer over
 %%               ConfigMap - configuration data, values needed for:
 %%                           fractalAlg (must be same as FractalAlg)
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
-computeRowOfFractalData(FractalAlg, {PixelY,ImgY},XList,ConfigMap) ->
+computeRowOfFractalData(FractalAlg, {PixelY, ImgY}, XList, ConfigMap) ->
     %% given Y value for the row, and given Xlist (the x values in the row), compute the fractal values
-    computeRowOfFractalData(FractalAlg, {PixelY,ImgY},XList,[], ConfigMap).
+    computeRowOfFractalData(FractalAlg, {PixelY, ImgY}, XList,[], ConfigMap).
 
-computeRowOfFractalData(_FractalAlg, {PixelY,ImgY}, XList, RowOfFractalData, _ConfigMap)
+computeRowOfFractalData(_FractalAlg, {PixelY, ImgY}, XList, RowOfFractalData, _ConfigMap)
         when XList == [] ->
     %% XList empty so done, return RowOfFractalData sorted by pixel value (ie 1 first)
-    %%     and include Y value for use when pooling (ie if they arrive out of order)
-    { {PixelY,ImgY}, lists:sort(RowOfFractalData) };
+    %%     and include Y value for use when pooling
+    %%     (ie if they arrive out of order)
+    { {PixelY, ImgY}, lists:sort(RowOfFractalData) };
 
-computeRowOfFractalData(FractalAlg, {PixelY,ImgY}, XList, RowOfFractalData, ConfigMap)
+computeRowOfFractalData( FractalAlg
+                       , {PixelY, ImgY}
+                       , XList
+                       , RowOfFractalData
+                       , ConfigMap
+                       )
             when FractalAlg == julian ->
-    %% otherwise pop off one x value, compute data, insert answer in RowOfFractalData, and recurse
-    [ {PixelX, RealX} | NewXList ] = XList,   % pop off first x value, remainder is used for next iteration
-    %% compute fractal value for x,y
+    %% otherwise pop off one x value, compute data,
+    %%      insert answer in RowOfFractalData, and recurse
+
+    %% pop off first x value, remainder is used for next iteration
+    [ {PixelX, RealX} | NewXList ] = XList,
+    %% compute fractal value for x, y
     IterCount = compute_points:compute_iteration_value(FractalAlg,
-                                      %% since julian, C remains constant
-                                      maps:get(cReal, ConfigMap),
-                                      maps:get(cImaginary, ConfigMap),
-                                      RealX,                          %ZReal since julian
-                                      ImgY,                           %ZImg since julian
-                                      0,                              %IterCount = 0 to start
-                                      maps:get(maxIterationThreshold,ConfigMap),
-                                      maps:get(bailoutThreshold,ConfigMap)
-                                      ),
+                                     %% since julian, C remains constant
+                                     maps:get(cReal, ConfigMap),
+                                     maps:get(cImaginary, ConfigMap),
+                                     RealX,    %ZReal since julian
+                                     ImgY,     %ZImg since julian
+                                     0,        %IterCount = 0 to start
+                                     maps:get(maxIterationThreshold, ConfigMap),
+                                     maps:get(bailoutThreshold, ConfigMap)
+                                     ),
     %% push new value onto RowOfFractalData list
     NewRowOfFractalData = [{PixelX, RealX, IterCount} | RowOfFractalData ],
 
     %% recurse
-    computeRowOfFractalData(FractalAlg, {PixelY,ImgY}, NewXList, NewRowOfFractalData, ConfigMap).
+    computeRowOfFractalData( FractalAlg
+                           , {PixelY, ImgY}
+                           , NewXList
+                           , NewRowOfFractalData
+                           , ConfigMap
+                           ).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 %% ComputeXlist and ComputeYList set up x/y pixel/number data
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%% ComputeXlist creates a row (list) of X,ZsubR,CsubR for a given fractal alg
-%%    This list, along with the Y list, create the 'box' where each dot (x,y) fractal value is computed
+%% ComputeXlist creates a row (list) of X, ZsubR, CsubR for a given fractal alg
+%%    This list, along with the Y list, create the 'box'
+%%        where each dot (x, y) fractal value is computed
 computeXList(ConfigMap) ->
      %% get parameters
-    Width      = maps:get(width,ConfigMap),
-    %% each pixel has a corresonding complex number defined by corners of the box
+    Width      = maps:get(width, ConfigMap),
+    %% each pixel has a corresonding complex number defined
+    %%         by corners of the box
     %%   note whether Y is dependent on Z or C is algorithm dependent
     %%     and taken into account in config file
-    XRealRight      = maps:get(xRealRight,ConfigMap),
-    XRealLeft       = maps:get(xRealLeft,ConfigMap),
-    %% box is bounded on left by x > XRealLeft and bounded on right by x < XRealRight
+    XRealRight      = maps:get(xRealRight, ConfigMap),
+    XRealLeft       = maps:get(xRealLeft, ConfigMap),
+    %% box is bounded on left by x > XRealLeft
+    %%    and bounded on right by x < XRealRight
     %% box is width pixels wide and height pixels high
 
     %% step is floating range divided by number of pixels
-    DeltaX = (XRealRight - XRealLeft) / (Width-1), % note -1 since one less intervals than points
+    %% note -1 in next statement since one less intervals than points
+    DeltaX = (XRealRight - XRealLeft) / (Width-1),
 
     %% iteratively compute the values in the list
     %%    starting at right (x=width, xreal=XRealRight) and decrementing down
-    %% the returned list is returned by this function for use in fractal computations
+    %% the returned list is returned by this function
+    %%    for use in fractal computations
     computeXList([], Width, XRealRight, DeltaX).
 
 computeXList(Row, PixelX, _RealX, _DeltaX)
@@ -158,36 +177,43 @@ computeXList(Row, PixelX, _RealX, _DeltaX)
 
 computeXList(Row, PixelX, RealX, DeltaX) ->
     %% otherwise add another point and recurse
-    NewRow = [ {PixelX,RealX} | Row ],
+    NewRow = [ {PixelX, RealX} | Row ],
     computeXList(NewRow, PixelX-1, RealX-DeltaX, DeltaX).
 
-%% ComputeYlist creates a column (list) of Y,ZsubI,CsubI for a given fracal alg
-%%    This list, along with the X list, create the 'box' where each dot (x,y) fractal value is computed
+%% ComputeYlist creates a column (list) of Y, ZsubI, CsubI for a
+%%    given fracal alg
+%%  This list, along with the X list, create the 'box' where
+%%    each dot (x, y) fractal value is computed
 computeYList(ConfigMap) ->
      %% get parameters
-    Height          = maps:get(height,ConfigMap),
-    %% each pixel has a corresonding complex number defined by corners of the box
-    %%   note whether Y is dependent on Z or C is algorithm dependent
+    Height          = maps:get(height, ConfigMap),
+    %% each pixel has a corresonding complex number defined by corners
+    %%    of the box
+    %%  note whether Y is dependent on Z or C is algorithm dependent
     %%     and taken into account in config file
-    YImaginaryLow   = maps:get(yImaginaryLow,ConfigMap),
-    YImaginaryHigh  = maps:get(yImaginaryHigh,ConfigMap),
-    %% box is bounded on top by y > YImaginaryHigh and bounded on bottom by y > YImaginaryLow
+    YImaginaryLow   = maps:get(yImaginaryLow, ConfigMap),
+    YImaginaryHigh  = maps:get(yImaginaryHigh, ConfigMap),
+    %% box is bounded on top by y > YImaginaryHigh
+    %%    and bounded on bottom by y > YImaginaryLow
     %% box is width pixels wide and height pixels high
-    DeltaY = (YImaginaryHigh - YImaginaryLow) / (Height-1), % note -1 since one less intervals than points
+    %% note -1 since one less intervals than points
+    DeltaY = (YImaginaryHigh - YImaginaryLow) / (Height-1),
 
     %% iteratively compute the values in the list
     %%    starting at top (y=height, yImg=YImgTop) and decrementing down
-    %% the returned list is returned by this function for use in fractal computations
+    %% the returned list is returned by this function
+    %%    for use in fractal computations
     computeYList([], Height, YImaginaryHigh, DeltaY).
 
 computeYList(Column, PixelY, _ImgY, _DeltaY)
          when PixelY =< 0 ->
-    %% since PixelY decremented to end, the Column is now complete, so return Column
+    %% since PixelY decremented to end, the Column is now complete,
+    %%    so return Column
     Column;
 
 computeYList(Column, PixelY, ImgY, DeltaY) ->
     %% otherwise add another point and recurse
-    NewColumn = [ {PixelY,ImgY} | Column ],
+    NewColumn = [ {PixelY, ImgY} | Column ],
     computeYList(NewColumn, PixelY-1, ImgY-DeltaY, DeltaY).
 
 %% addRowsToPng computes fractal data one row at a time and adds to png
@@ -200,13 +226,16 @@ addRowsToPng(FractalAlg, ThisPng, XList, YList, ConfigMap) ->
     %% otherwise pop off a row, compute fractal data, add to png, recurse
 
     %% pop off a row
-    [ {PixelY,ImgY} | NewYList ] = YList,
+    [ {PixelY, ImgY} | NewYList ] = YList,
 
     %% compute row of fractal data
-         { {_Yp, _Yi}, RowOfFractalData } = computeRowOfFractalData(FractalAlg, {PixelY,ImgY},XList,ConfigMap),
-         %%io:format("{~p,~p} Row: ~p~n", [PixelY,ImgY,RowOfFractalData]),
-         ThisRowDataOnly = [ C || {_P,_I,C} <- RowOfFractalData ],
-         %%io:format("Data: ~p~n",[ThisRowDataOnly]),
+    { {_Yp, _Yi}, RowOfFractalData } =
+            computeRowOfFractalData( FractalAlg
+                                   , {PixelY, ImgY}
+                                   , XList
+                                   , ConfigMap
+                                   ),
+    ThisRowDataOnly = [ C || {_P,_I, C} <- RowOfFractalData ],
 
     %% add to png
     imagelib:addRow( ThisRowDataOnly, ThisPng ),
@@ -215,11 +244,15 @@ addRowsToPng(FractalAlg, ThisPng, XList, YList, ConfigMap) ->
     addRowsToPng(FractalAlg, ThisPng, XList, NewYList, ConfigMap).
 
 %%%%%%%%%%
-%% addRowsToPngUsingPool - using worker_pool for calculating fractal data to try to do more in parrallel
+%% addRowsToPngUsingPool - using worker_pool for calculating
+%%      fractal data to try to do more in parrallel
+%%
 %%      add params here
 %%
-%% this routine spawns a process to get the pool calculating all the rows (which will be messaged back)
-%%      the it spawns a process to receive all the rows, and add them to the image in the right order
+%% this routine spawns a process to get the pool calculating
+%%   all the rows (which will be messaged back)
+%% then it spawns a process to receive all the rows,
+%%   and add them to the image in the right order
 %%
 %%%%%%%%%%
 addRowsToPngUsingPool(FractalAlg, ThisPng, XList, YList, ConfigMap) ->
@@ -233,19 +266,30 @@ addRowsToPngUsingPool(FractalAlg, ThisPng, XList, YList, ConfigMap) ->
     %% spawn a process to collect rows and write to png in correct order.
     %%     this process started first so pid is known
     %%     self pid is included so collector can message when finished
-    %%     nextRowId is started at 1 (ie the next row to be written is the y=1 row)
-    CollectorPid = spawn(?MODULE,collectRows,[self(), 1, maps:get(height,ConfigMap), ThisPng] ),
+    %%     nextRowId is started at 1
+    %%        (ie the next row to be written is the y=1 row)
+    CollectorPid = spawn( ?MODULE
+                        , collectRows
+                        , [ self()
+                          , 1
+                          , maps:get(height, ConfigMap)
+                          , ThisPng
+                          ] 
+                        ),
 
     %% spawn a process to use one worker per row to calculate fractal data
     %%     rowcollector pid is passed so workers respond correctly
-    spawn(?MODULE,createFractalWorkers,[CollectorPid, FractalAlg, XList, YList, ConfigMap]),
+    spawn( ?MODULE
+         , createFractalWorkers
+         ,[CollectorPid, FractalAlg, XList, YList, ConfigMap]
+         ),
 
 
     %% wait for message from collector that all rows are collected and written
     receive
            finished ->
                ok
-    after maps:get(timeout,ConfigMap) ->
+    after maps:get(timeout, ConfigMap) ->
                io:format("~ncollectRows Timeout~n"),
                timeout
     end,
@@ -253,11 +297,13 @@ addRowsToPngUsingPool(FractalAlg, ThisPng, XList, YList, ConfigMap) ->
     ok.
 
 %%%%%%%%%%
-%% collectRows collects rows of fractal data (messaged from workerpool) and writes to png
+%% collectRows collects rows of fractal data (messaged from workerpool)
+%%   and writes to png
 %%      collectRows messgages it's calling program when finished
 %% Parameters:
 %%    Calling Pid - calling programs pid so collectRows can message when done
-%%    NextRowId   - messages may arrive out of order so only write png when 'next' row arrives
+%%    NextRowId   - messages may arrive out of order
+%%                   so only write png when 'next' row arrives
 %%    Height      - done when this many rows are written
 %%
 %%    ThisPng     - png to be written to
@@ -268,10 +314,11 @@ collectRows(CallingPid, NextRowId, Height, _ThisPng)
     CallingPid ! finished;
 collectRows(CallingPid, NextRowId, Height, ThisPng) ->
     receive
-        { {NextRowId,_ImgY}, RowOfFractalData } ->   %% match when next row is to be written
-                                        %%   (otherwise leave messages in queue until their turn)
+        %% match when next row is to be written
+        %%   (otherwise leave messages in queue until their turn)
+        { {NextRowId,_ImgY}, RowOfFractalData } ->
            %% strip out just the data
-           ThisRowDataOnly = [ C || {_P,_I,C} <- RowOfFractalData ],
+           ThisRowDataOnly = [ C || {_P,_I, C} <- RowOfFractalData ],
            %% write data to png
            imagelib:addRow( ThisRowDataOnly, ThisPng ),
 
@@ -283,7 +330,8 @@ collectRows(CallingPid, NextRowId, Height, ThisPng) ->
 %% createFractalWorkers assigns fractal data creation to worker_pool
 %% parameters:
 %%            CollectorPid - process to message data to
-%%            FractalAlg   - which alg to use to compute fractal data (eg julian, mandelbrot, ...)
+%%            FractalAlg   - which alg to use to compute fractal data
+%%                             (eg julian, mandelbrot, ...)
 %%            XList        - list of x values
 %%            YList        - list of y values
 %%            ConfigMap    - all the config data
@@ -296,12 +344,18 @@ createFractalWorkers(CollectorPid, FractalAlg, XList, YList, ConfigMap) ->
     % for each rowi (value in YList), kick off a worker to compute data
     %%    cast used, output returned via a message to CollectorPid
     %%    pop a y value to define this row, then recurse thru rest of list
-    [ {PixelY,ImgY} | NewYList ] = YList,
-    wpool:cast(fractal_pool,{?MODULE,fractalWorker,[CollectorPid, FractalAlg, XList, {PixelY,ImgY}, ConfigMap]}),
+    [ {PixelY, ImgY} | NewYList ] = YList,
+    wpool:cast( fractal_pool
+              , { ?MODULE
+                , fractalWorker
+                ,[CollectorPid, FractalAlg, XList, {PixelY, ImgY}, ConfigMap]
+                }
+              ),
     createFractalWorkers(CollectorPid, FractalAlg, XList, NewYList, ConfigMap).
 
 %%%%%%%%%%
-%% fractalWorker is run by worker_pool to calculate one row of data and message it to collector
+%% fractalWorker is run by worker_pool to calculate one row of data
+%%          and message it to collector
 %%   parameters:
 %%              CollectorPid
 %%              FractalAlg
@@ -310,8 +364,13 @@ createFractalWorkers(CollectorPid, FractalAlg, XList, YList, ConfigMap) ->
 %%              YR
 %%              ConfigMap
 %%%%%%%%%%
-fractalWorker(CollectorPid, FractalAlg, XList, {PixelY,ImgY}, ConfigMap) ->
+fractalWorker(CollectorPid, FractalAlg, XList, {PixelY, ImgY}, ConfigMap) ->
      %% calculate a row of fractal data
-     Row = computeRowOfFractalData(FractalAlg, {PixelY,ImgY}, XList, ConfigMap),
-     %% message data to collector (note the Y value, ie row id, is first field in Row)
+     Row = computeRowOfFractalData( FractalAlg
+                                  , {PixelY, ImgY}
+                                  , XList
+                                  , ConfigMap
+                                  ),
+     %% message data to collector
+     %%   (note the Y value, ie row id, is first field in Row)
      CollectorPid ! Row.
