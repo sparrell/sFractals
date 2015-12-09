@@ -172,7 +172,8 @@ computeFractalData( Rows, RowData,       % row data computed so far
 %%%%%%%%
 %% computeFractalDataIntoFile/1 API
 %%        ConfigMap    - config info
-%%        creates file with list of rows (where each row is list of counts, 1 per pixel)
+%%        creates file with list of rows
+%%              (where each row is list of counts, 1 per pixel)
 %%                     suitable to be read with file:consult
 %%%%%%%%
 computeFractalDataIntoFile(ConfigMap) ->
@@ -181,13 +182,16 @@ computeFractalDataIntoFile(ConfigMap) ->
     %% create height rows of width columns of pixels
     Width           = maps:get(width, ConfigMap),
     Height          = maps:get(height, ConfigMap),
-    %% each pixel has a corresonding complex number defined by corners of the box
+    %% each pixel has a corresonding complex number defined by corners
+    %%   of the box
     XRealRight      = maps:get(xRealRight, ConfigMap),
     XRealLeft       = maps:get(xRealLeft, ConfigMap),
     YImaginaryLow   = maps:get(yImaginaryLow, ConfigMap),
     YImaginaryHigh  = maps:get(yImaginaryHigh, ConfigMap),
-    %% box is bounded on left by x > XRealLeft and bounded on right by x < XRealRight
-    %% box is bounded on top by y > YImaginaryHigh and bounded on bottom by y > YImaginaryLow
+    %% box is bounded on left by x > XRealLeft and
+    %%     bounded on right by x < XRealRight
+    %% box is bounded on top by y > YImaginaryHigh
+    %%     and bounded on bottom by y > YImaginaryLow
     %% box is width pixels wide and height pixels high
 
     %% step is floating range divided by number of pixels
@@ -202,11 +206,13 @@ computeFractalDataIntoFile(ConfigMap) ->
     computeFractalDataIntoFile( DataFile,       % file where data is written
                         [],             % ThisRow starts empty
                         Width,          % XPix starts width and decrements to 1
-                        XRealRight,     %% XR starts at right and decrements to by deltaX
+                        XRealRight,     % XR starts at righti
+                                        %  and decrements to by deltaX
                         DeltaX,
                         Width,          % width
                         Height,         % YPix starts height and decrements to 1
-                        YImaginaryHigh, % YI starts at top and decrements by delta y
+                        YImaginaryHigh, % YI starts at top
+                                        %  and decrements by delta y
                         DeltaY,
                         Height,         % height
                         ConfigMap).    % map of parameters
