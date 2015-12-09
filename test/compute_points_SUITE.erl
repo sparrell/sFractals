@@ -16,12 +16,12 @@
 %% tests to run
 all() ->
     [
-      testNewImaginaryC
-    , testNewRealC
-    , testNewImaginaryZ
-    , testNewRealZ
-    , testExceedIter
-    , testExceedBound
+      test_new_imaginary_c
+    , test_new_real_c
+    , test_new_imaginary_z
+    , test_new_real_z
+    , test_exceed_iter
+    , test_exceed_bound
       ].
 
 %% timeout if no reply in a minute
@@ -48,32 +48,70 @@ getCZconfig(Config) ->
       ?config(zReal, Config),
       ?config(zImaginary, Config) }.
 
-testNewRealC(Config) ->
+test_new_real_c(Config) ->
     {FractalAlg, CReal, CImaginary, ZReal, ZImaginary } = getCZconfig(Config),
-    0.5  = compute_points:new_real_c({FractalAlg,CReal,CImaginary, ZReal,ZImaginary}),
-    -2.0 = compute_points:new_real_c({FractalAlg,-2.0, CImaginary, ZReal,ZImaginary}),
-    0.0  = compute_points:new_real_c({FractalAlg,0.0, CImaginary, ZReal,ZImaginary}),
+    0.5  = compute_points:new_real_c({ FractalAlg
+                                     , CReal
+                                     , CImaginary
+                                     , ZReal
+                                     , ZImaginary
+                                     }),
+    -2.0 = compute_points:new_real_c({ FractalAlg
+                                     , -2.0
+                                     , CImaginary
+                                     , ZReal
+                                     , ZImaginary
+                                     }),
+    0.0  = compute_points:new_real_c({ FractalAlg
+                                     , 0.0
+                                     , CImaginary
+                                     , ZReal
+                                     , ZImaginary
+                                     }),
     ok.
 
-testNewImaginaryC(Config) ->
+test_new_imaginary_c(Config) ->
     {FractalAlg, CReal, CImaginary, ZReal, ZImaginary } = getCZconfig(Config),
-    0.6 = compute_points:new_imaginary_c({FractalAlg,CReal,CImaginary, ZReal,ZImaginary}),
-    -2.0 = compute_points:new_imaginary_c({FractalAlg,CReal,-2.0, ZReal,ZImaginary}),
-    0.0 = compute_points:new_imaginary_c({FractalAlg,CReal,0.0, ZReal,ZImaginary}),
+    0.6 = compute_points:new_imaginary_c({ FractalAlg
+                                         , CReal
+                                         , CImaginary
+                                         , ZReal
+                                         , ZImaginary
+                                         }),
+    -2.0 = compute_points:new_imaginary_c({ FractalAlg
+                                          , CReal
+                                          , -2.0
+                                          , ZReal
+                                          , ZImaginary
+                                          }),
+    0.0 = compute_points:new_imaginary_c({ FractalAlg
+                                         , CReal
+                                         , 0.0
+                                         , ZReal
+                                         , ZImaginary
+                                         }),
     ok.
 
-testNewImaginaryZ(Config) ->
+test_new_imaginary_z(Config) ->
     {FractalAlg, CReal, CImaginary, ZReal, ZImaginary } = getCZconfig(Config),
     %round rather than deal with floating point arith precision issues
-    1.72 = round(1000*compute_points:new_imaginary_z({FractalAlg,CReal,CImaginary, ZReal,ZImaginary}))/1000,
+    1.72 = round(1000*compute_points:new_imaginary_z({ FractalAlg
+                                                     , CReal
+                                                     , CImaginary
+                                                     , ZReal
+                                                     , ZImaginary}))/1000,
     ok.
 
-testNewRealZ(Config) ->
+test_new_real_z(Config) ->
     {FractalAlg, CReal, CImaginary, ZReal, ZImaginary } = getCZconfig(Config),
-    0.35 = round(1000*compute_points:new_real_z({FractalAlg,CReal,CImaginary, ZReal,ZImaginary}))/1000,
+    0.35 = round(1000*compute_points:new_real_z({ FractalAlg
+                                                , CReal
+                                                , CImaginary
+                                                , ZReal
+                                                , ZImaginary}))/1000,
     ok.
 
-testExceedIter(Config) ->
+test_exceed_iter(Config) ->
     {FractalAlg, CReal, CImaginary, ZReal, ZImaginary } = getCZconfig(Config),
     IterCount =  ?config(iterCount, Config),
     MaxIterationThreshold = ?config(maxIterationThreshold, Config),
@@ -99,7 +137,7 @@ testExceedIter(Config) ->
                                               ),
     ok.
 
-testExceedBound(Config) ->
+test_exceed_bound(Config) ->
     {FractalAlg, CReal, CImaginary, ZReal, ZImaginary } = getCZconfig(Config),
     IterCount =  ?config(iterCount, Config),
     MaxIterationThreshold = ?config(maxIterationThreshold, Config),

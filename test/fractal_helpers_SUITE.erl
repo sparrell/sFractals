@@ -16,19 +16,13 @@
 %% tests to run
 all() ->
     [
-      testNewImaginaryC,
-      testNewRealC,
-      testNewImaginaryZ,
-      testNewRealZ,
-     testExceedIter,
-      testExceedBound,
-     testXList,
-      testYList,
-      testComputeRowOfFractalData,
-      testComputeFractalData,
-      testMakePng,
-      testMakePngUsingPool
-      ].
+      testXList
+    , testYList
+    , testComputeRowOfFractalData
+    , testComputeFractalData
+    , testMakePng
+    , testMakePngUsingPool
+    ].
 
 %% timeout if no reply in a minute
 suite() ->
@@ -53,79 +47,6 @@ getCZconfig(Config) ->
       ?config(cImaginary, Config),
       ?config(zReal, Config),
       ?config(zImaginary, Config) }.
-
-testNewRealC(Config) ->
-    {FractalAlg, CReal, CImaginary, ZReal, ZImaginary } = getCZconfig(Config),
-    0.5  = fractalHelpers:newRealC({FractalAlg,CReal,CImaginary, ZReal,ZImaginary}),
-    -2.0 = fractalHelpers:newRealC({FractalAlg,-2.0, CImaginary, ZReal,ZImaginary}),
-    0.0  = fractalHelpers:newRealC({FractalAlg,0.0, CImaginary, ZReal,ZImaginary}),
-    ok.
-
-testNewImaginaryC(Config) ->
-    {FractalAlg, CReal, CImaginary, ZReal, ZImaginary } = getCZconfig(Config),
-    0.6 = fractalHelpers:newImaginaryC({FractalAlg,CReal,CImaginary, ZReal,ZImaginary}),
-    -2.0 = fractalHelpers:newImaginaryC({FractalAlg,CReal,-2.0, ZReal,ZImaginary}),
-    0.0 = fractalHelpers:newImaginaryC({FractalAlg,CReal,0.0, ZReal,ZImaginary}),
-    ok.
-
-testNewImaginaryZ(Config) ->
-    {FractalAlg, CReal, CImaginary, ZReal, ZImaginary } = getCZconfig(Config),
-    %round rather than deal with floating point arith precision issues
-    1.72 = round(1000*fractalHelpers:newImaginaryZ({FractalAlg,CReal,CImaginary, ZReal,ZImaginary}))/1000,
-    ok.
-
-testNewRealZ(Config) ->
-    {FractalAlg, CReal, CImaginary, ZReal, ZImaginary } = getCZconfig(Config),
-    0.35 = round(1000*fractalHelpers:newRealZ({FractalAlg,CReal,CImaginary, ZReal,ZImaginary}))/1000,
-    ok.
-
-testExceedIter(Config) ->
-    {FractalAlg, CReal, CImaginary, ZReal, ZImaginary } = getCZconfig(Config),
-    IterCount =  ?config(iterCount, Config),
-    MaxIterationThreshold = ?config(maxIterationThreshold, Config),
-    BailoutThreshold = ?config(bailoutThreshold, Config),
-    10 = fractalHelpers:computeIterationValue( FractalAlg,
-                                               CReal,
-                                               CImaginary,
-                                               ZReal,
-                                               ZImaginary,
-                                               11,             %note IterCountis > Max
-                                               MaxIterationThreshold,
-                                               BailoutThreshold ),
-    % now test can go thru an iteration or two without exceeding
-    3 = fractalHelpers:computeIterationValue( FractalAlg,
-                                               CReal,
-                                               CImaginary,
-                                               ZReal,
-                                               ZImaginary,
-                                               IterCount,
-                                               MaxIterationThreshold,
-                                               BailoutThreshold ),
-    ok.
-
-testExceedBound(Config) ->
-    {FractalAlg, CReal, CImaginary, ZReal, ZImaginary } = getCZconfig(Config),
-    IterCount =  ?config(iterCount, Config),
-    MaxIterationThreshold = ?config(maxIterationThreshold, Config),
-    BailoutThreshold = ?config(bailoutThreshold, Config),
-    1 = fractalHelpers:computeIterationValue( FractalAlg,
-                                               CReal,
-                                               CImaginary,
-                                               100,                 %exceed bailout
-                                               ZImaginary,
-                                               IterCount,           %start at 1
-                                               MaxIterationThreshold,
-                                               BailoutThreshold ),
-    % now test can go thru wo exceeding (although will eventually)
-    3 = fractalHelpers:computeIterationValue( FractalAlg,
-                                               CReal,
-                                               CImaginary,
-                                               ZReal,
-                                               ZImaginary,
-                                               IterCount,
-                                               MaxIterationThreshold,
-                                               BailoutThreshold ),
-    ok.
 
 testXList(_Config) ->
     %% test XList created OK

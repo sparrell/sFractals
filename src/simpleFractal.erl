@@ -143,7 +143,7 @@ computeFractalData( Rows, RowData,       % row data computed so far
         when XPix > 0, YPix > 0 ->
 
     %% get iteration count for this point
-    NewPoint = fractalHelpers:computeIterationValue( maps:get(fractalAlg,ConfigMap),
+    NewPoint = compute_points:compute_iteration_value( maps:get(fractalAlg,ConfigMap),
                                       maps:get(cReal,ConfigMap),
                                       maps:get(cImaginary,ConfigMap),
                                       XR,
@@ -258,7 +258,7 @@ computeFractalDataIntoFile( DataFile, RowData,       % row data computed so far
         when XPix > 0, YPix > 0 ->
 
     %% get iteration count for this point
-    NewPoint = fractalHelpers:computeIterationValue( maps:get(fractalAlg,ConfigMap),
+    NewPoint = compute_points:compute_iteration_value( maps:get(fractalAlg,ConfigMap),
                                       maps:get(cReal,ConfigMap),
                                       maps:get(cImaginary,ConfigMap),
                                       XR,
@@ -381,7 +381,7 @@ computeFractalDataIntoFile2( RowData,       % row data computed so far
         when XPix > 0, YPix > 0 ->
 
     %% get iteration count for this point
-    NewPoint = fractalHelpers:computeIterationValue( maps:get(fractalAlg,ConfigMap),
+    NewPoint = compute_points:compute_iteration_value( maps:get(fractalAlg,ConfigMap),
                                       maps:get(cReal,ConfigMap),
                                       maps:get(cImaginary,ConfigMap),
                                       XR,

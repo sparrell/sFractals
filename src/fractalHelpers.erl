@@ -20,9 +20,7 @@
           ]).
 
 %% expose functions for test
--export([ computeXList/1,computeYList/1,
-          newImaginaryC/1,newRealC/1,newImaginaryZ/1,newRealZ/1,
-          computeIterationValue/8 
+-export([ computeXList/1,computeYList/1
           ]).
  
 %%%%%%%%
@@ -111,7 +109,7 @@ computeRowOfFractalData(FractalAlg, {PixelY,ImgY}, XList, RowOfFractalData, Conf
     %% otherwise pop off one x value, compute data, insert answer in RowOfFractalData, and recurse
     [ {PixelX, RealX} | NewXList ] = XList,   % pop off first x value, remainder is used for next iteration
     %% compute fractal value for x,y
-    IterCount = computeIterationValue(FractalAlg,
+    IterCount = compute_points:compute_iteration_value(FractalAlg,
                                       maps:get(cReal,ConfigMap), %since julian, C remains constant
                                       maps:get(cImaginary,ConfigMap), %since julian, C remains constant
                                       RealX,                          %ZReal since julian
@@ -317,77 +315,3 @@ fractalWorker(CollectorPid, FractalAlg, XList, {PixelY,ImgY}, ConfigMap) ->
      Row = computeRowOfFractalData(FractalAlg, {PixelY,ImgY}, XList, ConfigMap),
      %% message data to collector (note the Y value, ie row id, is first field in Row)
      CollectorPid ! Row.
-
-%%%%%%%%%%
-%% computeIterationValue computes fractal value and returns iteration count
-%%%%%%%%%%
-computeIterationValue(_FractalAlg,
-                      _CReal, 
-                      _CImaginary, 
-                      _ZReal,
-                      _ZImaginary, 
-                      IterCount,                     %for this clause only need IterCount and Max
-                      MaxIterationThreshold, 
-                      _BailoutThreshold )
-        when IterCount >= MaxIterationThreshold ->   % reached iteration limit so return count=limit
-    MaxIterationThreshold;
-
-%% function clause for exceeding bound
-computeIterationValue(_FractalALg,
-                      _CReal,
-                      _CImaginary, 
-                      ZReal,
-                      ZImaginary, 
-                      IterCount, 
-                      _MaxIterationThreshold, 
-                      BailoutThreshold ) 
-        when ((ZReal*ZReal)+(ZImaginary*ZImaginary)) > BailoutThreshold -> 
-    %bailout exceeded so return iterCount
-    IterCount;
-
-%% function clause for recursing further
-computeIterationValue(FractalAlg,
-                      CReal,
-                      CImaginary, 
-                      ZReal,
-                      ZImaginary, 
-                      IterCount, 
-                      MaxIterationThreshold, 
-                      BailoutThreshold ) ->
-
-    % compute new Z and C based on fractal algorithm used
-    ZCParams      = {FractalAlg,CReal,CImaginary, ZReal,ZImaginary},
-    NewZReal      = newRealZ(ZCParams),
-    NewZImaginary = newImaginaryZ(ZCParams),
-    NewCReal      = newRealC(ZCParams),
-    NewCImaginary = newImaginaryC(ZCParams),
-
-    computeIterationValue(FractalAlg,
-                          NewCReal,
-                          NewCImaginary, 
-                          NewZReal, 
-                          NewZImaginary, 
-                          IterCount+1, 
-                          MaxIterationThreshold, 
-                          BailoutThreshold ).
-
-% function for creating new real value for Julian algorithm
-newRealZ({FractalAlg,CReal,_CImaginary, ZReal,ZImaginary}) 
-        when FractalAlg == julian ->
-    (ZReal*ZReal) - (ZImaginary*ZImaginary) + CReal.
-
-% function for creating new imaginary value for Julian algorithm
-newImaginaryZ({FractalAlg,_CReal,CImaginary, ZReal,ZImaginary}) 
-        when FractalAlg == julian ->
-    (2 * ZReal * ZImaginary) + CImaginary.
-
-% function for creating new real value for Julian Algorithm (ie remains unchanged)
-newRealC({FractalAlg,CReal,_CImaginary, _ZReal,_ZImaginary}) 
-        when FractalAlg == julian ->
-    CReal.
-
-% function for creating new imaginary value for Julian Algorithm (ie remains unchanged)
-newImaginaryC({FractalAlg,_CReal,CImaginary, _ZReal,_ZImaginary}) 
-        when FractalAlg == julian ->
-    CImaginary.
-
