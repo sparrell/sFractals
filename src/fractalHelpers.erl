@@ -274,7 +274,7 @@ addRowsToPngUsingPool(FractalAlg, ThisPng, XList, YList, ConfigMap) ->
                           , 1
                           , maps:get(height, ConfigMap)
                           , ThisPng
-                          ] 
+                          ]
                         ),
 
     %% spawn a process to use one worker per row to calculate fractal data

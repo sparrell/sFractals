@@ -6,8 +6,8 @@
 
 -module(compute_fractal_data).
 -author("Duncan Sparrell").
-%% try to make simple fractal data 
-%% and then turn into color data 
+%% try to make simple fractal data
+%% and then turn into color data
 %% and then make image
 
 %% public API
@@ -73,7 +73,7 @@ compute_fractal_data(ConfigMap) ->
     YImaginaryHigh  = maps:get(yImaginaryHigh, ConfigMap),
     %% box is bounded on left by x > XRealLeft
     %%      and bounded on right by x < XRealRight
-    %% box is bounded on top by y > YImaginaryHigh 
+    %% box is bounded on top by y > YImaginaryHigh
     %%      and bounded on bottom by y > YImaginaryLow
     %% box is width pixels wide and height pixels high
 
@@ -101,9 +101,9 @@ compute_fractal_data(ConfigMap) ->
 
 %%%%%%%%
 %% compute_fractal_data/11 API
-%%        Rows         - a list of the rows(lines) of data, starts empty 
+%%        Rows         - a list of the rows(lines) of data, starts empty
 %%                         and builds until height reached, built top down
-%%        ThisRow      - a list of the points(count value) in a row/line, 
+%%        ThisRow      - a list of the points(count value) in a row/line,
 %%                         starts empty and builds R->L until width reached
 %%        XPix         - the integer X value of the pixel
 %%        XR           - the real component of the floating point number
@@ -196,7 +196,7 @@ compute_fractal_data_file(ConfigMap) ->
     XRealLeft       = maps:get(xRealLeft, ConfigMap),
     YImaginaryLow   = maps:get(yImaginaryLow, ConfigMap),
     YImaginaryHigh  = maps:get(yImaginaryHigh, ConfigMap),
-    %% box is bounded on left by x > XRealLeft 
+    %% box is bounded on left by x > XRealLeft
     %%   and bounded on right by x < XRealRight
     %% box is bounded on top by y > YImaginaryHigh
     %%   and bounded on bottom by y > YImaginaryLow
