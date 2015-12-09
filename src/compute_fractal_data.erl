@@ -100,7 +100,8 @@ compute_fractal_data(ConfigMap) ->
 %%        DeltaX       - for each pixel, XR increases by this amount
 %%        Width        - width of fractal in pixels
 %%        YPix         - the integer Y value of the pixel
-%%        YI           - the imaginary component of the floating point number for computing fractal for this YPix
+%%        YI           - the imaginary component of the floating point number
+%%                         for computing fractal for this YPix
 %%        DeltaY       - for each pixel, YI increases by this amount
 %%        Height       - height(intger) of image = number of rows
 %%        ConfigMap    - config info
@@ -390,7 +391,7 @@ compute_fractal_data_file2( RowData,       % row data computed so far
                                       maps:get(maxIterationThreshold, ConfigMap),
                                       maps:get(bailoutThreshold, ConfigMap)
                                       ),
- 
+
     NewRowData = [ NewPoint | RowData ],
     NewXPix    = XPix - 1,                           % decrement moving left building row
     NewXR      = XR - DeltaX,                        % decrease XR to the left
