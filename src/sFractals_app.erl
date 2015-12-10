@@ -45,8 +45,14 @@ start_webserver() ->
                {
                  '_'  %virtual hostname (any host name)
                , [ {"/status", status_handler, []}
+                 , {"/static_assets/[...]"
+                   , cowboy_static, { priv_dir
+                                    , sFractals
+                                    , "static/assets"
+                                    } 
+                   }
                  , {"/", cowboy_static, IndexPage}
-                 , {<<"/[...]">>, cowboy_static, StaticPages }
+                 , {"/sFractal", fractal_handler, [] }
                  ]
                }
              ],
