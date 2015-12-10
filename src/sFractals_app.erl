@@ -40,10 +40,12 @@ start_webserver() ->
     StaticPages = [ { directory, {priv_dir,sFractals,[]} }
                   , {mimetypes, [{<<".html">>, [<<"text/html">>]}]}
                   ],
+    IndexPage = {priv_file, sFractals, "index.html"},
     Routes = [
                {
                  '_'  %virtual hostname (any host name)
                , [ {<<"/status">>, status_handler, []}
+                 , {"/", cowboy_static, IndexPage}
                  , {<<"/[...]">>, cowboy_static, StaticPages }
                  ]
                }
