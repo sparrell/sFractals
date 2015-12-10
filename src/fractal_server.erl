@@ -27,10 +27,11 @@ terminate(Reason, State) ->
 
 -spec handle_call(Request::term(), From::{pid(), term()}, State::state()) ->
         {reply, Reply::term(), NewState::state()}.
-handle_call(makeFractal, From, State) ->
+handle_call({makeFractalPng,ConfigMap}, From, State) ->
     lager:debug("got a makeFractal call from ~p", [From]),
-    Reply = figureThisOutLater,
+    DataBox = compute_fractal_data:compute_fractal_data(ConfigMap),
     NewState = State,
+    Reply = DataBox,
     {reply, Reply, NewState};
 handle_call(Request, _From, State) ->
     Reply = figureThisOutLater,
