@@ -44,7 +44,7 @@ start_webserver() ->
     Routes = [
                {
                  '_'  %virtual hostname (any host name)
-               , [ {<<"/status">>, status_handler, []}
+               , [ {"/status", status_handler, []}
                  , {"/", cowboy_static, IndexPage}
                  , {<<"/[...]">>, cowboy_static, StaticPages }
                  ]
