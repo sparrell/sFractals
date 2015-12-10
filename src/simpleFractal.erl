@@ -1,4 +1,6 @@
 %%%-------------------------------------------------------------------
+%%% module being deprecated - still needs to be cleaned up
+%%%-------------------------------------------------------------------
 %%% @author Duncan Sparrell
 %%% @copyright (C) 2015, sFractal Consulting LLC
 %%%
@@ -100,14 +102,19 @@ computeFractalData(ConfigMap) ->
 
 %%%%%%%%
 %% computeFractalData/11 API
-%%        Rows         - a list of the rows(lines) of data, starts empty and builds until height reached, built top down
-%%        ThisRow      - a list of the points(count value) in a row/line, starts empty and builds R->L until width reached
+%%        Rows         - a list of the rows(lines) of data,
+%%                       starts empty and builds until height reached,
+%%                       built top down
+%%        ThisRow      - a list of the points(count value) in a row/line,
+%%                       starts empty and builds R->L until width reached
 %%        XPix         - the integer X value of the pixel
-%%        XR           - the real component of the floating point number for computing fractal for this XPix
+%%        XR           - the real component of the floating point number
+%%                       for computing fractal for this XPix
 %%        DeltaX       - for each pixel, XR increases by this amount
 %%        Width        - width of fractal in pixels
 %%        YPix         - the integer Y value of the pixel
-%%        YI           - the imaginary component of the floating point number for computing fractal for this YPix
+%%        YI           - the imaginary component of the floating point number
+%%                       for computing fractal for this YPix
 %%        DeltaY       - for each pixel, YI increases by this amount
 %%        Height       - height(intger) of image = number of rows
 %%        ConfigMap    - config info
@@ -133,11 +140,11 @@ computeFractalData( Rows, ThisRow,        % row data computed so far
     NewRows = [ ThisRow | Rows ],
 
     % reset to begining of next row
-    NewRowData = [],                                 % reset data for row to empty
-    NewXPix    = Width,                              % reset to end of line
-    NewXR      = maps:get(xRealRight, ConfigMap),     % reset to end of line
-    NewYPix    = YPix - 1,                           % increment row
-    NewYI      = YI - DeltaY,                          % increment row
+    NewRowData = [],                              % reset data for row to empty
+    NewXPix    = Width,                           % reset to end of line
+    NewXR      = maps:get(xRealRight, ConfigMap), % reset to end of line
+    NewYPix    = YPix - 1,                        % increment row
+    NewYI      = YI - DeltaY,                     % increment row
     computeFractalData( NewRows, NewRowData,
                    NewXPix, NewXR, DeltaX, Width,
                    NewYPix, NewYI, DeltaY, Height,
@@ -150,19 +157,20 @@ computeFractalData( Rows, RowData,       % row data computed so far
         when XPix > 0, YPix > 0 ->
 
     %% get iteration count for this point
-    NewPoint = compute_points:compute_iteration_value( maps:get(fractalAlg, ConfigMap),
-                                      maps:get(cReal, ConfigMap),
-                                      maps:get(cImaginary, ConfigMap),
-                                      XR,
-                                      YI,
-                                      0,          %iteration count starts at zero
-                                      maps:get(maxIterationThreshold, ConfigMap),
-                                      maps:get(bailoutThreshold, ConfigMap)
-                                      ),
+    NewPoint = compute_points:compute_iteration_value(
+                                   maps:get(fractalAlg, ConfigMap)
+                                 , maps:get(cReal, ConfigMap)
+                                 , maps:get(cImaginary, ConfigMap)
+                                 , XR
+                                 , YI
+                                 , 0          %iteration count starts at zero
+                                 , maps:get(maxIterationThreshold, ConfigMap)
+                                 , maps:get(bailoutThreshold, ConfigMap)
+                                 ),
 
     NewRowData = [ NewPoint | RowData ],
-    NewXPix    = XPix - 1,                           % decrement moving left building row
-    NewXR      = XR - DeltaX,                        % decrease XR to the left
+    NewXPix    = XPix - 1,    % decrement moving left building row
+    NewXR      = XR - DeltaX, % decrease XR to the left
     computeFractalData( Rows, NewRowData,
                    NewXPix, NewXR, DeltaX, Width,
                    YPix, YI, DeltaY, Height,
@@ -247,21 +255,21 @@ computeFractalDataIntoFile( DataFile, _ThisRow,
     file:close(DataFile);
 
 % clause when row is complete  but height not reached - process row and recurse
-computeFractalDataIntoFile( DataFile, ThisRow,        % row data computed so far
+computeFractalDataIntoFile( DataFile, ThisRow,    % row data computed so far
                XPix, _XR, DeltaX, Width,  % info for points in a row
                YPix, YI, DeltaY, Height,  % info for rows
                ConfigMap)
         when XPix =< 0, YPix >= 0 ->
 
     % add row to file
-    io:format(DataFile,"~w.~n",[ThisRow]),
+    io:format(DataFile, "~w.~n", [ThisRow]),
 
     % reset to begining of next row
-    NewRowData = [],                             % reset data for row to empty
-    NewXPix    = Width,                          % reset to end of line
-    NewXR      = maps:get(xRealRight, ConfigMap),% reset to end of line
-    NewYPix    = YPix - 1,                       % increment row
-    NewYI      = YI - DeltaY,                    % increment row
+    NewRowData = [],                              % reset data for row to empty
+    NewXPix    = Width,                           % reset to end of line
+    NewXR      = maps:get(xRealRight, ConfigMap), % reset to end of line
+    NewYPix    = YPix - 1,                        % increment row
+    NewYI      = YI - DeltaY,                     % increment row
     computeFractalDataIntoFile( DataFile, NewRowData,
                    NewXPix, NewXR, DeltaX, Width,
                    NewYPix, NewYI, DeltaY, Height,
@@ -369,13 +377,13 @@ computeFractalDataIntoFile2(  _ThisRow,
 
     %% pixels all made already, therefore work is finished so close file and end
     %% more work needed here to actually write file. for now just show status
-    io:format('finishing computeFractalDataIntoFile2 - more work needed~n'),
+    lager:debug('finishing computeFractalDataIntoFile2 - more work needed~n'),
     dataFileSvr:rowStatus(),
     dataFileSvr:writeDataFile(),
     % temp fix until message when complete
     timer:sleep(3000),
     dataFileSvr:rowStatus(),
-    io:format('still more work needed~n'),
+    lager:debug('still more work needed~n'),
     ok;
 
 % clause when row is complete  but height not reached - process row and recurse

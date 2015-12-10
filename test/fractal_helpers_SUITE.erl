@@ -106,7 +106,7 @@ testComputeRowOfFractalData(_Config) ->
                               {4,1.25,2},
                               {5,1.4,1}]},
     XList = fractalHelpers:computeXList(ConfigMap),
-    ExpectedResult = fractalHelpers:computeRowOfFractalData(julian, {3,0},XList,ConfigMap),
+    ExpectedResult = fractalHelpers:compute_row(julian, {3,0},XList,ConfigMap),
     ok.
 
 testComputeFractalData(_Config) ->
@@ -156,7 +156,7 @@ testComputeFractalData(_Config) ->
                     {3,1.1,2},
                     {4,1.25,1},
                     {5,1.4,1}]}],
-    ExpectedResult = fractalHelpers:computeAllRowsOfFractalData(ConfigMap),
+    ExpectedResult = fractalHelpers:compute_rows(ConfigMap),
     ok.
 
 testMakePng(_Config) ->
