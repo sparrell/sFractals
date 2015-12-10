@@ -31,7 +31,6 @@ handle_call({makeFractalPng,ConfigMap}, From, State) ->
     lager:debug("got a makeFractal call from ~p", [From]),
     DataBox = compute_fractal_data:compute_fractal_data(ConfigMap),
     NewState = State,
-    %%Reply = makeFractalCallfigureThisOutLater,
     Reply = DataBox,
     {reply, Reply, NewState};
 handle_call(Request, _From, State) ->
