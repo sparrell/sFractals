@@ -4,7 +4,7 @@
 %%% 
 %%%-------------------------------------------------------------------
 
--module(dataFileSvr).
+-module(data_file_svr).
 -author("Duncan Sparrell").
 %% server for gathering fractal data and storing it in file
 %% later maybe retrieving (and caching) it
