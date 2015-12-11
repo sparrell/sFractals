@@ -381,14 +381,14 @@ compute_fractal_data_file2(  _ThisRow,
 
     %% pixels all made already, therefore work is finished so close file and end
     %% more work needed here to actually write file. for now just show status
-    io:format('finishing compute_fractal_data_file2 - more work needed~n'),
+    lager:debug('finishing compute_fractal_data_file2 - more work needed~n'),
     dataFileSvr:rowStatus(),
     dataFileSvr:writeDataFile(),
     % temp fix until message when complete
     timer:sleep(3000),
     dataFileSvr:rowStatus(),
-    io:format('really finishing compute_fractal_data_file2~n'),
-    io:format('still more work needed~n'),
+    lager:debug('really finishing compute_fractal_data_file2~n'),
+    lager:debug('still more work needed~n'),
     ok;
 
 % clause when row is complete  but height not reached - process row and recurse
