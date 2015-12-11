@@ -159,7 +159,7 @@ rect(Z) when Z#complex.i == 0 ->
     #complex{r=Z#complex.r, i=0};
 rect(Z) when ?ISCOMPLEX(Z) ->
     R = Z#complex.r * math:cos(Z#complex.i),
-    I = Z#complex.r * math:sin(Z#complex.i)
+    I = Z#complex.r * math:sin(Z#complex.i),
     #complex{r=R, i=I}.
 
 
@@ -168,7 +168,7 @@ rect(Z) when ?ISCOMPLEX(Z) ->
 %%
 cos(Z) when ?ISCOMPLEX(Z) ->
     R = math:cos(Z#complex.r) * math:cosh(Z#complex.i),
-    I = math:sin(Z#complex.r) * math:xos(Z#complex.i),
+    I = -math:sin(Z#complex.r) * math:sinh(Z#complex.i),
     #complex{r=R, i=I}.
 sin(Z) when ?ISCOMPLEX(Z) ->
     R = math:sin(Z#complex.r) * math:cosh(Z#complex.i),
