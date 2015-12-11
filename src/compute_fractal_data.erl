@@ -335,7 +335,7 @@ compute_fractal_data_file2(ConfigMap) ->
     DeltaY = (YImaginaryHigh - YImaginaryLow) / Height,
 
     %% start server
-    {ok, Pid} = dataFileSvr:start(ConfigMap),
+    {ok, Pid} = data_file_svr:start(ConfigMap),
 
     %% call compute_fractal_data_file2/11
     %% writing rows one at a time
@@ -381,14 +381,14 @@ compute_fractal_data_file2(  _ThisRow,
 
     %% pixels all made already, therefore work is finished so close file and end
     %% more work needed here to actually write file. for now just show status
-    io:format('finishing compute_fractal_data_file2 - more work needed~n'),
-    dataFileSvr:rowStatus(),
-    dataFileSvr:writeDataFile(),
+    lager:debug('finishing compute_fractal_data_file2 - more work needed~n'),
+    data_file_svr:rowStatus(),
+    data_file_svr:writeDataFile(),
     % temp fix until message when complete
     timer:sleep(3000),
-    dataFileSvr:rowStatus(),
-    io:format('really finishing compute_fractal_data_file2~n'),
-    io:format('still more work needed~n'),
+    data_file_svr:rowStatus(),
+    lager:debug('really finishing compute_fractal_data_file2~n'),
+    lager:debug('still more work needed~n'),
     ok;
 
 % clause when row is complete  but height not reached - process row and recurse
@@ -399,7 +399,7 @@ compute_fractal_data_file2( ThisRow,        % row data computed so far
         when XPix =< 0, YPix >= 0 ->
 
     % sent row#, row to file svr
-    dataFileSvr:addARow( {YPix, ThisRow} ),
+    data_file_svr:addARow( {YPix, ThisRow} ),
 
     % reset to begining of next row
     NewRowData = [],                              % reset data for row to empty

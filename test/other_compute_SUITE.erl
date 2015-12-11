@@ -4,7 +4,7 @@
 %%%
 %%%-------------------------------------------------------------------
 
--module(fractal_helpers_SUITE).
+-module(other_compute_SUITE).
 -author("Duncan Sparrell").
 
 %% for test
@@ -63,7 +63,12 @@ testXList(_Config) ->
        yImaginaryLow => -3.0,
        yImaginaryHigh => 3.0
        },
-    [{1,-3.0},{2,-1.5},{3,0.0},{4,1.5},{5,3.0}] = fractalHelpers:computeXList(ConfigMap),
+    [ {1, -3.0}
+    , {2, -1.5}
+    , {3, 0.0}
+    , {4, 1.5}
+    , {5, 3.0}
+    ] = other_compute:compute_xlist(ConfigMap),
     ok.
 
 testYList(_Config) ->
@@ -80,7 +85,11 @@ testYList(_Config) ->
        yImaginaryLow => -6.0,
        yImaginaryHigh => 6.0
        },
-    [{1,-6.0},{2,-3.0},{3,0.0},{4,3.0},{5,6.0}] = fractalHelpers:computeYList(ConfigMap),
+    [ {1,-6.0}
+    , {2, -3.0}
+    , {3, 0.0}
+    , {4, 3.0}
+    , {5, 6.0}] = other_compute:compute_ylist(ConfigMap),
     ok.
 
 testComputeRowOfFractalData(_Config) ->
@@ -105,8 +114,12 @@ testComputeRowOfFractalData(_Config) ->
                               {3,1.1,3},
                               {4,1.25,2},
                               {5,1.4,1}]},
-    XList = fractalHelpers:computeXList(ConfigMap),
-    ExpectedResult = fractalHelpers:computeRowOfFractalData(julian, {3,0},XList,ConfigMap),
+    XList = other_compute:compute_xlist(ConfigMap),
+    ExpectedResult = other_compute:compute_row( julian
+                                               , {3,0}
+                                               , XList
+                                               , ConfigMap
+                                               ),
     ok.
 
 testComputeFractalData(_Config) ->
@@ -156,7 +169,7 @@ testComputeFractalData(_Config) ->
                     {3,1.1,2},
                     {4,1.25,1},
                     {5,1.4,1}]}],
-    ExpectedResult = fractalHelpers:computeAllRowsOfFractalData(ConfigMap),
+    ExpectedResult = other_compute:compute_rows(ConfigMap),
     ok.
 
 testMakePng(_Config) ->
@@ -192,7 +205,7 @@ testMakePng(_Config) ->
                    66,96,130>>,
 
     %% create fractal data, make image,  and put image into a file
-    ok = fractalHelpers:makePng(ConfigMap),
+    ok = other_compute:make_png(ConfigMap),
 
     %% is png right size?
     { ok, { file_info, OutputFileSize, _reg,_rw,_t1,_t2,_t3,_,_,_,_,_,_,_} } =
@@ -237,7 +250,7 @@ testMakePngUsingPool(_Config) ->
                    66,96,130>>,
 
     %% create fractal data, make image,  and put image into a file
-    ok = fractalHelpers:makePngUsingPool(ConfigMap),
+    ok = other_compute:make_png_using_pool(ConfigMap),
 
     %% is png right size?
     { ok, { file_info, OutputFileSize, _reg,_rw,_t1,_t2,_t3,_,_,_,_,_,_,_} } =

@@ -17,9 +17,9 @@
 %%====================================================================
 
 start(_StartType, _StartArgs) ->
-    {ok, Sf_Pid} = 'sFractals_sup':start_link(),
+    {ok, SfPid} = 'sFractals_sup':start_link(),
     start_webserver(),
-    {ok, Sf_Pid}.
+    {ok, SfPid}.
 
 %%--------------------------------------------------------------------
 stop(_State) ->
@@ -37,7 +37,7 @@ start_webserver() ->
     Port = 8080,  % get this from config when clean this up
     ListenerCount = 5, % how many parralell listeners (don't need many)
     MaxConnections = 100, % how many can use at same tim
-    StaticPages = [ { directory, {priv_dir,sFractals,[]} }
+    StaticPages = [ { directory, {priv_dir, sFractals, []} }
                   , {mimetypes, [{<<".html">>, [<<"text/html">>]}]}
                   ],
     IndexPage = {priv_file, sFractals, "index.html"},
@@ -49,7 +49,7 @@ start_webserver() ->
                    , cowboy_static, { priv_dir
                                     , sFractals
                                     , "static/assets"
-                                    } 
+                                    }
                    }
                  , {"/", cowboy_static, IndexPage}
                  , {"/sFractal", fractal_handler, [] }

@@ -1,10 +1,10 @@
 %%%-------------------------------------------------------------------
 %%% @author Duncan Sparrell
 %%% @copyright (C) 2015, sFractal Consulting LLC
-%%% 
+%%%
 %%% @doc imagelib contains routines for making fractal image
 %%% @end
-%%% 
+%%%
 %%%-------------------------------------------------------------------
 
 -module(imagelib).
@@ -28,16 +28,19 @@
 
 % public api
 analyzeData(CountData) ->
-    % go thru grabbing 3rd element (the value) and count them in a dictionary. return the dict
-    lists:foldl(fun( {_,_,V}, OldDict ) -> orddict:update_counter(V,1, OldDict) end,
-         orddict:new(),
-         CountData).
+    %% go thru grabbing 3rd element (the value)
+    %%    and count them in a dictionary. return the dict
+    lists:foldl( fun( {_, _, V}, OldDict ) ->
+                       orddict:update_counter(V, 1, OldDict) end
+               , orddict:new()
+               , CountData
+               ).
 
 makePng( ConfigMap ) ->
     Width  = maps:get(width, ConfigMap),
-    Height = maps:get(height,ConfigMap),
-    PngFileName = maps:get(imageFileName,ConfigMap),
-    ColorAlg = maps:get(colorAlg,ConfigMap),
+    Height = maps:get(height, ConfigMap),
+    PngFileName = maps:get(imageFileName, ConfigMap),
+    ColorAlg = maps:get(colorAlg, ConfigMap),
 
     ColorPalette = makeColorPalette(ColorAlg),
 
@@ -106,9 +109,9 @@ append_row(#{size := {Width, _Height}} = Png, Y) ->
 %% Open the png file and return the png object
 startPng( ConfigMap ) ->
     Width  = maps:get(width, ConfigMap),
-    Height = maps:get(height,ConfigMap),
-    PngFileName = maps:get(imageFileName,ConfigMap),
-    ColorAlg = maps:get(colorAlg,ConfigMap),
+    Height = maps:get(height, ConfigMap),
+    PngFileName = maps:get(imageFileName, ConfigMap),
+    ColorAlg = maps:get(colorAlg, ConfigMap),
 
     ColorPalette = makeColorPalette(ColorAlg),
 
