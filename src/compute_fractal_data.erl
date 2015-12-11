@@ -64,7 +64,7 @@ addRows(ThisPng, [ThisRow | RestOfRows ] ) ->
 compute_fractal_data(ConfigMap) ->
     %% get config needed
     %% create height rows of width columns of pixels
-    Width           = maps:get(width, ConfigMap),
+    Width           = maps:get(<<"width">>, ConfigMap),
     Height          = maps:get(height, ConfigMap),
     %% each pixel is corresonding complex number defined by corners of the box
     XRealRight      = maps:get(xRealRight, ConfigMap),
@@ -188,7 +188,7 @@ compute_fractal_data_file(ConfigMap) ->
     %% get config needed
     DataFileName  = maps:get(dataFileName, ConfigMap),
     %% create height rows of width columns of pixels
-    Width           = maps:get(width, ConfigMap),
+    Width           = maps:get(<<"width">>, ConfigMap),
     Height          = maps:get(height, ConfigMap),
     %% each pixel has a corresonding complex number
     %%     defined by corners of the box
@@ -316,7 +316,7 @@ compute_fractal_data_file( DataFile, RowData,       % row data computed so far
 compute_fractal_data_file2(ConfigMap) ->
     %% get config needed
     %% create height rows of width columns of pixels
-    Width           = maps:get(width, ConfigMap),
+    Width           = maps:get(<<"width">>, ConfigMap),
     Height          = maps:get(height, ConfigMap),
     %% each pixel has a corresonding complex number
     %%    defined by corners of the box

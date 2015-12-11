@@ -30,7 +30,7 @@ makePng(_Config) ->
     %% need to do
 
     ConfigMap = #{ imageFileName => "firstPng.png", %image file created
-                  width => 150, 
+                  <<"width">> => 150, 
                   height => 100,
                   colorAlg => simplest 
                 },
@@ -43,7 +43,7 @@ testMakePng(_Config) ->
     TestFileName = "secondPng.png",
     TestFileSize = 189,
     ConfigMap = #{ imageFileName => TestFileName, %image file created
-                  width => 120, 
+                  <<"width">> => 120, 
                   height => 100,
                   colorAlg => simplest 
                 },
@@ -111,7 +111,7 @@ makeImages( [ {ColorAlg,FileName,PaletteSize} | RestOfConfig ] ) ->
     Width = PaletteSize * 10,
     
     ConfigMap = #{ imageFileName => FileName, 
-                  width => Width, 
+                  <<"width">> => Width, 
                   height => 100,
                   colorAlg => ColorAlg
                 },

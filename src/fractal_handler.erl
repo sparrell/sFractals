@@ -36,7 +36,7 @@ handle_json(Req, State) ->
     lager:debug("JsonConfigMap: ~p", [JsonConfigMap] ),
     Rows = compute_fractal_data:compute_fractal_data( JsonConfigMap ),
     lager:debug("Rows: ~p", [Rows] ),
-    simpleFractal:makePngFromData(Rows,ConfigMap),
+    simpleFractal:makePngFromData(Rows,JsonConfigMap),
     lager:debug("Image Created"),
     { true, Req1, State}.
 

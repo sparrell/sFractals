@@ -161,7 +161,7 @@ compute_row( FractalAlg
 %%        where each dot (x, y) fractal value is computed
 compute_xlist(ConfigMap) ->
      %% get parameters
-    Width      = maps:get(width, ConfigMap),
+    Width      = maps:get(<<"width">>, ConfigMap),
     %% each pixel has a corresonding complex number defined
     %%         by corners of the box
     %%   note whether Y is dependent on Z or C is algorithm dependent

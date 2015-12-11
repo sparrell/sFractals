@@ -54,7 +54,7 @@ test_make_data(_Config) ->
                    imageFileName => FractalImageFileName,
                    dataFileName         => DataFileName,
                    colorAlg => simplest,  % 0-11 map to colors
-                   width => 10,           % width=10
+                   <<"width">> => 10,           % width=10
                    height => 10,          % height=10
                    cReal => 0.5,          % real portion of C0
                    cImaginary => -0.5,    % imaginary portion of C0
@@ -116,7 +116,7 @@ test_make_data_file(_Config) ->
                    imageFileName => FractalImageFileName,
                    dataFileName         => DataFileName,
                    colorAlg => simplest,  % 0-11 map to colors
-                   width => 10,           % width=10
+                   <<"width">> => 10,           % width=10
                    height => 10,          % height=10
                    cReal => 0.5,          % real portion of C0
                    cImaginary => -0.5,    % imaginary portion of C0
@@ -176,7 +176,7 @@ test_compute_fractal_data_eol(_Config) ->
     %% setup some test config and test data
     ConfigMap = #{ fractalAlg => julian,  % Fractal Algorithm is julian
        imageFileName => './EolTest.png',  %image file created
-       width => 5, % width=10
+       <<"width">> => 5, % width=10
        height => 5,
        cReal => 0.5, % real portion of C0
        cImaginary => -0.5, % imaginary portion of C0
@@ -218,7 +218,7 @@ test_adding_row(_Config) ->
     %% setup some test config and test data
     ConfigMap = #{ fractalAlg => julian,  % Fractal Algorithm is julian
        imageFileName => './EolTest.png',  %image file created
-       width => 5,
+       <<"width">> => 5,
        height => 5,
        cReal => 0.1, % real portion of C0
        cImaginary => -0.1, % imaginary portion of C0
