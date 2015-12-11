@@ -30,7 +30,7 @@ content_types_accepted(Req, State) ->
     { [{ { <<"application">>, <<"json">>, '*'} , handle_json}], Req, State}.
 
 handle_json(Req, State) ->
-    %% put stuff here for actually making fractal and returing it
+    %% put stuff here for actually making fractal and returning it
     { ok, Body, Req1} = cowboy_req:body(Req),
     Json = jiffy:decode(Body, [return_maps]),
     lager:debug("Json: ~p", [Json] ),
