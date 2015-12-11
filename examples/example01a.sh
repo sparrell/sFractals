@@ -18,13 +18,14 @@ main(_) ->
     % example 1a
 
     %% base config
-    {ok, [ ConfigMap | _T ] } = file:consult("../examples/Config/example01a.ecfg"),
+    ConfigFile = "../examples/Config/example01a.ecfg",
+    {ok, [ ConfigMap | _T ] } = file:consult(ConfigFile),
 
     % create the data
-    Rows = simpleFractal:computeFractalData( ConfigMap ),
+    Rows = compute_fractal_data:compute_fractal_data( ConfigMap ),
 
     %% make image from data
-    simpleFractal:makePngFromData(Rows,ConfigMap),
+    compute_fractal_data:make_png_from_data(Rows,ConfigMap),
 
     ok.
 

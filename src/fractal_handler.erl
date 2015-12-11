@@ -32,8 +32,10 @@ content_types_accepted(Req, State) ->
 handle_json(Req, State) ->
     %% put stuff here for actually making fractal and returning it
     { ok, Body, Req1} = cowboy_req:body(Req),
-    Json = jiffy:decode(Body, [return_maps]),
-    lager:debug("Json: ~p", [Json] ),
+    JsonConfigMap = jiffy:decode(Body, [return_maps]),
+    lager:debug("JsonConfigMap: ~p", [JsonConfigMap] ),
+    Rows = simpleFractal:computeFractalData( JsonConfigMap ),
+    lager:debug("Rows: ~p", [Rows] ),
     { true, Req1, State}.
 
 
