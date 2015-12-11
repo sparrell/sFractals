@@ -34,8 +34,10 @@ handle_json(Req, State) ->
     { ok, Body, Req1} = cowboy_req:body(Req),
     JsonConfigMap = jiffy:decode(Body, [return_maps]),
     lager:debug("JsonConfigMap: ~p", [JsonConfigMap] ),
-    Rows = simpleFractal:computeFractalData( JsonConfigMap ),
+    Rows = compute_fractal_data:compute_fractal_data( JsonConfigMap ),
     lager:debug("Rows: ~p", [Rows] ),
+    simpleFractal:makePngFromData(Rows,ConfigMap),
+    lager:debug("Image Created"),
     { true, Req1, State}.
 
 
