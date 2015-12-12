@@ -51,6 +51,12 @@ start_webserver() ->
                                     , "static/assets"
                                     }
                    }
+                 , {"/images/[...]"
+                   , cowboy_static, { priv_dir
+                                    , sFractals
+                                    , "images"
+                                    }
+                   }
                  , {"/", cowboy_static, IndexPage}
                  , {"/sFractal", fractal_handler, [] }
                  ]

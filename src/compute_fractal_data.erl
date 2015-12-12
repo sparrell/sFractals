@@ -419,9 +419,11 @@ compute_fractal_data_file2( RowData,       % row data computed so far
         when XPix > 0, YPix > 0 ->
 
     %% get iteration count for this point
+    #{fractalAlg := FractalAlg, 
+      cReal := CReal } = ConfigMap, 
     NewPoint = compute_points:compute_iteration_value(
-                                     maps:get(fractalAlg, ConfigMap),
-                                     maps:get(cReal, ConfigMap),
+                                     FractalAlg,
+                                     CReal, 
                                      maps:get(cImaginary, ConfigMap),
                                      XR,
                                      YI,

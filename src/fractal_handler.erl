@@ -8,10 +8,10 @@
         , handle_json/2
         ]).
 
-init( {tcp, http}, Req, Opts) ->
+init( {tcp, http}, _Req, _Opts) ->
     {upgrade, protocol, cowboy_rest}.
 
-rest_init(Req, Opts) ->
+rest_init(Req, _Opts) ->
     {Method, Req1} = cowboy_req:method(Req),
     {URL, Req2} = cowboy_req:url(Req1),
     lager:debug("~s ~s", [Method, URL]),
@@ -34,18 +34,15 @@ handle_json(Req, State) ->
     { ok, Body, Req1} = cowboy_req:body(Req),
     JsonConfigMap = jiffy:decode(Body, [return_maps]),
     lager:debug("JsonConfigMap: ~p", [JsonConfigMap] ),
-    Height = maps:get(<<"height">>,JsonConfigMap),
-    JsonConfigMap2 = maps:put(height,Height,JsonConfigMap),
-    lager:debug("JsonConfigMap: ~p", [JsonConfigMap2] ),
-    Rows = compute_fractal_data:compute_fractal_data( JsonConfigMap2 ),
+    ConfigMap = config_utils:jason2atom(JsonConfigMap),
+    lager:debug("ConfigMap: ~p", [ConfigMap] ),
+    Rows = compute_fractal_data:compute_fractal_data( ConfigMap ),
     lager:debug("Rows: ~p", [Rows] ),
-    simpleFractal:makePngFromData(Rows,JsonConfigMap2),
+    %%compute_fractal_data:make_png_from_data(Rows, ConfigMap),
+    WhereRunning = code:priv_dir(sFractals),
+    %% add here to concat WhereRunning, images, filename
+    lager:debug("WhereRunning: ~p", [WhereRunning]),
     lager:debug("Image Created"),
     { true, Req1, State}.
-
-
-
-
-
 
 
