@@ -335,7 +335,7 @@ compute_fractal_data_file2(ConfigMap) ->
     DeltaY = (YImaginaryHigh - YImaginaryLow) / Height,
 
     %% start server
-    {ok, Pid} = data_file_svr:start(ConfigMap),
+    {ok, _Pid} = data_file_svr:start(ConfigMap),
 
     %% call compute_fractal_data_file2/11
     %% writing rows one at a time
@@ -419,12 +419,14 @@ compute_fractal_data_file2( RowData,       % row data computed so far
         when XPix > 0, YPix > 0 ->
 
     %% get iteration count for this point
-    #{fractalAlg := FractalAlg, 
-      cReal := CReal } = ConfigMap, 
+    #{ fractalAlg := FractalAlg
+     , cReal      := CReal 
+     , cImaginary := CImaginary 
+     } = ConfigMap, 
     NewPoint = compute_points:compute_iteration_value(
                                      FractalAlg,
                                      CReal, 
-                                     maps:get(cImaginary, ConfigMap),
+                                     CImaginary,
                                      XR,
                                      YI,
                                      0,          %iteration count starts at zero

@@ -1,6 +1,6 @@
 curl -vX POST localhost:8080/sFractal -H'content-type:application/json' -d '{
    "fractalAlg":"julian",
-   "imageFileName":"../examples/Output/example09.png",
+   "imageFileName":"example09.png",
    "colorAlg":"simplest",
    "width":10,
    "height":10,
