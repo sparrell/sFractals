@@ -64,7 +64,7 @@ addRows(ThisPng, [ThisRow | RestOfRows ] ) ->
 compute_fractal_data(ConfigMap) ->
     %% get config needed
     %% create height rows of width columns of pixels
-    Width           = maps:get(width, ConfigMap),
+    Width           = maps:get(<<"width">>, ConfigMap),
     Height          = maps:get(height, ConfigMap),
     %% each pixel is corresonding complex number defined by corners of the box
     XRealRight      = maps:get(xRealRight, ConfigMap),
@@ -188,7 +188,7 @@ compute_fractal_data_file(ConfigMap) ->
     %% get config needed
     DataFileName  = maps:get(dataFileName, ConfigMap),
     %% create height rows of width columns of pixels
-    Width           = maps:get(width, ConfigMap),
+    Width           = maps:get(<<"width">>, ConfigMap),
     Height          = maps:get(height, ConfigMap),
     %% each pixel has a corresonding complex number
     %%     defined by corners of the box
@@ -316,7 +316,7 @@ compute_fractal_data_file( DataFile, RowData,       % row data computed so far
 compute_fractal_data_file2(ConfigMap) ->
     %% get config needed
     %% create height rows of width columns of pixels
-    Width           = maps:get(width, ConfigMap),
+    Width           = maps:get(<<"width">>, ConfigMap),
     Height          = maps:get(height, ConfigMap),
     %% each pixel has a corresonding complex number
     %%    defined by corners of the box
@@ -335,7 +335,7 @@ compute_fractal_data_file2(ConfigMap) ->
     DeltaY = (YImaginaryHigh - YImaginaryLow) / Height,
 
     %% start server
-    {ok, Pid} = data_file_svr:start(ConfigMap),
+    {ok, _Pid} = data_file_svr:start(ConfigMap),
 
     %% call compute_fractal_data_file2/11
     %% writing rows one at a time
@@ -419,10 +419,14 @@ compute_fractal_data_file2( RowData,       % row data computed so far
         when XPix > 0, YPix > 0 ->
 
     %% get iteration count for this point
+    #{ fractalAlg := FractalAlg
+     , cReal      := CReal 
+     , cImaginary := CImaginary 
+     } = ConfigMap, 
     NewPoint = compute_points:compute_iteration_value(
-                                     maps:get(fractalAlg, ConfigMap),
-                                     maps:get(cReal, ConfigMap),
-                                     maps:get(cImaginary, ConfigMap),
+                                     FractalAlg,
+                                     CReal, 
+                                     CImaginary,
                                      XR,
                                      YI,
                                      0,          %iteration count starts at zero
