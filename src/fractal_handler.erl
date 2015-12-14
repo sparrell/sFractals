@@ -34,18 +34,20 @@ handle_json(Req, State) ->
     { ok, Body, Req1} = cowboy_req:body(Req),
     JsonConfigMap = jiffy:decode(Body, [return_maps]),
     ConfigMap = config_utils:jason2atom(JsonConfigMap),
-    Rows = compute_fractal_data:compute_fractal_data( ConfigMap ),
-    %%compute_fractal_data:make_png_from_data(Rows, ConfigMap),
+    %% concat WhereRunning, images, filename
     WhereRunning = code:priv_dir(sFractals),
-    %% add here to concat WhereRunning, images, filename
     UserFileName = maps:get(imageFileName,ConfigMap),
     SysFileName = filename:join( [WhereRunning, "images", UserFileName] ),
-    lager:debug("SysFileName: ~p", [SysFileName]),
     SysConfigMap = maps:update(imageFileName, SysFileName, ConfigMap),
 
+    %% calculate the fractal data
+    lager:info("Starting data calc"),
+    Rows = compute_fractal_data:compute_fractal_data( SysConfigMap ),
+
     %% make the image
+    lager:info("Making Png"),
     compute_fractal_data:make_png_from_data(Rows,SysConfigMap),
-    lager:debug("Image Created"),
+    lager:info("Image created at: ~p", [SysFileName]),
 
     %% decide what to return
     { true, Req1, State}.

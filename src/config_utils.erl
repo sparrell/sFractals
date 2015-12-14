@@ -4,16 +4,11 @@
         ]).
 
 jason2atom(BinaryMap) ->
-  Width  = maps:get(<<"width">>, BinaryMap),
-  lager:debug("Width(fix later) ~p", [Width]),
+  Width  = get_width(BinaryMap),
   Height = get_height(BinaryMap),
-  lager:debug("Height ~p", [Height]),
   FractalAlg = get_fractal_alg(BinaryMap),
-  lager:debug("FractalAlg ~p", [FractalAlg]),
   ImageFile = get_image_file(BinaryMap),
-  lager:debug("ImageFile ~p", [ImageFile]),
   ColorAlg = get_color_alg(BinaryMap),
-  lager:debug("ColorAlg ~p", [ColorAlg]),
   
   CReal = maps:get(<<"cReal">>, BinaryMap),
   CImaginary = maps:get(<<"cImaginary">>, BinaryMap),
@@ -29,7 +24,7 @@ jason2atom(BinaryMap) ->
   %% need to add checks on input here
   %% need to add optional parameters here (or default on gets above)
 
-  JsonConfigMap = #{ <<"width">> => Width
+  JsonConfigMap = #{ width => Width
                    , height => Height
                    , fractalAlg => FractalAlg
                    , imageFileName => ImageFile
@@ -47,6 +42,21 @@ jason2atom(BinaryMap) ->
                    },
   %% return the converted map
   JsonConfigMap.
+
+get_width(BinaryMap) ->
+  Width  = maps:get(<<"width">>, BinaryMap),
+  check_width(Width).
+
+check_width(Width)
+        when is_integer(Width),
+             Width > 0,
+             Width < 10000
+        ->
+  %% passed checks so return Width
+  Width;
+check_width(_Width) ->
+  %% failed checks so fail with atom indicating issue
+  erlang:error(width_must_be_integer_1_to_9999).
 
 get_height(BinaryMap) ->
   %% mandatory parameter

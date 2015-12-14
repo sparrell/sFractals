@@ -52,7 +52,7 @@ testXList(_Config) ->
     %% test XList created OK
     %% setup some test config
     ConfigMap = #{ fractalAlg => julian,  % Fractal Algorithm is julian
-       <<"width">> => 5,
+       width => 5,
        height => 5,
        cReal => 0.1, % real portion of C0
        cImaginary => -0.1, % imaginary portion of C0
@@ -74,7 +74,7 @@ testXList(_Config) ->
 testYList(_Config) ->
     %% setup some test config
     ConfigMap = #{ fractalAlg => julian,  % Fractal Algorithm is julian
-       <<"width">> => 5,
+       width => 5,
        height => 5,
        cReal => 0.1, % real portion of C0
        cImaginary => -0.1, % imaginary portion of C0
@@ -95,7 +95,7 @@ testYList(_Config) ->
 testComputeRowOfFractalData(_Config) ->
     %% setup some test config
     ConfigMap = #{ fractalAlg => julian,  % Fractal Algorithm is julian
-       <<"width">> => 5,
+       width => 5,
        height => 5,
        cReal => 0.1, % real portion of C0
        cImaginary => -0.1, % imaginary portion of C0
@@ -125,7 +125,7 @@ testComputeRowOfFractalData(_Config) ->
 testComputeFractalData(_Config) ->
     %% setup some test config
     ConfigMap = #{ fractalAlg => julian,  % Fractal Algorithm is julian
-       <<"width">> => 5,
+       width => 5,
        height => 5,
        cReal => 0.1, % real portion of C0
        cImaginary => -0.1, % imaginary portion of C0
@@ -178,7 +178,7 @@ testMakePng(_Config) ->
     ConfigMap = #{ fractalAlg => julian,  % Fractal Algorithm is julian
                    imageFileName => FractalImageFileName,
                    colorAlg      => simplest,  % 0-11 map to colors
-                   <<"width">>         => 10,        % width=10
+                   width         => 10,        % width=10
                    height        => 10,        % height=10
                    cReal         => 0.5,       % real portion of C0
                    cImaginary    => -0.5,      % imaginary portion of C0
@@ -223,7 +223,7 @@ testMakePngUsingPool(_Config) ->
     ConfigMap = #{ fractalAlg => julian,  % Fractal Algorithm is julian
                    imageFileName => FractalImageFileName,
                    colorAlg      => simplest,  % 0-11 map to colors
-                   <<"width">>         => 10,        % width=10
+                   width         => 10,        % width=10
                    height        => 10,        % height=10
                    cReal         => 0.5,       % real portion of C0
                    cImaginary    => -0.5,      % imaginary portion of C0
