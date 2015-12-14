@@ -40,17 +40,17 @@ handle_json(Req, State) ->
     lager:debug("Rows: ~p", [Rows] ),
     %%compute_fractal_data:make_png_from_data(Rows, ConfigMap),
     WhereRunning = code:priv_dir(sFractals),
-    lager:debug("WhereRunning: ~p", [WhereRunning]),
     %% add here to concat WhereRunning, images, filename
-    UserFileName = maps:get(imageFile,ConfigMap),
-    lager:debug("UserFileName: ~p", [UserFileName]),
+    UserFileName = maps:get(imageFileName,ConfigMap),
     SysFileName = filename:join( [WhereRunning, "images", UserFileName] ),
     lager:debug("SysFileName: ~p", [SysFileName]),
-    SysConfigMap = maps:update(imageFile, SysFileName, ConfigMap),
-    lager:debug("SysConfigMap: ~p", [SysConfigMap]),
+    SysConfigMap = maps:update(imageFileName, SysFileName, ConfigMap),
 
-    %% addin actually making image
-    lager:debug("Image Created (eventually will be here)"),
+    %% make the image
+    compute_fractal_data:make_png_from_data(Rows,SysConfigMap),
+    lager:debug("Image Created"),
+
+    %% decide what to return
     { true, Req1, State}.
 
 

@@ -32,7 +32,7 @@ jason2atom(BinaryMap) ->
   JsonConfigMap = #{ <<"width">> => Width
                    , height => Height
                    , fractalAlg => FractalAlg
-                   , imageFile => ImageFile
+                   , imageFileName => ImageFile
                    , colorAlg => ColorAlg
                    , cReal => CReal
                    , cImaginary => CImaginary
