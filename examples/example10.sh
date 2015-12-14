@@ -1,25 +1,17 @@
-#!/usr/bin/env escript
-%% -*- erlang -*-
-%%! -pa ../_build/test/lib/sFractals/ebin ../_build/test/lib/png/ebin
-%% assumes running out of _build
-
-%%%-------------------------------------------------------------------
-%%% @author Duncan Sparrell
-%%% @copyright (C) 2015, sFractal Consulting LLC
-%%% 
-%%%-------------------------------------------------------------------
-
--author("Duncan Sparrell").
--mode(compile).
-
-main(_) ->
-
-    % example 10
-
-    %% base config
-    ConfigFile = "../examples/Config/example01a.ecfg",
-    {ok, [ ConfigMap | _T ] } = file:consult(ConfigFile),
-
-
-    ok.
-
+curl -vX POST localhost:8080/sFractal -H'content-type:application/json' -d '{
+   "fractalAlg":"julian",
+   "imageFileName":"example10.png",
+   "colorAlg":"simple64",
+   "width":8000,
+   "height":8000,
+   "cReal":0.5,
+   "cImaginary":-0.5,
+   "zReal":-0.1,
+   "zImaginary":-0.1,
+   "xRealRight":1.0,
+   "xRealLeft":-1.0,
+   "yImaginaryLow":0.0,
+   "yImaginaryHigh":2.0,
+   "bailoutThreshold":4,
+   "maxIterationThreshold":63 
+}'
