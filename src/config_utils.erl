@@ -9,7 +9,7 @@ jason2atom(BinaryMap) ->
   FractalAlg = get_fractal_alg(BinaryMap),
   ImageFile = get_image_file(BinaryMap),
   ColorAlg = get_color_alg(BinaryMap),
-  
+
   CReal = maps:get(<<"cReal">>, BinaryMap),
   CImaginary = maps:get(<<"cImaginary">>, BinaryMap),
   ZReal = maps:get(<<"zReal">>, BinaryMap),

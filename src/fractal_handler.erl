@@ -36,7 +36,7 @@ handle_json(Req, State) ->
     ConfigMap = config_utils:jason2atom(JsonConfigMap),
     %% concat WhereRunning, images, filename
     WhereRunning = code:priv_dir(sFractals),
-    UserFileName = maps:get(imageFileName,ConfigMap),
+    UserFileName = maps:get(imageFileName, ConfigMap),
     SysFileName = filename:join( [WhereRunning, "images", UserFileName] ),
     SysConfigMap = maps:update(imageFileName, SysFileName, ConfigMap),
 
@@ -46,7 +46,7 @@ handle_json(Req, State) ->
 
     %% make the image
     lager:info("Making Png"),
-    compute_fractal_data:make_png_from_data(Rows,SysConfigMap),
+    compute_fractal_data:make_png_from_data(Rows, SysConfigMap),
     lager:info("Image created at: ~p", [SysFileName]),
 
     %% decide what to return

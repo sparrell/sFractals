@@ -154,17 +154,24 @@ compute_fractal_data( Rows, RowData,       % row data computed so far
                ConfigMap)
         when XPix > 0, YPix > 0 ->
 
+    %% get config
+    #{ fractalAlg := FractalAlg
+     , cReal      := CReal
+     , cImaginary := CImaginary
+     , maxIterationThreshold := MaxIterationThreshold
+     , bailoutThreshold := BailoutThreshold
+     } = ConfigMap,
+
     %% get iteration count for this point
-    NewPoint = compute_points:compute_iteration_value(
-                                   maps:get(fractalAlg, ConfigMap),
-                                   maps:get(cReal, ConfigMap),
-                                   maps:get(cImaginary, ConfigMap),
-                                   XR,
-                                   YI,
-                                   0,      %iteration count starts at zero
-                                   maps:get(maxIterationThreshold, ConfigMap),
-                                   maps:get(bailoutThreshold, ConfigMap)
-                                   ),
+    NewPoint = compute_points:compute_iteration_value( FractalAlg
+                                                     , CReal
+                                                     , CImaginary
+                                                     , XR
+                                                     , YI
+                                                     , 0  %iteration count
+                                                     , MaxIterationThreshold
+                                                     , BailoutThreshold
+                                                     ),
 
     NewRowData = [ NewPoint | RowData ],
     %% decrement moving left building row
@@ -283,17 +290,24 @@ compute_fractal_data_file( DataFile, RowData,       % row data computed so far
                ConfigMap)
         when XPix > 0, YPix > 0 ->
 
+    %% get config
+    #{ fractalAlg := FractalAlg
+     , cReal      := CReal
+     , cImaginary := CImaginary
+     , maxIterationThreshold := MaxIterationThreshold
+     , bailoutThreshold := BailoutThreshold
+     } = ConfigMap,
+
     %% get iteration count for this point
-    NewPoint = compute_points:compute_iteration_value(
-                                     maps:get(fractalAlg, ConfigMap),
-                                     maps:get(cReal, ConfigMap),
-                                     maps:get(cImaginary, ConfigMap),
-                                     XR,
-                                     YI,
-                                     0,   %iteration count starts at zero
-                                     maps:get(maxIterationThreshold, ConfigMap),
-                                     maps:get(bailoutThreshold, ConfigMap)
-                                     ),
+    NewPoint = compute_points:compute_iteration_value( FractalAlg
+                                                     , CReal
+                                                     , CImaginary
+                                                     , XR
+                                                     , YI
+                                                     , 0   %zero iteration count
+                                                     , MaxIterationThreshold
+                                                     , BailoutThreshold
+                                                     ),
 
     NewRowData = [ NewPoint | RowData ],
     NewXPix    = XPix - 1,           % decrement moving left building row
@@ -418,21 +432,24 @@ compute_fractal_data_file2( RowData,       % row data computed so far
                ConfigMap)
         when XPix > 0, YPix > 0 ->
 
-    %% get iteration count for this point
+    %% get config
     #{ fractalAlg := FractalAlg
-     , cReal      := CReal 
-     , cImaginary := CImaginary 
-     } = ConfigMap, 
-    NewPoint = compute_points:compute_iteration_value(
-                                     FractalAlg,
-                                     CReal, 
-                                     CImaginary,
-                                     XR,
-                                     YI,
-                                     0,          %iteration count starts at zero
-                                     maps:get(maxIterationThreshold, ConfigMap),
-                                     maps:get(bailoutThreshold, ConfigMap)
-                                     ),
+     , cReal      := CReal
+     , cImaginary := CImaginary
+     , maxIterationThreshold := MaxIterationThreshold
+     , bailoutThreshold := BailoutThreshold
+     } = ConfigMap,
+
+    %% get iteration count for this point
+    NewPoint = compute_points:compute_iteration_value( FractalAlg
+                                                     , CReal
+                                                     , CImaginary
+                                                     , XR
+                                                     , YI
+                                                     , 0 % zero iteration count
+                                                     , MaxIterationThreshold
+                                                     , BailoutThreshold
+                                                     ),
 
     NewRowData = [ NewPoint | RowData ],
     NewXPix    = XPix - 1,                  % decrement moving left building row
