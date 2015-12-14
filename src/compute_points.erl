@@ -77,23 +77,43 @@ compute_iteration_value( FractalAlg
 
 %% function for creating new real value for Julian algorithm
 new_real_z({FractalAlg, CReal, _CImaginary, ZReal, ZImaginary})
-        when FractalAlg == julian ->
+        when FractalAlg == julian
+           , is_float(CReal) 
+           , is_float(_CImaginary) 
+           , is_float(ZReal) 
+           , is_float(ZImaginary) 
+           ->
     (ZReal*ZReal) - (ZImaginary*ZImaginary) + CReal.
 
 %% function for creating new imaginary value for Julian algorithm
 new_imaginary_z({FractalAlg, _CReal, CImaginary, ZReal, ZImaginary})
-        when FractalAlg == julian ->
+        when FractalAlg == julian
+           , is_float(_CReal) 
+           , is_float(CImaginary) 
+           , is_float(ZReal) 
+           , is_float(ZImaginary) 
+           ->
     (2 * ZReal * ZImaginary) + CImaginary.
 
 %% function for creating new real value for Julian Algorithm
 %%     (ie remains unchanged)
 new_real_c({FractalAlg, CReal, _CImaginary, _ZReal, _ZImaginary})
-        when FractalAlg == julian ->
+        when FractalAlg == julian
+           , is_float(CReal) 
+           , is_float(_CImaginary) 
+           , is_float(_ZReal) 
+           , is_float(_ZImaginary) 
+           ->
     CReal.
 
 %% function for creating new imaginary value for Julian Algorithm
 %%     (ie remains unchanged)
 new_imaginary_c({FractalAlg, _CReal, CImaginary, _ZReal, _ZImaginary})
-        when FractalAlg == julian ->
+        when FractalAlg == julian
+           , is_float(_CReal) 
+           , is_float(CImaginary) 
+           , is_float(_ZReal) 
+           , is_float(_ZImaginary) 
+           ->
     CImaginary.
 

@@ -109,14 +109,14 @@ testComputeRowOfFractalData(_Config) ->
        bailoutThreshold => 4
        },
     %% pick one row and test created correctly
-    ExpectedResult = {{3,0}, [{1,0.8000000000000003,32},
+    ExpectedResult = {{3,0.0}, [{1,0.8000000000000003,32},
                               {2,0.9500000000000002,4},
                               {3,1.1,3},
                               {4,1.25,2},
                               {5,1.4,1}]},
     XList = other_compute:compute_xlist(ConfigMap),
     ExpectedResult = other_compute:compute_row( julian
-                                               , {3,0}
+                                               , {3,0.0}
                                                , XList
                                                , ConfigMap
                                                ),

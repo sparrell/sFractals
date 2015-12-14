@@ -2,10 +2,10 @@
 
 -export([init/3, rest_init/2, to_html/2]).
 
-init( {tcp, http}, Req, Opts) ->
+init( {tcp, http}, _Req, _Opts) ->
     {upgrade, protocol, cowboy_rest}.
 
-rest_init(Req, Opts) ->
+rest_init(Req, _Opts) ->
     {Method, Req1} = cowboy_req:method(Req),
     {URL, Req2} = cowboy_req:url(Req1),
     lager:debug("~s ~s", [Method, URL]),
