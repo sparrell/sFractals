@@ -136,7 +136,7 @@ is_good_char(_C) ->
   ok.
 
 get_color_alg(BinaryMap) ->
-  InitalColorAlg  = maps:get(<<"ColorAlg">>, BinaryMap),
+  InitalColorAlg  = maps:get(<<"colorAlg">>, BinaryMap),
   %% check validity and return if valid
   check_color_alg(InitalColorAlg).
 
