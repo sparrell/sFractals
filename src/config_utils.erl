@@ -5,12 +5,16 @@
 
 jason2atom(BinaryMap) ->
   Width  = maps:get(<<"width">>, BinaryMap),
-
+  lager:debug("Width(fix later) ~p", [Width]),
   Height = get_height(BinaryMap),
+  lager:debug("Height ~p", [Height]),
   FractalAlg = get_fractal_alg(BinaryMap),
+  lager:debug("FractalAlg ~p", [FractalAlg]),
   ImageFile = get_image_file(BinaryMap),
+  lager:debug("ImageFile ~p", [ImageFile]),
+  ColorAlg = get_color_alg(BinaryMap),
+  lager:debug("ColorAlg ~p", [ColorAlg]),
   
-  ColorAlg = maps:get(<<"colorAlg">>, BinaryMap),
   CReal = maps:get(<<"cReal">>, BinaryMap),
   CImaginary = maps:get(<<"cImaginary">>, BinaryMap),
   ZReal = maps:get(<<"zReal">>, BinaryMap),
@@ -56,7 +60,7 @@ check_height(Height)
         ->
   %% passed checks so return Height
   Height;
-check_height(Height) ->
+check_height(_Height) ->
   %% failed checks so fail with atom indicating issue
   erlang:error(height_must_be_integer_1_to_9999).
 
@@ -74,7 +78,7 @@ check_fractal_alg(FractalAlg)
   %% valid so return atom
   julian;
 %% add other valid fractal algorithms here as they are created
-check_fractal_alg(FractalAlg) ->
+check_fractal_alg(_FractalAlg) ->
   erlang:error(this_fractal_algorithm_not_implemented).
 
 %% get and validate image file name
@@ -94,7 +98,7 @@ check_image_file(ImageFile) when is_list(ImageFile) ->
   check_illegal_filename_chars(ImageFile),
   %% all good so return string
   ImageFile;
-check_image_file(ImageFile) ->
+check_image_file(_ImageFile) ->
   erlang:error(imageFile_is_not_binary_nor_list).
 
 check_illegal_filename_chars( [] ) ->
@@ -130,3 +134,40 @@ is_good_char(C)
 is_good_char(_C) ->
   %% this char ok
   ok.
+
+get_color_alg(BinaryMap) ->
+  InitalColorAlg  = maps:get(<<"ColorAlg">>, BinaryMap),
+  %% check validity and return if valid
+  check_color_alg(InitalColorAlg).
+
+check_color_alg(InitialColorAlg) when InitialColorAlg =:= "simplest" ->
+  simplest;
+check_color_alg(InitialColorAlg) when InitialColorAlg =:= <<"simplest">> ->
+  simplest;
+check_color_alg(InitialColorAlg) when InitialColorAlg =:= <<"simplest2">> ->
+  simplest2;
+check_color_alg(InitialColorAlg) when InitialColorAlg =:= "simplest2" ->
+  simplest2;
+check_color_alg(InitialColorAlg) when InitialColorAlg =:= <<"simple16">> ->
+  simple16;
+check_color_alg(InitialColorAlg) when InitialColorAlg =:= "simple16" ->
+  simple16;
+check_color_alg(InitialColorAlg) when InitialColorAlg =:= <<"simple32">> ->
+  simple32;
+check_color_alg(InitialColorAlg) when InitialColorAlg =:= "simple32" ->
+  simple32;
+check_color_alg(InitialColorAlg) when InitialColorAlg =:= <<"blue32">> ->
+  blue32;
+check_color_alg(InitialColorAlg) when InitialColorAlg =:= "blue32" ->
+  blue32;
+check_color_alg(InitialColorAlg) when InitialColorAlg =:= <<"simple64">> ->
+  simple64;
+check_color_alg(InitialColorAlg) when InitialColorAlg =:= "simple64" ->
+  simple64;
+check_color_alg(_) ->
+  erlang:error(unknown_color_alg).
+
+
+
+
+
