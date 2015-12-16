@@ -50,6 +50,10 @@ handle_json(Req, State) ->
     lager:info("Image created at: ~p", [SysFileName]),
 
     %% decide what to return
-    { true, Req1, State}.
+    {Host, Req2} = cowboy_req:header(<<"host">>, Req1),
+    BinUserFileName = list_to_binary(UserFileName),
+    Path = <<"/images/", BinUserFileName/binary>>,
+    Location = <<"http://", Host/binary, Path/binary>>,
+    { {true, Location}, Req2, State}.
 
 
