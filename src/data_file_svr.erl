@@ -67,16 +67,21 @@ init(ConfigMap) ->     % initialization
 
     RowData = [],                              % start with empty row list
 
-    { ok, {NumRowsLeft, RowData, ConfigMap} }. % return tuple for LoopData
+    %% add NumRowsLeft and RowData and ConfigMap to make new map for status
+    InterimStatusMap = maps:update(num_rows_left,NumRowsLeft,ConfigMap),
+    StatusMap = maps:update(row_data,RowData,InterimStatusMap),
+
+    { ok, StatusMap }. % return tuple for LoopData
 
 %% sync requests
-handle_call( {rowStatus, junkForNow}
+handle_call( {whatcall, StatusMap}
            , _From
            , {NumRowsLeft, RowData, ConfigMap}
            ) ->
+    #{ num_rows_left := NumRowsLeft, RowData := RowData} = StatusMap,
     %% fix later
     lager:debug("rowStatus svr: ~p, ~p~n", [NumRowsLeft, RowData] ),
-    {reply, "reply to rowStatus", {NumRowsLeft, RowData, ConfigMap}}.
+    {reply, "reply to rowStatus", StatusMap}.
 
 %% async requests
 handle_cast( {addARow, {RowNumber, RowToAdd}}
