@@ -18,3 +18,4 @@ _tdeps
 logs
 _build
 example07b1.erl.txt
+*.trace

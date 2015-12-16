@@ -9,6 +9,7 @@
     , lager
     , cowboy
     , jiffy
+    , png
    ]},
   {env,[]},
   {modules, []},
