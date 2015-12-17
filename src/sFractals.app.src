@@ -8,6 +8,8 @@
     , stdlib
     , lager
     , cowboy
+    , eper
+    , recon
     , jiffy
     , png
    ]},

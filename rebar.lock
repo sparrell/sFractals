@@ -20,6 +20,7 @@
        {ref,"2b93ff12d8caa8e23e207b04a6aff04bc2d47a63"}},
   1},
  {<<"ranch">>,{pkg,<<"ranch">>,<<"1.2.0">>},1},
+ {<<"recon">>,{pkg,<<"recon">>,<<"2.2.1">>},0},
  {<<"worker_pool">>,
   {git,"https://github.com/inaka/worker_pool.git",
        {ref,"5789bde4a95122edd1079dd0fe8fccf6dbeb92e1"}},

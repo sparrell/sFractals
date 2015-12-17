@@ -122,9 +122,8 @@ new_real_c({FractalAlg, CReal, _CImaginary, _ZReal, _ZImaginary})
 
 %% function for creating new imaginary value for Julian Algorithm
 %%     (ie remains unchanged)
-new_imaginary_c({FractalAlg, _CReal, CImaginary, _ZReal, _ZImaginary})
-        when FractalAlg == julian
-           , is_float(_CReal)
+new_imaginary_c({julian, _CReal, CImaginary, _ZReal, _ZImaginary})
+        when is_float(_CReal)
            , is_float(CImaginary)
            , is_float(_ZReal)
            , is_float(_ZImaginary)
