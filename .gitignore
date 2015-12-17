@@ -19,3 +19,5 @@ logs
 _build
 example07b1.erl.txt
 *.trace
+outfile.cgrind
+outfile.fprof

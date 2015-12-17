@@ -32,12 +32,15 @@ compute_iteration_value( _FractalAlg
                        , IterCount
                        , MaxIterationThreshold
                        , _BailoutThreshold )
-        when IterCount >= MaxIterationThreshold ->
+        when is_integer(IterCount)
+           , is_integer(MaxIterationThreshold)
+           , IterCount >= MaxIterationThreshold
+        ->
     %% reached iteration limit so return count=limit
     MaxIterationThreshold;
 
 %% function clause for exceeding bound
-compute_iteration_value( _FractalALg
+compute_iteration_value( _FractalAlg
                       , _CReal
                       , _CImaginary
                       , ZReal
@@ -45,7 +48,11 @@ compute_iteration_value( _FractalALg
                       , IterCount
                       , _MaxIterationThreshold
                       , BailoutThreshold )
-        when ((ZReal*ZReal)+(ZImaginary*ZImaginary)) > BailoutThreshold ->
+        when is_integer(IterCount)
+           , is_float(ZReal)
+           , is_float(ZImaginary)
+           , ((ZReal*ZReal)+(ZImaginary*ZImaginary)) > BailoutThreshold
+        ->
     %bailout exceeded so return iterCount
     IterCount;
 
@@ -57,7 +64,14 @@ compute_iteration_value( FractalAlg
                        , ZImaginary
                        , IterCount
                        , MaxIterationThreshold
-                       , BailoutThreshold ) ->
+                       , BailoutThreshold )
+        when is_integer(IterCount)
+           , is_float(CReal)
+           , is_float(CImaginary)
+           , is_float(ZReal)
+           , is_float(ZImaginary)
+           , is_integer(MaxIterationThreshold)
+        ->
 
     % compute new Z and C based on fractal algorithm used
     ZCParams      = {FractalAlg, CReal, CImaginary, ZReal, ZImaginary},
