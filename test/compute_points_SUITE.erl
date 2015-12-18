@@ -145,7 +145,7 @@ test_exceed_bound(Config) ->
     1 = compute_points:compute_iteration_value( FractalAlg
                                               , CReal
                                               , CImaginary
-                                              , 100                 %exceed bailout
+                                              , 100.0 %big so exceed bailout
                                               , ZImaginary
                                               , IterCount           %start at 1
                                               , MaxIterationThreshold

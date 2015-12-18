@@ -33,24 +33,27 @@ handle_json(Req, State) ->
     %% put stuff here for actually making fractal and returning it
     { ok, Body, Req1} = cowboy_req:body(Req),
     JsonConfigMap = jiffy:decode(Body, [return_maps]),
-    lager:debug("JsonConfigMap: ~p", [JsonConfigMap] ),
     ConfigMap = config_utils:jason2atom(JsonConfigMap),
-    lager:debug("ConfigMap: ~p", [ConfigMap] ),
-    Rows = compute_fractal_data:compute_fractal_data( ConfigMap ),
-    lager:debug("Rows: ~p", [Rows] ),
-    %%compute_fractal_data:make_png_from_data(Rows, ConfigMap),
+    %% concat WhereRunning, images, filename
     WhereRunning = code:priv_dir(sFractals),
-    %% add here to concat WhereRunning, images, filename
-    UserFileName = maps:get(imageFileName,ConfigMap),
+    UserFileName = maps:get(imageFileName, ConfigMap),
     SysFileName = filename:join( [WhereRunning, "images", UserFileName] ),
-    lager:debug("SysFileName: ~p", [SysFileName]),
     SysConfigMap = maps:update(imageFileName, SysFileName, ConfigMap),
 
+    %% calculate the fractal data
+    lager:info("Starting data calc"),
+    Rows = compute_fractal_data:compute_fractal_data( SysConfigMap ),
+
     %% make the image
-    compute_fractal_data:make_png_from_data(Rows,SysConfigMap),
-    lager:debug("Image Created"),
+    lager:info("Making Png"),
+    compute_fractal_data:make_png_from_data(Rows, SysConfigMap),
+    lager:info("Image created at: ~p", [SysFileName]),
 
     %% decide what to return
-    { true, Req1, State}.
+    {Host, Req2} = cowboy_req:header(<<"host">>, Req1),
+    BinUserFileName = list_to_binary(UserFileName),
+    Path = <<"/images/", BinUserFileName/binary>>,
+    Location = <<"http://", Host/binary, Path/binary>>,
+    { {true, Location}, Req2, State}.
 
 

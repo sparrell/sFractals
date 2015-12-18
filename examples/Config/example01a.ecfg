@@ -1,7 +1,7 @@
 #{ fractalAlg    => julian,  % Fractal Algorithm is julian
    imageFileName => "../examples/Output/example01a.png",  %image file created
    colorAlg      => simplest,  % 0-11 map to colors
-   <<"width">>         => 10,        % width=10
+   width         => 10,        % width=10
    height        => 10,        % height=10
    cReal         => 0.5,       % real portion of C0
    cImaginary    => -0.5,      % imaginary portion of C0

@@ -36,10 +36,7 @@ start_webserver() ->
     lager:info("cowboy webserver about to start"),
     Port = 8080,  % get this from config when clean this up
     ListenerCount = 5, % how many parralell listeners (don't need many)
-    MaxConnections = 100, % how many can use at same tim
-    StaticPages = [ { directory, {priv_dir, sFractals, []} }
-                  , {mimetypes, [{<<".html">>, [<<"text/html">>]}]}
-                  ],
+    %%MaxConnections = 100, % how many can use at same tim
     IndexPage = {priv_file, sFractals, "index.html"},
     Routes = [
                {

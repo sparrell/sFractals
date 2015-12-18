@@ -8,7 +8,10 @@
     , stdlib
     , lager
     , cowboy
+    , eper
+    , recon
     , jiffy
+    , png
    ]},
   {env,[]},
   {modules, []},

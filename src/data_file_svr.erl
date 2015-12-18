@@ -31,6 +31,8 @@
           code_change/3       % for later
           ]).
 
+-type state()::#{}. 
+
 %% client functions
 
 start(ConfigMap) ->
@@ -58,6 +60,7 @@ writeDataFile() ->
     %% wait for more if not? timeout?
     gen_server:cast(?MODULE, writeDataFile).
 
+-spec init(ConfigMap::map()) -> { ok, state() }.
 %% server functions
 init(ConfigMap) ->     % initialization
     lager:debug("starting dataFileSvr ~n" ),
@@ -67,28 +70,39 @@ init(ConfigMap) ->     % initialization
 
     RowData = [],                              % start with empty row list
 
-    { ok, {NumRowsLeft, RowData, ConfigMap} }. % return tuple for LoopData
+    %% add NumRowsLeft and RowData and ConfigMap to make new map for status
+    InterimStatusMap = maps:update(num_rows_left, NumRowsLeft, ConfigMap),
+    StatusMap = maps:update(row_data, RowData, InterimStatusMap),
+
+    { ok, StatusMap }. % return tuple for LoopData
 
 %% sync requests
-handle_call( {rowStatus, junkForNow}
+handle_call( whatcall
            , _From
-           , {NumRowsLeft, RowData, ConfigMap}
+           , StatusMap
            ) ->
+    #{ num_rows_left := NumRowsLeft, row_data := RowData} = StatusMap,
     %% fix later
     lager:debug("rowStatus svr: ~p, ~p~n", [NumRowsLeft, RowData] ),
-    {reply, "reply to rowStatus", {NumRowsLeft, RowData, ConfigMap}}.
+    {reply, "reply to rowStatus", StatusMap}.
 
 %% async requests
 handle_cast( {addARow, {RowNumber, RowToAdd}}
-           , {NumRowsLeft , RowData , ConfigMap}
+           , #{ num_rows_left := NumRowsLeft
+              , row_data := RowData
+              } = StatusMap
            )
         when NumRowsLeft > 0 ->
     %% this case when crunching thru the rows and not at last one yet
     lager:debug("handleCast svr:addARow: NumRowsLeft=~p~n",[NumRowsLeft]),
     NewNumRowsLeft = NumRowsLeft - 1,
     NewRowData = [ {RowNumber, RowToAdd} | RowData ],
-    {noreply, {NewNumRowsLeft, NewRowData, ConfigMap}};
-handle_cast(writeDataFile, {NumRowsLeft, RowData, ConfigMap}) ->
+    StatusMap2 = maps:update( num_rows_left, NewNumRowsLeft, StatusMap),
+    StatusMap3 = maps:update( row_data, NewRowData, StatusMap2),
+
+    {noreply, StatusMap3};
+handle_cast(writeDataFile, StatusMap) ->
+    #{ num_rows_left := NumRowsLeft, row_data := RowData} = StatusMap,
     %% this case when have everything to write
     lager:debug("CastSvr:writeDataFile: got here~n"),
     lager:debug("    NumRowsLeft = ~p~n",[NumRowsLeft]),
@@ -103,7 +117,7 @@ handle_cast(writeDataFile, {NumRowsLeft, RowData, ConfigMap}) ->
     lager:debug("CastSvr:writeDataFile: SortedRowData=~p~n",[SortedRowData]),
 
     %% get config and open file
-    DataFileName = maps:get(dataFileName, ConfigMap),  % where to write datafile
+    DataFileName = maps:get(dataFileName, StatusMap),  % where to write datafile
     {ok, DataFile} = file:open(DataFileName, [write]),
 
     %% write to file until out of rows
@@ -114,7 +128,7 @@ handle_cast(writeDataFile, {NumRowsLeft, RowData, ConfigMap}) ->
     file:close(DataFile),
 
     %% return? stop?
-    {noreply, {NumRowsLeft, RowData, ConfigMap}};
+    {noreply, StatusMap};
 handle_cast(stop, LoopData) ->
     lager:debug("handleCast:stop: got here~n"),
     {stop, normal, LoopData}.

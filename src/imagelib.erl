@@ -37,7 +37,7 @@ analyzeData(CountData) ->
                ).
 
 makePng( ConfigMap ) ->
-    Width  = maps:get(<<"width">>, ConfigMap),
+    Width  = maps:get(width, ConfigMap),
     Height = maps:get(height, ConfigMap),
     PngFileName = maps:get(imageFileName, ConfigMap),
     ColorAlg = maps:get(colorAlg, ConfigMap),
@@ -108,7 +108,7 @@ append_row(#{size := {Width, _Height}} = Png, Y) ->
 
 %% Open the png file and return the png object
 startPng( ConfigMap ) ->
-    Width  = maps:get(<<"width">>, ConfigMap),
+    Width  = maps:get(width, ConfigMap),
     Height = maps:get(height, ConfigMap),
     PngFileName = maps:get(imageFileName, ConfigMap),
     ColorAlg = maps:get(colorAlg, ConfigMap),
