@@ -61,16 +61,22 @@ addRows(ThisPng, [ThisRow | RestOfRows ] ) ->
 %%        returns Rows
 %%          list of rows where each row is list of counts, 1 per pixel)
 %%%%%%%%
-compute_fractal_data(ConfigMap) ->
-    %% get config needed
+compute_fractal_data( #{ width  := Width
+                       , height := Height
+                       , xRealRight := XRealRight
+                       , xRealLeft := XRealLeft
+                       , yImaginaryLow := YImaginaryLow
+                       , yImaginaryHigh := YImaginaryHigh
+                       } = ConfigMap
+                    ) when is_integer(Width)
+                         , is_integer(Height)
+                         , is_float(XRealRight)
+                         , is_float(XRealLeft)
+                         , is_float(YImaginaryLow)
+                         , is_float(YImaginaryHigh)
+                      ->
     %% create height rows of width columns of pixels
-    Width           = maps:get(width, ConfigMap),
-    Height          = maps:get(height, ConfigMap),
     %% each pixel is corresonding complex number defined by corners of the box
-    XRealRight      = maps:get(xRealRight, ConfigMap),
-    XRealLeft       = maps:get(xRealLeft, ConfigMap),
-    YImaginaryLow   = maps:get(yImaginaryLow, ConfigMap),
-    YImaginaryHigh  = maps:get(yImaginaryHigh, ConfigMap),
     %% box is bounded on left by x > XRealLeft
     %%      and bounded on right by x < XRealRight
     %% box is bounded on top by y > YImaginaryHigh
@@ -122,7 +128,7 @@ compute_fractal_data( Rows, _ThisRow,
                _XPix, _XR, _DeltaX, _Width,
                YPix, _YI, _DeltaY, _Height,  % only height matters
                _ConfigMap)
-        when YPix =< 0 ->
+        when is_integer(YPix), YPix =< 0 ->
 
     %% pixels all made already so done
     Rows;
@@ -131,8 +137,18 @@ compute_fractal_data( Rows, _ThisRow,
 compute_fractal_data( Rows, ThisRow,        % row data computed so far
                XPix, _XR, DeltaX, Width,  % info for points in a row
                YPix, YI, DeltaY, Height,  % info for rows
-               ConfigMap)
-        when XPix =< 0, YPix >= 0 ->
+               %% reset to end of row by getting from config
+               #{ xRealRight := NewXR } = ConfigMap)
+        when is_integer(XPix) % type guards help compiler make faster code
+           , is_integer(YPix)
+           , is_integer(Width)
+           , is_integer(Height)
+           , is_float(DeltaX)
+           , is_float(DeltaY)
+           , is_float(NewXR)
+           , XPix =< 0
+           , YPix >= 0
+        ->
 
     % add row
     NewRows = [ ThisRow | Rows ],
@@ -140,7 +156,6 @@ compute_fractal_data( Rows, ThisRow,        % row data computed so far
     % reset to begining of next row
     NewRowData = [],                               % reset data for row to empty
     NewXPix    = Width,                            % reset to end of line
-    NewXR      = maps:get(xRealRight, ConfigMap),  % reset to end of line
     NewYPix    = YPix - 1,                         % increment row
     NewYI      = YI - DeltaY,                      % increment row
     compute_fractal_data( NewRows, NewRowData,
@@ -151,16 +166,25 @@ compute_fractal_data( Rows, ThisRow,        % row data computed so far
 compute_fractal_data( Rows, RowData,       % row data computed so far
                XPix, XR, DeltaX, Width,   % info for points in a row
                YPix, YI, DeltaY, Height,  % info for rows
-               ConfigMap)
-        when XPix > 0, YPix > 0 ->
+               #{ fractalAlg := FractalAlg
+                , cReal      := CReal
+                , cImaginary := CImaginary
+                , maxIterationThreshold := MaxIterationThreshold
+                , bailoutThreshold := BailoutThreshold
+                } = ConfigMap
+              )
+        when is_integer(XPix) % type guards help compiler make faster code
+           , is_integer(YPix)
+           , is_integer(Width)
+           , is_integer(Height)
+           , is_float(DeltaX)
+           , is_float(DeltaY)
+           , is_float(XR)
+           , is_float(YI)
+           , XPix > 0
+           , YPix > 0
+        ->
 
-    %% get config
-    #{ fractalAlg := FractalAlg
-     , cReal      := CReal
-     , cImaginary := CImaginary
-     , maxIterationThreshold := MaxIterationThreshold
-     , bailoutThreshold := BailoutThreshold
-     } = ConfigMap,
 
     %% get iteration count for this point
     NewPoint = compute_points:compute_iteration_value( FractalAlg
