@@ -33,10 +33,15 @@ make_data( ConfigMap ) ->
   %%    cfp = concurrent fractal processing
   true = cxy_ctl:init([{cfp, unlimited, 1000, 100000}]),
   %% spawn the workers for each point
+  lager:debug("make_data spawning workers"),
   make_rows( cfp, XList, YList, ConfigMap, FractalEts ),
 
   %% wait for all rows of data to finish
+  lager:debug("make_data waiting for workers to finish"),
   wait_for_rows( XList, YList),
+  lager:debug("make_data workers finished"),
+  EtsInfo = ets:info(FractalEts),
+  lager:debug("ets info: ~p", [EtsInfo]),
 
   %% transform data
 
