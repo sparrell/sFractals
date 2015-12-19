@@ -4,7 +4,7 @@
 %%%
 %%%-------------------------------------------------------------------
 
--module(controller).
+-module(sf_controller).
 -author("Duncan Sparrell").
 %% control the flow of making a fractal
 %% use epocxy to spawn actual computations
