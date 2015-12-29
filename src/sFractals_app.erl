@@ -17,6 +17,7 @@
 %%====================================================================
 
 start(_StartType, _StartArgs) ->
+    true = cxy_ctl:init([{cfp, unlimited, 1000, 100000}]),
     {ok, SfPid} = 'sFractals_sup':start_link(),
     start_webserver(),
     {ok, SfPid}.
