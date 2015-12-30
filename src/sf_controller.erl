@@ -14,7 +14,6 @@
         , compute_row/8 % so spawned process can run
         , data2file/2  % write fractal data to file
         , data2svr/2  % write fractal data to svr
-        , point/5     % worker
           ]).
 
 %% expose functions for test
@@ -94,7 +93,7 @@ wait_for_rows2(Row) when is_integer(Row), Row > 0 ->
   receive
     %% match when get a message that a row is done
     {did_a_row, Row} -> ok
-  after 5000 ->  %hardcoded 5s timeout for next point
+  after 5000 ->  %hardcoded 5s timeout for next row
       lager:error("wait_for_row timeout. Row = ~p",[Row]),
       erlang:error("wait_for_row timeout")
   end,
@@ -222,51 +221,4 @@ data2file( _Data, _ConfigMap) ->
 
 data2svr( _Data, _ConfigMap) ->
   lager:debug("need to implement data2svr"),
-  ok.
-
-%%%%%%%
-%% point is the worker to compute one data point
-%%     inputs: {PixelX, RealX}, {PixelY, ImgY}, ConfigMap
-%%              PixelX = integer x pixel co-ordinate
-%%              RealX  = real floating point number corresponding to X
-%%              PixelY = integer y pixel co-ordinate
-%%              ImgY   = imaginary floating point number corresponding to Y
-%%              ConfigMap = configuration data
-point( {PixelX, RealX}
-     , {PixelY, ImgY}
-     , #{ fractalAlg := julian
-        , cReal := CReal
-        , cImaginary := CImaginary
-        , maxIterationThreshold := MaxIterationThreshold
-        , bailoutThreshold := BailoutThreshold
-        }
-     , FractalEts
-     , ControllerPid
-     )
-    when is_integer(PixelX)
-       , is_integer(PixelY)
-       , is_float(RealX)
-       , is_float(ImgY)
-       , is_float(CReal)
-       , is_float(CImaginary)
-       , is_integer(MaxIterationThreshold)
-       , is_float(BailoutThreshold)
-    ->
-  %% calculate iterations
-  Iter = compute_points:compute_iteration_value( julian
-                                               , CReal
-                                               , CImaginary
-                                               , RealX
-                                               , ImgY
-                                               , 0
-                                               , MaxIterationThreshold
-                                               , BailoutThreshold ),
-
-  %% store in ets table at x,y
-  ets:insert(FractalEts, {{PixelX ,PixelY}, Iter}),
-
-  %% message that data stored
-  ControllerPid ! did_a_point,
-
-  %% done
   ok.
