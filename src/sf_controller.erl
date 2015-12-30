@@ -58,7 +58,6 @@ make_data2( #{ height := Height
   lager:debug("compute rows workers finished"),
   EtsInfo = ets:info(FractalEts),
   lager:debug("ets info: ~p", [EtsInfo]),
-  lager:debug("clean up ets?"),
 
   %% convert ets table data into rowdata for png
   RowData = ets_to_rowdata(FractalEts, Height, []),
@@ -69,6 +68,7 @@ make_data2( #{ height := Height
 %% convert ets table into fractal row data suitable for png
 ets_to_rowdata(_FractalEts, 0, RowData) ->
   %% Height = zero  so done, return RowData
+  lager:debug("clean up hardcoded timeout in wait_for_rows(2?)"),
   %%     later feature - put save to file here if desired
   lager:debug("later feature - put save to file here if desired"),
   %%     later feature - clean up ets here
@@ -78,7 +78,6 @@ ets_to_rowdata( FractalEts, RowNum, RowData )
                when is_integer(RowNum), RowNum > 0 ->
   %% pull the data for Row numbered RowNum
   [{RowNum, NewRow}] = ets:lookup(FractalEts, RowNum),
-  lager:debug("NewRow: ~p", [NewRow]),
 
   %% add to RowData
   NewRowData = [ NewRow | RowData ],
@@ -100,9 +99,6 @@ wait_for_rows2(Row) when is_integer(Row), Row > 0 ->
       lager:error("wait_for_row timeout. Row = ~p",[Row]),
       erlang:error("wait_for_row timeout")
   end,
-  lager:debug("fix hardcoded row timeout"),
-
-  lager:debug("got Row = ~p",[Row]),
 
   %% iterate for next row
   NewRow = Row - 1,
