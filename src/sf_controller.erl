@@ -10,8 +10,7 @@
 %% use epocxy to spawn actual computations
 
 %% public API
--export([ make_data/1 % create a block of fractal data
-        , make_data2/1
+-export([ make_data/1
         , compute_row/8 % so spawned process can run
         , data2file/2  % write fractal data to file
         , data2svr/2  % write fractal data to svr
@@ -21,7 +20,7 @@
 %% expose functions for test
 %% none?
 
-make_data2( #{ height := Height
+make_data( #{ height := Height
              , yImaginaryLow := YImaginaryLow
              , yImaginaryHigh := YImaginaryHigh
              , width := Width
@@ -216,82 +215,6 @@ compute_row( CallingPid
              , DeltaX
              , NewRowData
              ).
-
-make_data( ConfigMap ) ->
-
-  %% compute the box (ie list of x's and y's)
-  XList = databox:compute_xlist(ConfigMap),
-  YList = databox:compute_ylist(ConfigMap),
-
-  %% create ETS table to hold data
-  FractalEts = ets:new(fractal_ets, [set, public, {write_concurrency, true}]),
-
-  %% spawn processes to populate ETS with fractal data
-  %%    initialize epocxy concurrency initialized in supervisor
-  %%    cfp = concurrent fractal processing
-
-  %% spawn the workers for each point
-  lager:debug("make_data spawning workers"),
-  make_rows( cfp, XList, YList, ConfigMap, FractalEts ),
-
-  %% wait for all rows of data to finish
-  lager:debug("make_data waiting for workers to finish"),
-  wait_for_rows( XList, YList),
-  lager:debug("make_data workers finished"),
-  EtsInfo = ets:info(FractalEts),
-  lager:debug("ets info: ~p", [EtsInfo]),
-
-  %% transform data
-
-  %% return data
-  ok.
-
-wait_for_rows( _XList, []) ->
-  %% if YList empty then you are done
-  ok;
-wait_for_rows( XList, [Y | RestY] ) ->
-  %% wait for next row
-  wait_for_row( XList, Y ),
-  %% recurse thru rest of rows
-  wait_for_rows( XList, RestY ).
-
-wait_for_row( [], _Y) ->
-  %% if XList empty then you are done with this row
-  ok;
-wait_for_row( [ X | RestX ], Y ) ->
-  %% wait for next point in row
-  receive
-    %% match when get a message that a point is done
-    %% note it might not be this XY
-    %%   doesn't matter - just counting got right number back
-    did_a_point ->
-      ok
-  after 5000 ->  %hardcoded 5s timeout for next point
-      lager:error("wait_for_row timeout. XY = ~p, ~p",[X,Y]),
-      erlang:error("wait_for_row timeout")
-  end,
-
-  %% recurse thru rest of points in row
-  wait_for_row( RestX, Y).
-
-
-make_rows( _Pool, _XList, [], _ConfigMap, _FractalEts ) ->
-  %% done when YList empty
-  ok;
-make_rows( Pool, XList, [FirstY | RestY], ConfigMap, FractalEts ) ->
-  %% make another row of data
-  make_a_row( Pool, XList, FirstY, ConfigMap, FractalEts),
-  %% recurse thru rest of rows
-  make_rows( Pool, XList, RestY, ConfigMap, FractalEts ).
-
-make_a_row( _Pool, [], _Y, _ConfigMap, _FractalEts) ->
-  %% done when XList empty
-  ok;
-make_a_row( Pool, [X | RestX], Y, ConfigMap, FractalEts) ->
-  %% make a point
-  cxy_ctl:execute_task(cfp, ?MODULE, point, [ X, Y, ConfigMap, FractalEts, self()]),
-  %% recurse thru rest of row
-  make_a_row( Pool, RestX, Y, ConfigMap, FractalEts).
 
 data2file( _Data, _ConfigMap) ->
   lager:debug("need to implement data2file using binary"),
