@@ -77,7 +77,8 @@ ets_to_rowdata(_FractalEts, 0, RowData) ->
 ets_to_rowdata( FractalEts, RowNum, RowData )
                when is_integer(RowNum), RowNum > 0 ->
   %% pull the data for Row numbered RowNum
-  NewRow = [0,0,0], %for now
+  [{RowNum, NewRow}] = ets:lookup(FractalEts, RowNum),
+  lager:debug("NewRow: ~p", [NewRow]),
 
   %% add to RowData
   NewRowData = [ NewRow | RowData ],
