@@ -12,7 +12,7 @@
 %% public API
 -export([ make_data/1 % create a block of fractal data
         , make_data2/1
-        , compute_row/9 % so spawned process can run
+        , compute_row/8 % so spawned process can run
         , data2file/2  % write fractal data to file
         , data2svr/2  % write fractal data to svr
         , point/5     % worker
@@ -38,9 +38,6 @@ make_data2( #{ height := Height
   %% create ETS table to hold data
   FractalEts = ets:new(fractal_ets, [set, public, {write_concurrency, true}]),
 
-  %% create PNG
-  ThisPng = imagelib:startPng( ConfigMap ),
-
   %% compute once
   DeltaY = (YImaginaryHigh - YImaginaryLow) / (Height-1),
   DeltaX = (XRealRight - XRealLeft) / (Width-1),
@@ -48,7 +45,6 @@ make_data2( #{ height := Height
   %% compute each row initializing with height and width
   lager:debug("starting spawning rows"),
   compute_rows( FractalEts
-              , ThisPng
               , Height
               , YImaginaryHigh
               , DeltaY
@@ -58,29 +54,44 @@ make_data2( #{ height := Height
               , ConfigMap
               ),
   lager:debug("finished spawning rows, starting wait"),
-  wait_for_rows2( Height, ThisPng ), % wait for top row
+  wait_for_rows2( Height ), % wait for top row
   lager:debug("compute rows workers finished"),
   EtsInfo = ets:info(FractalEts),
   lager:debug("ets info: ~p", [EtsInfo]),
   lager:debug("clean up ets?"),
-  ok.
 
-wait_for_rows2(Row, ThisPng) when is_integer(Row), Row =< 0 ->
-  %% done
+  %% convert ets table data into rowdata for png
+  RowData = ets_to_rowdata(FractalEts, Height, []),
 
-  %% write ets rowdata to png?
+  %% create image from rowdata
+  make_png:make_png_from_data(RowData, ConfigMap).
 
-
-  %%   close png
-  imagelib:finishPng(ThisPng),
-  %% later feature - put save to file here if desired
+%% convert ets table into fractal row data suitable for png
+ets_to_rowdata(_FractalEts, 0, RowData) ->
+  %% Height = zero  so done, return RowData
+  %%     later feature - put save to file here if desired
   lager:debug("later feature - put save to file here if desired"),
-  %% later feature - clean up ets here
+  %%     later feature - clean up ets here
   lager:debug("later feature - clean up ets here"),
+  RowData;
+ets_to_rowdata( FractalEts, RowNum, RowData )
+               when is_integer(RowNum), RowNum > 0 ->
+  %% pull the data for Row numbered RowNum
+  NewRow = [0,0,0], %for now
+
+  %% add to RowData
+  NewRowData = [ NewRow | RowData ],
+
+  %% recurse to next row
+  NewRowNum = RowNum - 1,
+  ets_to_rowdata( FractalEts, NewRowNum, NewRowData ).
+
+wait_for_rows2(0) ->
+  %% Row=0 so done
   ok;
-  
-wait_for_rows2(Row, ThisPng) ->
-  %% wait for next row to be written
+
+wait_for_rows2(Row) when is_integer(Row), Row > 0 ->
+  %% wait for any row to be written
   receive
     %% match when get a message that a row is done
     {did_a_row, Row} -> ok
@@ -90,34 +101,25 @@ wait_for_rows2(Row, ThisPng) ->
   end,
   lager:debug("fix hardcoded row timeout"),
 
-  %% see if next to write row is avail and write to png
   lager:debug("got Row = ~p",[Row]),
-  lager:debug("add write png"),
 
   %% iterate for next row
   NewRow = Row - 1,
-  wait_for_rows2( NewRow, ThisPng).
+  wait_for_rows2( NewRow).
 
-compute_rows( FractalEts
-            , ThisPng
+compute_rows( _FractalEts
             , 0
             , _YI
             , _DeltaY
             , _XP
             , _XR
             , _DeltaX
-            , ConfigMap
+            , _ConfigMap
             ) ->
   %% if Y=0 then done going thru all rows
-
-  %% do cleanup of ets and png here
-%% if storing data for later, do it here
-%% then delete ets table
-
-  ok = png:close(ThisPng);
+  ok;
 
 compute_rows(FractalEts
-            , ThisPng
             , YP
             , YI
             , DeltaY
@@ -144,7 +146,6 @@ compute_rows(FractalEts
                         , XP
                         , XR
                         , DeltaX
-                        , [] % init row data
                         ]
                       ),
 
@@ -153,8 +154,13 @@ compute_rows(FractalEts
   NewYI = YI - DeltaY,
 
   %% recurse to next row
-  compute_rows(FractalEts, ThisPng, NewYP, NewYI, DeltaY, XP, XR, DeltaX, ConfigMap).
-  
+  compute_rows(FractalEts, NewYP, NewYI, DeltaY, XP, XR, DeltaX, ConfigMap).
+
+compute_row( CallingPid, FractalEts, ConfigMap, YP, YI, XP, XR, DeltaX ) ->
+  %% this is spawned worker process
+  %%  initialize row data to empty and kickoff recursion thru all the points in the row
+  compute_row( CallingPid, FractalEts, ConfigMap, YP, YI, XP, XR, DeltaX, [] ).
+
 compute_row( CallingPid, FractalEts, _ConfigMap, YP, _YI, XP, _XR, _DeltaX, RowData )
         when is_integer(YP), is_integer(XP), XP =< 0 ->
   %% done with row
@@ -186,7 +192,7 @@ compute_row( CallingPid
            , is_float(CReal)
            , is_float(CImaginary)
            , is_integer(MaxIterationThreshold)
-           , is_float(MaxIterationThreshold)
+           , is_float(BailoutThreshold)
         ->
   %% compute iteration count for point
   Iter = compute_points:compute_iteration_value( FractalAlg
@@ -202,8 +208,17 @@ compute_row( CallingPid
 
   %% iterate for next point
   NewXP = XP - 1,
-  NewXR = XR - DeltaX, 
-  compute_row( CallingPid, FractalEts, ConfigMap, YP, YI, NewXP, NewXR, DeltaX, NewRowData ).
+  NewXR = XR - DeltaX,
+  compute_row( CallingPid
+             , FractalEts
+             , ConfigMap
+             , YP
+             , YI
+             , NewXP
+             , NewXR
+             , DeltaX
+             , NewRowData
+             ).
 
 make_data( ConfigMap ) ->
 
@@ -307,7 +322,7 @@ point( {PixelX, RealX}
         }
      , FractalEts
      , ControllerPid
-     ) 
+     )
     when is_integer(PixelX)
        , is_integer(PixelY)
        , is_float(RealX)
