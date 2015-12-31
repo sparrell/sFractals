@@ -33,7 +33,7 @@ init_per_suite(Config) ->
 test_status(_Config) ->
   Env = application:get_all_env(sFractals),
   ct:pal("ENV: ~p", [Env]),
-  MyPort = application:get_env(sFractals, port, 8081),
+  MyPort = application:get_env(sFractals, port, 8080),
   {ok, Conn} = shotgun:open("localhost", MyPort),
   {ok, Response} = shotgun:get(Conn, "/status"),
   ct:pal("Response = ~p", [Response]),
