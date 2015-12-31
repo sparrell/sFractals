@@ -12,6 +12,6 @@ curl -vX POST localhost:8080/sFractal -H'content-type:application/json' -d '{
    "xRealLeft":-1.0,
    "yImaginaryLow":0.0,
    "yImaginaryHigh":2.0,
-   "bailoutThreshold":4,
+   "bailoutThreshold":4.0,
    "maxIterationThreshold":63 
 }'
