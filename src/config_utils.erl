@@ -13,6 +13,7 @@ jason2atom(BinaryMap) ->
   ImageFile = get_image_file(BinaryMap),
   ColorAlg = get_color_alg(BinaryMap),
   CReal = get_c_real(BinaryMap),
+  CImaginary = get_c_imaginary(BinaryMap),
 
   CImaginary = maps:get(<<"cImaginary">>, BinaryMap),
   ZReal = maps:get(<<"zReal">>, BinaryMap),
@@ -178,14 +179,19 @@ check_color_alg(InitialColorAlg) when InitialColorAlg =:= "simple64" ->
 check_color_alg(_) ->
   erlang:error(unknown_color_alg).
 
+check_is_float(ParamName, Num) when not is_float(Num) ->
+  erlang:error("~p/~p must be floating point number", [ParamName, Num] );
+check_is_float(ParamName, Num) ->
+  Num.
+
 get_c_real(BinaryMap) ->
   CReal = maps:get(<<"cReal">>, BinaryMap),
-  check_c_real(CReal).
+  check_is_float(c_real, CReal).
 
-check_c_real(CReal) when not is_float(CReal) ->
-  erlang:error("CReal must be floating point number");
-check_c_real(CReal) ->
-  CReal.
+get_c_imaginary(BinaryMap) ->
+  CImaginary = maps:get(<<"cImaginary">>, BinaryMap),
+  check_is_float(c_imaginary, CImaginary).
+
 
 
 
