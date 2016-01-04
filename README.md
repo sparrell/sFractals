@@ -14,7 +14,7 @@ Build
 Build and Test
 --------------
 
-    $ rebar3 ct
+    $ rebar3 do compile, ct
 
 Examples
 --------------
@@ -24,6 +24,57 @@ A number of example escripts to show how it works. Look at readme in example dir
 Program Structure
 --------------
 This is still a work in progress. 
+
+Dependencies:
+- rebar3 is used to compile & build this application
+- png is used for creating png image
+- epocxy is used to distribute the fractal processing across many processes
+- cowboy is used as the web&API server
+- jiffy is used for parsing user input into json
+- lager is used for logging
+- eper & recon are used for debugging
+- shotgun is used for test
+- relx is used for creating releases
+- worker_pool is deprecated in this application _x
+ 
+
+
+Quick overview of files:
+- for rebar3 make/build/install
+   - rebar.config => for rebar3 to make/build/install application
+- for erlang OTP application
+   - src/sFractals.app.src
+   - src/sFractals_app.erl
+   - src/sFractals_sup.erl
+- Cowboy web and REST API server
+   - the sFractals application starts a cowboy webserver and routes:
+      - static to index.hmtl
+      - /status to status_handler.erl
+      - /sFractal to fractal_handler.erl
+- Fractal Creation
+   - fractal_handler.erl _x is called by cowboy when a post is made to /sFractal
+   - fractal_handler.erl
+      - uses routines in config_utils convert html to JSON and validate input
+      - calls sf_controller:make_data to make the fractal
+   - config_utils.erl is called by fractal_handler.erl and any other routines that need config input validation. Uses jiffy for json conversions
+   - sf_controller.erl controls the flow of making a fractal. 
+      - It creates an ets table to hold the fractal data, 
+      - uses epocxy to spawn one process per row of computation. 
+      - Calls compute_points:compute_iteration_value to do the actual fractal computation for each point.
+      - Calls make_png:make_png_from_data to create the image from the data
+   - compute_points.erl contains actual fractal computation algorithms
+   - make_png.erl converts fractal data into image using png and imagelib.erl
+   - imagelib.erl has routines for converts fractal data into image using png
+- Misc
+   - status_handler.erl is called by Cowboy on /status and returns status about the application (still a work in process)
+   - cplx.erl - routines for complex (ie imaginary number) math (not used yet)
+   - data_file_svr.erl - not used yet. hope to make a storage server to save recomputation
+
+
+
+
+
+
 It grew over time so there are multiple methods of creating a fractal image as I tried various ways.
 
 Method A: As shown in examples 01a,02a,03a,04a,...:
