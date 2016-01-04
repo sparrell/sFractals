@@ -22,13 +22,8 @@ jason2atom(BinaryMap) ->
   YImaginaryLow = get_y_imaginary_low(BinaryMap),
   YImaginaryHigh = get_y_imaginary_high(BinaryMap),
   check_y_imaginary(YImaginaryLow, YImaginaryHigh),
-
-  Bailout = maps:get(<<"bailoutThreshold">>, BinaryMap),
-  MaxIter = maps:get(<<"maxIterationThreshold">>, BinaryMap),
-  lager:debug("need more checks on input in config_utils:jason2atom"),
-
-  %% need to add checks on input here
-  %% need to add optional parameters here (or default on gets above)
+  Bailout = get_bailout(BinaryMap),
+  MaxIter = get_max_iter(BinaryMap),
 
   JsonConfigMap = #{ width => Width
                    , height => Height
@@ -185,6 +180,22 @@ check_is_float(ParamName, Num) when not is_float(Num) ->
 check_is_float(_ParamName, Num) ->
   Num.
 
+check_postive_float(_ParamName, Num)
+     when is_float(Num)
+        , Num > 0.0
+     ->
+  Num;
+check_postive_float(ParamName, Num) ->
+  erlang:error("~p/~p must be floating point number > 0", [ParamName, Num] ).
+
+check_positive_int(_ParamName, Num)
+    when is_integer(Num)
+       , Num > 0
+    ->
+  Num;
+check_positive_int(ParamName, Num) ->
+  erlang:error("~p/~p must be integer > 0", [ParamName, Num] ).
+
 get_c_real(BinaryMap) ->
   CReal = maps:get(<<"cReal">>, BinaryMap),
   check_is_float(c_real, CReal).
@@ -237,4 +248,11 @@ check_y_imaginary(YImaginaryLow, YImaginaryHigh)
 check_y_imaginary(_YImaginaryLow, _YImaginaryHigh) ->
   erlang:error( yi_must_be_floats_and_high_must_be_greater_than_low).
 
+get_bailout(BinaryMap) ->
+  Bailout = maps:get(<<"bailoutThreshold">>, BinaryMap),
+  check_postive_float(bailout, Bailout).
+
+get_max_iter(BinaryMap) ->
+  MaxIter = maps:get(<<"maxIterationThreshold">>, BinaryMap),
+  check_positive_int(max_iter, MaxIter).
 
