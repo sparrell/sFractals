@@ -14,10 +14,9 @@ jason2atom(BinaryMap) ->
   ColorAlg = get_color_alg(BinaryMap),
   CReal = get_c_real(BinaryMap),
   CImaginary = get_c_imaginary(BinaryMap),
+  ZReal = get_z_real(BinaryMap),
+  ZImaginary = get_z_imaginary(BinaryMap),
 
-  CImaginary = maps:get(<<"cImaginary">>, BinaryMap),
-  ZReal = maps:get(<<"zReal">>, BinaryMap),
-  ZImaginary = maps:get(<<"zImaginary">>, BinaryMap),
   XRealRight = maps:get(<<"xRealRight">>, BinaryMap),
   XRealLeft = maps:get(<<"xRealLeft">>, BinaryMap),
   YImaginaryLow = maps:get(<<"yImaginaryLow">>, BinaryMap),
@@ -181,7 +180,7 @@ check_color_alg(_) ->
 
 check_is_float(ParamName, Num) when not is_float(Num) ->
   erlang:error("~p/~p must be floating point number", [ParamName, Num] );
-check_is_float(ParamName, Num) ->
+check_is_float(_ParamName, Num) ->
   Num.
 
 get_c_real(BinaryMap) ->
@@ -191,6 +190,14 @@ get_c_real(BinaryMap) ->
 get_c_imaginary(BinaryMap) ->
   CImaginary = maps:get(<<"cImaginary">>, BinaryMap),
   check_is_float(c_imaginary, CImaginary).
+
+get_z_real(BinaryMap) ->
+  ZReal = maps:get(<<"zReal">>, BinaryMap),
+  check_is_float(z_real, ZReal).
+
+get_z_imaginary(BinaryMap) ->
+  ZImaginary = maps:get(<<"zImaginary">>, BinaryMap),
+  check_is_float(z_imaginary, ZImaginary).
 
 
 
