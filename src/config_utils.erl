@@ -12,8 +12,8 @@ jason2atom(BinaryMap) ->
   FractalAlg = get_fractal_alg(BinaryMap),
   ImageFile = get_image_file(BinaryMap),
   ColorAlg = get_color_alg(BinaryMap),
+  CReal = get_c_real(BinaryMap),
 
-  CReal = maps:get(<<"cReal">>, BinaryMap),
   CImaginary = maps:get(<<"cImaginary">>, BinaryMap),
   ZReal = maps:get(<<"zReal">>, BinaryMap),
   ZImaginary = maps:get(<<"zImaginary">>, BinaryMap),
@@ -23,6 +23,7 @@ jason2atom(BinaryMap) ->
   YImaginaryHigh = maps:get(<<"yImaginaryHigh">>, BinaryMap),
   Bailout = maps:get(<<"bailoutThreshold">>, BinaryMap),
   MaxIter = maps:get(<<"maxIterationThreshold">>, BinaryMap),
+  lager:debug("need more checks on input in config_utils:jason2atom"),
 
   %% need to add checks on input here
   %% need to add optional parameters here (or default on gets above)
@@ -177,6 +178,14 @@ check_color_alg(InitialColorAlg) when InitialColorAlg =:= "simple64" ->
 check_color_alg(_) ->
   erlang:error(unknown_color_alg).
 
+get_c_real(BinaryMap) ->
+  CReal = maps:get(<<"cReal">>, BinaryMap),
+  check_c_real(CReal).
+
+check_c_real(CReal) when not is_float(CReal) ->
+  erlang:error("CReal must be floating point number");
+check_c_real(CReal) ->
+  CReal.
 
 
 
