@@ -16,11 +16,13 @@ jason2atom(BinaryMap) ->
   CImaginary = get_c_imaginary(BinaryMap),
   ZReal = get_z_real(BinaryMap),
   ZImaginary = get_z_imaginary(BinaryMap),
+  XRealRight = get_x_real_right(BinaryMap),
+  XRealLeft = get_x_real_left(BinaryMap),
+  check_x_real(XRealLeft, XRealRight),
+  YImaginaryLow = get_y_imaginary_low(BinaryMap),
+  YImaginaryHigh = get_y_imaginary_high(BinaryMap),
+  check_y_imaginary(YImaginaryLow, YImaginaryHigh),
 
-  XRealRight = maps:get(<<"xRealRight">>, BinaryMap),
-  XRealLeft = maps:get(<<"xRealLeft">>, BinaryMap),
-  YImaginaryLow = maps:get(<<"yImaginaryLow">>, BinaryMap),
-  YImaginaryHigh = maps:get(<<"yImaginaryHigh">>, BinaryMap),
   Bailout = maps:get(<<"bailoutThreshold">>, BinaryMap),
   MaxIter = maps:get(<<"maxIterationThreshold">>, BinaryMap),
   lager:debug("need more checks on input in config_utils:jason2atom"),
@@ -199,7 +201,40 @@ get_z_imaginary(BinaryMap) ->
   ZImaginary = maps:get(<<"zImaginary">>, BinaryMap),
   check_is_float(z_imaginary, ZImaginary).
 
+get_x_real_right(BinaryMap) ->
+  XRealRight = maps:get(<<"xRealRight">>, BinaryMap),
+  check_is_float(x_real_right, XRealRight).
 
+get_x_real_left(BinaryMap) ->
+  XRealLeft = maps:get(<<"xRealLeft">>, BinaryMap),
+  check_is_float(x_real_left, XRealLeft).
 
+check_x_real(XRealLeft, XRealRight )
+    %% xrr must be > xrl and both must be floats
+    when is_float(XRealLeft)
+       , is_float(XRealLeft)
+       , XRealRight > XRealLeft
+    ->
+  ok;
+check_x_real(_XRealLeft, _XRealRight ) ->
+  erlang:error( xreals_must_be_floats_and_right_must_be_greater_than_left).
+
+get_y_imaginary_low(BinaryMap) ->
+  YImaginaryLow = maps:get(<<"yImaginaryLow">>, BinaryMap),
+  check_is_float(y_imaginary_low, YImaginaryLow).
+
+get_y_imaginary_high(BinaryMap) ->
+  YImaginaryHigh = maps:get(<<"yImaginaryHigh">>, BinaryMap),
+  check_is_float(y_imaginary_high, YImaginaryHigh).
+
+check_y_imaginary(YImaginaryLow, YImaginaryHigh)
+    %% yih must be > yil and both must be floats
+    when is_float(YImaginaryLow)
+       , is_float(YImaginaryHigh)
+       , YImaginaryHigh > YImaginaryLow
+    ->
+  ok;
+check_y_imaginary(_YImaginaryLow, _YImaginaryHigh) ->
+  erlang:error( yi_must_be_floats_and_high_must_be_greater_than_low).
 
 
