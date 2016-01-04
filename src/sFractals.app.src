@@ -8,6 +8,7 @@
     , stdlib
     , lager
     , cowboy
+    , epocxy
     , eper
     , recon
     , jiffy

@@ -2,8 +2,8 @@ curl -vX POST localhost:8080/sFractal -H'content-type:application/json' -d '{
    "fractalAlg":"julian",
    "imageFileName":"example10.png",
    "colorAlg":"simple64",
-   "width":8000,
-   "height":8000,
+   "width":2000,
+   "height":2000,
    "cReal":0.5,
    "cImaginary":-0.5,
    "zReal":-0.1,
@@ -12,6 +12,6 @@ curl -vX POST localhost:8080/sFractal -H'content-type:application/json' -d '{
    "xRealLeft":-1.0,
    "yImaginaryLow":0.0,
    "yImaginaryHigh":2.0,
-   "bailoutThreshold":4,
+   "bailoutThreshold":4.0,
    "maxIterationThreshold":63 
 }'

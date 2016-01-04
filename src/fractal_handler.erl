@@ -40,13 +40,18 @@ handle_json(Req, State) ->
     SysFileName = filename:join( [WhereRunning, "images", UserFileName] ),
     SysConfigMap = maps:update(imageFileName, SysFileName, ConfigMap),
 
+    %% calc data and make png
+    lager:info("Starting fractal"),
+    sf_controller:make_data( SysConfigMap ),
+
+
     %% calculate the fractal data
-    lager:info("Starting data calc"),
-    Rows = compute_fractal_data:compute_fractal_data( SysConfigMap ),
+    %%lager:info("Starting data calc"),
+    %%Rows = compute_fractal_data:compute_fractal_data( SysConfigMap ),
 
     %% make the image
-    lager:info("Making Png"),
-    compute_fractal_data:make_png_from_data(Rows, SysConfigMap),
+    %%lager:info("Making Png"),
+    %%compute_fractal_data:make_png_from_data(Rows, SysConfigMap),
     lager:info("Image created at: ~p", [SysFileName]),
 
     %% decide what to return

@@ -3,6 +3,9 @@
 -export([ jason2atom/1
         ]).
 
+%% for test
+- export( [ is_good_char/1 ] ).
+
 jason2atom(BinaryMap) ->
   Width  = get_width(BinaryMap),
   Height = get_height(BinaryMap),
@@ -98,13 +101,10 @@ get_image_file(BinaryMap) ->
 
 check_image_file(ImageFile) when is_binary(ImageFile) ->
   %% convert binary to normal string list
-  lager:debug('ImageFile Binary ~p', [ImageFile]),
   StringList = binary_to_list(ImageFile),
-  lager:debug('ImageFile String from bin ~p', [StringList]),
   %% now run rest of checks
   check_image_file(StringList);
 check_image_file(ImageFile) when is_list(ImageFile) ->
-  lager:debug('got to ImageFile String ~p', [ImageFile]),
   check_illegal_filename_chars(ImageFile),
   %% all good so return string
   ImageFile;
@@ -120,30 +120,30 @@ check_illegal_filename_chars( [H | T] ) ->
   %% recurse thru rest of char
   check_illegal_filename_chars( T ).
 
+%% is_good_char checks only valid characters used
+%%    prevents hack to get at other parts of filesystem/webserver
+%%    allowed characters
+%%       - ("dash" - ascii 45)
+%%       . ("dot" - ascii 46)
+%%       0-9 (ascii 48-57)
+%%       A-Z (ascii 65-90)
+%%       _ ("underscrore" - ascii 95)
+%%       a-z (ascii 97-122)
 is_good_char(C)
         when not is_integer(C) ->
   erlang:error(input_has_bad_char);
 is_good_char(C)
-        when C < 45 ->
-  erlang:error(input_has_bad_char);
-is_good_char(C)
-        when C =:= 47 ->
-  erlang:error(input_has_bad_slash_char);
-is_good_char(C)
-        when C > 57, C < 65 ->
-  erlang:error(input_has_bad_char);
-is_good_char(C)
-        when C > 90, C < 95 ->
-  erlang:error(input_has_bad_char);
-is_good_char(C)
-        when C =:= 96 ->
-  erlang:error(input_has_bad_acc_char);
-is_good_char(C)
-        when C > 122 ->
-  erlang:error(input_has_bad_char);
+        when C =:= 45 % dash
+           ; C =:= 46 % dot
+           ; ( C >= 48 andalso C =< 57 ) % 0-9
+           ; ( C >= 65 andalso C =< 90 ) % A-Z
+           ; C =:= 95 % underscrore
+           ; ( C >= 97 andalso C =< 122 ) % a-z
+        ->
+  ok; % valid characters
 is_good_char(_C) ->
-  %% this char ok
-  ok.
+  %% anything else is bad
+  erlang:error(input_has_bad_char).
 
 get_color_alg(BinaryMap) ->
   InitalColorAlg  = maps:get(<<"colorAlg">>, BinaryMap),
