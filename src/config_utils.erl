@@ -3,9 +3,6 @@
 -export([ jason2atom/1
         ]).
 
-%% for test
-- export( [ is_good_char/1 ] ).
-
 jason2atom(BinaryMap) ->
   Width  = get_width(BinaryMap),
   Height = get_height(BinaryMap),

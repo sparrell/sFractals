@@ -33,6 +33,7 @@ handle_json(Req, State) ->
     %% put stuff here for actually making fractal and returning it
     { ok, Body, Req1} = cowboy_req:body(Req),
     JsonConfigMap = jiffy:decode(Body, [return_maps]),
+    %%lager:debug("handle_json JsonConfigMap ~p", [JsonConfigMap] ),
     ConfigMap = config_utils:jason2atom(JsonConfigMap),
     %% concat WhereRunning, images, filename
     WhereRunning = code:priv_dir(sFractals),
