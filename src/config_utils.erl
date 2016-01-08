@@ -1,9 +1,9 @@
 -module(config_utils).
 
--export([ jason2atom/1
+-export([ json2atom/1
         ]).
 
-jason2atom(BinaryMap) ->
+json2atom(BinaryMap) ->
   Width  = get_width(BinaryMap),
   Height = get_height(BinaryMap),
   FractalAlg = get_fractal_alg(BinaryMap),
@@ -172,8 +172,8 @@ check_color_alg(InitialColorAlg) when InitialColorAlg =:= "simple64" ->
 check_color_alg(_) ->
   erlang:error(unknown_color_alg).
 
-check_is_float(ParamName, Num) when not is_float(Num) ->
-  erlang:error("~p/~p must be floating point number", [ParamName, Num] );
+check_is_float(_ParamName, Num) when not is_float(Num) ->
+  erlang:error(must_be_floating_point_number);
 check_is_float(_ParamName, Num) ->
   Num.
 
@@ -182,8 +182,8 @@ check_postive_float(_ParamName, Num)
         , Num > 0.0
      ->
   Num;
-check_postive_float(ParamName, Num) ->
-  erlang:error("~p/~p must be floating point number > 0", [ParamName, Num] ).
+check_postive_float(_ParamName, _Num) ->
+  erlang:error(must_be_positive_floating_point_number).
 
 check_positive_int(_ParamName, Num)
     when is_integer(Num)

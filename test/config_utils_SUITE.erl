@@ -18,29 +18,108 @@ all() ->
     [ test_good_json
     , test_bad_char_json
     , bad_width
+    , bad_height
+    , bad_fractal_alg
+    , bad_color_alg
+    , bad_cr
     ].
 
 %% timeout if no reply in a minute
 suite() ->
-    [{timetrap,{minutes,2}}].
+    [ {timetrap,{minutes,2}}
+    , {userdata, [ {json_map, #{ <<"bailoutThreshold">> => 4.0
+                                , <<"cImaginary">> => -0.5
+                                , <<"cReal">> => 0.5
+                                , <<"colorAlg">> => <<"simple64">>
+                                , <<"fractalAlg">> => <<"julian">>
+                                , <<"height">> => 2000
+                                , <<"imageFileName">> => <<"example10.png">>
+                                , <<"maxIterationThreshold">> => 63
+                                , <<"width">> => 2000
+                                , <<"xRealLeft">> => -1.0
+                                , <<"xRealRight">> => 1.0
+                                , <<"yImaginaryHigh">> => 2.0
+                                , <<"yImaginaryLow">> => 0.0
+                                , <<"zImaginary">> => -0.1
+                                , <<"zReal">> => -0.1
+                                } 
+                   } 
+                 ]
+      }
+    ].
 
 test_good_json(_Config) ->
-  JsonConfigMap = #{ <<"bailoutThreshold">> => 4.0
-                    ,<<"cImaginary">> => -0.5
-                    ,<<"cReal">> => 0.5
-                    ,<<"colorAlg">> => <<"simple64">>
-                    ,<<"fractalAlg">> => <<"julian">>
-                    ,<<"height">> => 2000
-                    ,<<"imageFileName">> => <<"example10.png">>
-                    ,<<"maxIterationThreshold">> => 63
-                    ,<<"width">> => 2000
-                    ,<<"xRealLeft">> => -1.0
-                    ,<<"xRealRight">> => 1.0
-                    ,<<"yImaginaryHigh">> => 2.0
-                    ,<<"yImaginaryLow">> => 0.0
-                    ,<<"zImaginary">> => -0.1
-                    ,<<"zReal">> => -0.1
-                    },
+  test_good_param( <<"imageFileName">>
+                 , imageFileName
+                 , <<"abc-def_ghijklmnopqrstuvwxyz.png">>
+                 , "abc-def_ghijklmnopqrstuvwxyz.png"),
+  test_good_param( <<"imageFileName">>
+                 , imageFileName
+                 , <<"ABCDEFGHIJKLMNOPQRSTUVWXYZ.png">>
+                 , "ABCDEFGHIJKLMNOPQRSTUVWXYZ.png"),
+  test_good_param( <<"imageFileName">>
+                 , imageFileName
+                 , <<"0123456789">>
+                 , "0123456789"),
+  test_good_param( <<"fractalAlg">>
+                 , fractalAlg
+                 , <<"julian">>
+                 , julian),
+  test_good_param( <<"colorAlg">>
+                 , colorAlg
+                 , "simplest"
+                 , simplest),
+  test_good_param( <<"colorAlg">>
+                 , colorAlg
+                 , "simplest2"
+                 , simplest2),
+  test_good_param( <<"colorAlg">>
+                 , colorAlg
+                 , "simple16"
+                 , simple16),
+  test_good_param( <<"colorAlg">>
+                 , colorAlg
+                 , "simple32"
+                 , simple32),
+  test_good_param( <<"colorAlg">>
+                 , colorAlg
+                 , "blue32"
+                 , blue32),
+  test_good_param( <<"colorAlg">>
+                 , colorAlg
+                 , "simple64"
+                 , simple64),
+  test_good_param( <<"colorAlg">>
+                 , colorAlg
+                 , <<"simplest">>
+                 , simplest),
+  test_good_param( <<"colorAlg">>
+                 , colorAlg
+                 , <<"simplest2">>
+                 , simplest2),
+  test_good_param( <<"colorAlg">>
+                 , colorAlg
+                 , <<"simple16">>
+                 , simple16),
+  test_good_param( <<"colorAlg">>
+                 , colorAlg
+                 , <<"simple32">>
+                 , simple32),
+  test_good_param( <<"colorAlg">>
+                 , colorAlg
+                 , <<"blue32">>
+                 , blue32),
+  test_good_param( <<"colorAlg">>
+                 , colorAlg
+                 , <<"simple64">>
+                 , simple64),
+  ok.
+
+test_good_param(InParam, OutParam, InValue, OutValue) ->
+  %% get inital config
+  JsonMap = get_base_config(),
+  JsonMap2 = maps:update(InParam, InValue , JsonMap),
+
   Expected = #{ bailoutThreshold => 4.0
               , cImaginary => -0.5
               , cReal => 0.5
@@ -56,93 +135,133 @@ test_good_json(_Config) ->
               , yImaginaryLow => 0.0
               , zImaginary => -0.1
               , zReal => -0.1},
+  Expected2 = maps:update(OutParam, OutValue , Expected),
 
-  Expected = config_utils:jason2atom(JsonConfigMap),
+  Expected2 = config_utils:json2atom(JsonMap2),
+  ok.
+
+get_base_config() ->
+  %% get inital config
+  SuiteData = ?MODULE:suite(),
+  {userdata, UserData} =  lists:keyfind(userdata, 1, SuiteData),
+  {json_map, JsonMap} =  lists:keyfind(json_map, 1, UserData),
+  JsonMap.
+
+
+bad_color_alg(_Config) ->
+  %% use alg not implemented yet to JsonMap and test
+  test_bad_param( <<"colorAlg">>
+                , <<"unheardofalg">>
+                , unknown_color_alg
+                , unknown_color_alg
+                ).
+
+bad_fractal_alg(_Config) ->
+  %% use alg not implemented yet to JsonMap and test
+  test_bad_param( <<"fractalAlg">>
+                , <<"mandelbrot">>
+                , this_fractal_algorithm_not_implemented
+                , this_fractal_algorithm_not_implemented
+                ),
+  test_bad_param( <<"fractalAlg">>
+                , <<"kleinian">>
+                , this_fractal_algorithm_not_implemented
+                , this_fractal_algorithm_not_implemented
+                ),
+  test_bad_param( <<"fractalAlg">>
+                , <<"garbage">>
+                , this_fractal_algorithm_not_implemented
+                , this_fractal_algorithm_not_implemented
+                ),
   ok.
 
 test_bad_char_json(_Config) ->
-  JsonConfigMap = #{ <<"bailoutThreshold">> => 4.0
-                    ,<<"cImaginary">> => -0.5
-                    ,<<"cReal">> => 0.5
-                    ,<<"colorAlg">> => <<"simple64">>
-                    ,<<"fractalAlg">> => <<"julian">>
-                    ,<<"height">> => 2000
-                    ,<<"imageFileName">> => <<"./example10.png">>
-                    ,<<"maxIterationThreshold">> => 63
-                    ,<<"width">> => 2000
-                    ,<<"xRealLeft">> => -1.0
-                    ,<<"xRealRight">> => 1.0
-                    ,<<"yImaginaryHigh">> => 2.0
-                    ,<<"yImaginaryLow">> => 0.0
-                    ,<<"zImaginary">> => -0.1
-                    ,<<"zReal">> => -0.1
-                    },
-  try config_utils:jason2atom(JsonConfigMap) of
-    _ -> ct:fail(failed_to_catch_bad_char)
-  catch
-    error:input_has_bad_char -> ok
-  end,
+
+  %% add bad char to JsonMap and test
+  test_bad_param( <<"imageFileName">>
+                , <<"./example10.png">>
+                , input_has_bad_char
+                , failed_to_catch_bad_char
+                ),
   %% try another bad character
-  JsonConfigMap2 = maps:update(<<"imageFileName">>, <<"example?10.png">>, JsonConfigMap),
-  try config_utils:jason2atom(JsonConfigMap2) of
-    _ -> ct:fail(failed_to_catch_bad_char)
-  catch
-    error:input_has_bad_char -> ok
-  end,
+  test_bad_param( <<"imageFileName">>
+                , <<"example?10.png">>
+                , input_has_bad_char
+                , failed_to_catch_bad_char
+                ),
   %% try another bad character
-  JsonConfigMap3 = maps:update(<<"imageFileName">>, <<3>>, JsonConfigMap),
-  try config_utils:jason2atom(JsonConfigMap3) of
-    _ -> ct:fail(failed_to_catch_bad_char)
-  catch
-    error:input_has_bad_char -> ok
-  end,
+  test_bad_param( <<"imageFileName">>
+                , <<3>>
+                , input_has_bad_char
+                , failed_to_catch_bad_char
+                ),
+
   %% try different type
-  JsonConfigMap4 = maps:update(<<"imageFileName">>, atom_not_bin, JsonConfigMap),
-  try config_utils:jason2atom(JsonConfigMap4) of
-    _ -> ct:fail(failed_to_catch_bad_char)
-  catch
-    error:imageFile_is_not_binary_nor_list -> ok
-  end,
-  ok.
+  test_bad_param( <<"imageFileName">>
+                , atom_not_bin
+                , imageFile_is_not_binary_nor_list
+                , failed_to_catch_bad_char
+                ).
 
 bad_width(_Config) ->
-  JsonConfigMap = #{ <<"bailoutThreshold">> => 4.0
-                    ,<<"cImaginary">> => -0.5
-                    ,<<"cReal">> => 0.5
-                    ,<<"colorAlg">> => <<"simple64">>
-                    ,<<"fractalAlg">> => <<"julian">>
-                    ,<<"height">> => 2000
-                    ,<<"imageFileName">> => <<"example10.png">>
-                    ,<<"maxIterationThreshold">> => 63
-                    ,<<"width">> => -2000
-                    ,<<"xRealLeft">> => -1.0
-                    ,<<"xRealRight">> => 1.0
-                    ,<<"yImaginaryHigh">> => 2.0
-                    ,<<"yImaginaryLow">> => 0.0
-                    ,<<"zImaginary">> => -0.1
-                    ,<<"zReal">> => -0.1
-                    },
-  try config_utils:jason2atom(JsonConfigMap) of
-    _ -> ct:fail(failed_to_catch_bad_width)
-  catch
-    error:width_must_be_integer_1_to_9999 -> ok
-  end,
-  JsonConfigMap2 = maps:update(<<"width">>, 0 , JsonConfigMap),
-  try config_utils:jason2atom(JsonConfigMap2) of
-    _ -> ct:fail(failed_to_catch_bad_width)
-  catch
-    error:width_must_be_integer_1_to_9999 -> ok
-  end,
-  JsonConfigMap3 = maps:update(<<"width">>, 10000 , JsonConfigMap),
-  try config_utils:jason2atom(JsonConfigMap3) of
-    _ -> ct:fail(failed_to_catch_bad_width)
-  catch
-    error:width_must_be_integer_1_to_9999 -> ok
-  end,
-  JsonConfigMap4 = maps:update(<<"width">>, 10.5 , JsonConfigMap),
-  try config_utils:jason2atom(JsonConfigMap4) of
-    _ -> ct:fail(failed_to_catch_bad_width)
-  catch
-    error:width_must_be_integer_1_to_9999 -> ok
-  end,
+
+  %% make a bad width
+  test_bad_param( <<"width">>
+                , -2
+                , width_must_be_integer_1_to_9999
+                , failed_to_catch_bad_width
+                ),
+
+  test_bad_param( <<"width">>
+                , 10000
+                , width_must_be_integer_1_to_9999
+                , failed_to_catch_bad_width
+                ),
+
+  test_bad_param( <<"width">>
+                , 10.5
+                , width_must_be_integer_1_to_9999
+                , failed_to_catch_bad_width
+                ),
   ok.
+
+bad_cr(_Config) ->
+  test_bad_param( <<"cReal">>
+                , 10
+                , must_be_floating_point_number
+                , failed_to_catch_bad_cr
+                ),
+  ok.
+bad_height(_Config) ->
+
+  %% make a bad height
+  test_bad_param( <<"height">>
+                , -2
+                , height_must_be_integer_1_to_9999
+                , failed_to_catch_bad_height
+                ),
+
+  test_bad_param( <<"height">>
+                , 10000
+                , height_must_be_integer_1_to_9999
+                , failed_to_catch_bad_height
+                ),
+
+  test_bad_param( <<"height">>
+                , 10.5
+                , height_must_be_integer_1_to_9999
+                , failed_to_catch_bad_height
+                ),
+  ok.
+
+test_bad_param(Param, Value, Error, ErrorMsg)
+     when is_atom(Error)
+        , is_atom(ErrorMsg)
+     ->
+  JsonMap = get_base_config(),
+  JsonMap2 = maps:update(Param, Value , JsonMap),
+  try config_utils:json2atom(JsonMap2) of
+    _ -> ct:fail(ErrorMsg)
+  catch
+    error:Error -> ok
+  end.

@@ -26,7 +26,7 @@ resource_exists(Req, State) ->
     {false, Req, State}.
 
 content_types_accepted(Req, State) ->
-    %% header has content =application/jason/whatever
+    %% header has content =application/json/whatever
     { [{ { <<"application">>, <<"json">>, '*'} , handle_json}], Req, State}.
 
 handle_json(Req, State) ->
@@ -34,7 +34,7 @@ handle_json(Req, State) ->
     { ok, Body, Req1} = cowboy_req:body(Req),
     JsonConfigMap = jiffy:decode(Body, [return_maps]),
     %%lager:debug("handle_json JsonConfigMap ~p", [JsonConfigMap] ),
-    ConfigMap = config_utils:jason2atom(JsonConfigMap),
+    ConfigMap = config_utils:json2atom(JsonConfigMap),
     %% concat WhereRunning, images, filename
     WhereRunning = code:priv_dir(sFractals),
     UserFileName = maps:get(imageFileName, ConfigMap),
