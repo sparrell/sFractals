@@ -190,8 +190,8 @@ check_positive_int(_ParamName, Num)
        , Num > 0
     ->
   Num;
-check_positive_int(ParamName, Num) ->
-  erlang:error("~p/~p must be integer > 0", [ParamName, Num] ).
+check_positive_int(_ParamName, _Num) ->
+  erlang:error(must_be_positive_integer).
 
 get_c_real(BinaryMap) ->
   CReal = maps:get(<<"cReal">>, BinaryMap),

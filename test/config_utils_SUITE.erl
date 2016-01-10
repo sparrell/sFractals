@@ -22,6 +22,13 @@ all() ->
     , bad_fractal_alg
     , bad_color_alg
     , bad_cr
+    , bad_ci
+    , bad_zr
+    , bad_zi
+    , bad_xr
+    , bad_yi
+    , bad_bailout
+    , bad_max_iter
     ].
 
 %% timeout if no reply in a minute
@@ -232,6 +239,109 @@ bad_cr(_Config) ->
                 , failed_to_catch_bad_cr
                 ),
   ok.
+
+bad_ci(_Config) ->
+  test_bad_param( <<"cImaginary">>
+                , 10
+                , must_be_floating_point_number
+                , failed_to_catch_bad_ci
+                ),
+  ok.
+
+bad_zr(_Config) ->
+  test_bad_param( <<"zReal">>
+                , 10
+                , must_be_floating_point_number
+                , failed_to_catch_bad_zr
+                ),
+  ok.
+
+bad_zi(_Config) ->
+  test_bad_param( <<"zImaginary">>
+                , 10
+                , must_be_floating_point_number
+                , failed_to_catch_bad_zi
+                ),
+  ok.
+
+bad_xr(_Config) ->
+  test_bad_param( <<"xRealRight">>
+                , 10
+                , must_be_floating_point_number
+                , failed_to_catch_bad_xrr
+                ),
+  test_bad_param( <<"xRealLeft">>
+                , 10
+                , must_be_floating_point_number
+                , failed_to_catch_bad_xrr
+                ),
+  %% test left is greater then right. 
+  %%   note right in base config is 1.0
+  test_bad_param( <<"xRealLeft">>
+                , 2.0
+                , xreals_must_be_floats_and_right_must_be_greater_than_left
+                , failed_to_catch_bad_xrr
+                ),
+  %%   note left in base config is -1.0
+  test_bad_param( <<"xRealRight">>
+                , -2.0
+                , xreals_must_be_floats_and_right_must_be_greater_than_left
+                , failed_to_catch_bad_xrr
+                ),
+  ok.
+
+bad_bailout(_Config) ->
+  test_bad_param( <<"bailoutThreshold">>
+                , 10
+                , must_be_positive_floating_point_number
+                , failed_to_catch_bad_bailout
+                ),
+  test_bad_param( <<"bailoutThreshold">>
+                , -10.5
+                , must_be_positive_floating_point_number
+                , failed_to_catch_bad_bailout
+                ),
+  ok.
+
+bad_max_iter(_Config) ->
+  test_bad_param( <<"maxIterationThreshold">>
+                , 10.5
+                , must_be_positive_integer
+                , failed_to_catch_bad_bailout
+                ),
+  test_bad_param( <<"maxIterationThreshold">>
+                , -10
+                , must_be_positive_integer
+                , failed_to_catch_bad_bailout
+                ),
+  ok.
+
+bad_yi(_Config) ->
+  test_bad_param( <<"yImaginaryLow">>
+                , 10
+                , must_be_floating_point_number
+                , failed_to_catch_bad_xrr
+                ),
+  test_bad_param( <<"yImaginaryHigh">>
+                , 10
+                , must_be_floating_point_number
+                , failed_to_catch_bad_xrr
+                ),
+  %% test high is greater then low. 
+  %%   note high in base config is 2.0
+  test_bad_param( <<"yImaginaryLow">>
+                , 2.5
+                , yi_must_be_floats_and_high_must_be_greater_than_low
+                , failed_to_catch_bad_yil
+                ),
+  %%   note low in base config is 0.0
+  test_bad_param( <<"yImaginaryHigh">>
+                , -2.0
+                , yi_must_be_floats_and_high_must_be_greater_than_low
+                , failed_to_catch_bad_yih
+                ),
+  ok.
+
 bad_height(_Config) ->
 
   %% make a bad height
