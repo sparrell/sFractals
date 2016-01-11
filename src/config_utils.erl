@@ -1,31 +1,26 @@
 -module(config_utils).
 
--export([ jason2atom/1
+-export([ json2atom/1
         ]).
 
-%% for test
-- export( [ is_good_char/1 ] ).
-
-jason2atom(BinaryMap) ->
+json2atom(BinaryMap) ->
   Width  = get_width(BinaryMap),
   Height = get_height(BinaryMap),
   FractalAlg = get_fractal_alg(BinaryMap),
   ImageFile = get_image_file(BinaryMap),
   ColorAlg = get_color_alg(BinaryMap),
-
-  CReal = maps:get(<<"cReal">>, BinaryMap),
-  CImaginary = maps:get(<<"cImaginary">>, BinaryMap),
-  ZReal = maps:get(<<"zReal">>, BinaryMap),
-  ZImaginary = maps:get(<<"zImaginary">>, BinaryMap),
-  XRealRight = maps:get(<<"xRealRight">>, BinaryMap),
-  XRealLeft = maps:get(<<"xRealLeft">>, BinaryMap),
-  YImaginaryLow = maps:get(<<"yImaginaryLow">>, BinaryMap),
-  YImaginaryHigh = maps:get(<<"yImaginaryHigh">>, BinaryMap),
-  Bailout = maps:get(<<"bailoutThreshold">>, BinaryMap),
-  MaxIter = maps:get(<<"maxIterationThreshold">>, BinaryMap),
-
-  %% need to add checks on input here
-  %% need to add optional parameters here (or default on gets above)
+  CReal = get_c_real(BinaryMap),
+  CImaginary = get_c_imaginary(BinaryMap),
+  ZReal = get_z_real(BinaryMap),
+  ZImaginary = get_z_imaginary(BinaryMap),
+  XRealRight = get_x_real_right(BinaryMap),
+  XRealLeft = get_x_real_left(BinaryMap),
+  check_x_real(XRealLeft, XRealRight),
+  YImaginaryLow = get_y_imaginary_low(BinaryMap),
+  YImaginaryHigh = get_y_imaginary_high(BinaryMap),
+  check_y_imaginary(YImaginaryLow, YImaginaryHigh),
+  Bailout = get_bailout(BinaryMap),
+  MaxIter = get_max_iter(BinaryMap),
 
   JsonConfigMap = #{ width => Width
                    , height => Height
@@ -177,7 +172,84 @@ check_color_alg(InitialColorAlg) when InitialColorAlg =:= "simple64" ->
 check_color_alg(_) ->
   erlang:error(unknown_color_alg).
 
+check_is_float(_ParamName, Num) when not is_float(Num) ->
+  erlang:error(must_be_floating_point_number);
+check_is_float(_ParamName, Num) ->
+  Num.
 
+check_postive_float(_ParamName, Num)
+     when is_float(Num)
+        , Num > 0.0
+     ->
+  Num;
+check_postive_float(_ParamName, _Num) ->
+  erlang:error(must_be_positive_floating_point_number).
 
+check_positive_int(_ParamName, Num)
+    when is_integer(Num)
+       , Num > 0
+    ->
+  Num;
+check_positive_int(_ParamName, _Num) ->
+  erlang:error(must_be_positive_integer).
 
+get_c_real(BinaryMap) ->
+  CReal = maps:get(<<"cReal">>, BinaryMap),
+  check_is_float(c_real, CReal).
+
+get_c_imaginary(BinaryMap) ->
+  CImaginary = maps:get(<<"cImaginary">>, BinaryMap),
+  check_is_float(c_imaginary, CImaginary).
+
+get_z_real(BinaryMap) ->
+  ZReal = maps:get(<<"zReal">>, BinaryMap),
+  check_is_float(z_real, ZReal).
+
+get_z_imaginary(BinaryMap) ->
+  ZImaginary = maps:get(<<"zImaginary">>, BinaryMap),
+  check_is_float(z_imaginary, ZImaginary).
+
+get_x_real_right(BinaryMap) ->
+  XRealRight = maps:get(<<"xRealRight">>, BinaryMap),
+  check_is_float(x_real_right, XRealRight).
+
+get_x_real_left(BinaryMap) ->
+  XRealLeft = maps:get(<<"xRealLeft">>, BinaryMap),
+  check_is_float(x_real_left, XRealLeft).
+
+check_x_real(XRealLeft, XRealRight )
+    %% xrr must be > xrl and both must be floats
+    when is_float(XRealLeft)
+       , is_float(XRealLeft)
+       , XRealRight > XRealLeft
+    ->
+  ok;
+check_x_real(_XRealLeft, _XRealRight ) ->
+  erlang:error( xreals_must_be_floats_and_right_must_be_greater_than_left).
+
+get_y_imaginary_low(BinaryMap) ->
+  YImaginaryLow = maps:get(<<"yImaginaryLow">>, BinaryMap),
+  check_is_float(y_imaginary_low, YImaginaryLow).
+
+get_y_imaginary_high(BinaryMap) ->
+  YImaginaryHigh = maps:get(<<"yImaginaryHigh">>, BinaryMap),
+  check_is_float(y_imaginary_high, YImaginaryHigh).
+
+check_y_imaginary(YImaginaryLow, YImaginaryHigh)
+    %% yih must be > yil and both must be floats
+    when is_float(YImaginaryLow)
+       , is_float(YImaginaryHigh)
+       , YImaginaryHigh > YImaginaryLow
+    ->
+  ok;
+check_y_imaginary(_YImaginaryLow, _YImaginaryHigh) ->
+  erlang:error( yi_must_be_floats_and_high_must_be_greater_than_low).
+
+get_bailout(BinaryMap) ->
+  Bailout = maps:get(<<"bailoutThreshold">>, BinaryMap),
+  check_postive_float(bailout, Bailout).
+
+get_max_iter(BinaryMap) ->
+  MaxIter = maps:get(<<"maxIterationThreshold">>, BinaryMap),
+  check_positive_int(max_iter, MaxIter).
 

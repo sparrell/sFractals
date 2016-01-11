@@ -26,14 +26,15 @@ resource_exists(Req, State) ->
     {false, Req, State}.
 
 content_types_accepted(Req, State) ->
-    %% header has content =application/jason/whatever
+    %% header has content =application/json/whatever
     { [{ { <<"application">>, <<"json">>, '*'} , handle_json}], Req, State}.
 
 handle_json(Req, State) ->
     %% put stuff here for actually making fractal and returning it
     { ok, Body, Req1} = cowboy_req:body(Req),
     JsonConfigMap = jiffy:decode(Body, [return_maps]),
-    ConfigMap = config_utils:jason2atom(JsonConfigMap),
+    %%lager:debug("handle_json JsonConfigMap ~p", [JsonConfigMap] ),
+    ConfigMap = config_utils:json2atom(JsonConfigMap),
     %% concat WhereRunning, images, filename
     WhereRunning = code:priv_dir(sFractals),
     UserFileName = maps:get(imageFileName, ConfigMap),

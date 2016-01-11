@@ -35,7 +35,7 @@ Dependencies:
 - eper & recon are used for debugging
 - shotgun is used for test
 - relx is used for creating releases
-- worker_pool is deprecated in this application
+- worker_pool_ is deprecated in this application
 
 
 
@@ -71,7 +71,32 @@ Quick overview of files:
    - data_file_svr.erl - not used yet. hope to make a storage server to save recomputation
 
 
+#Use Cases
+--------------
 
+The use case of creating this fractal:
+- put pic here
+consists of:
+- user inputting configuration parameters
+- creating fractal data based on config parameters
+- mapping fractal data into colors and creating png
+
+## Inputting Config
+--------------
+Starting the sFractals app
+
+## Creating Fractal Data
+--------------
+
+
+## Colors and Png
+--------------
+
+# Status Use case
+--------------
+
+# Browsing Image Use Case
+--------------
 
 
 Module Relationships
