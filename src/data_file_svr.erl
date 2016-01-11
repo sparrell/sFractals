@@ -31,7 +31,7 @@
           code_change/3       % for later
           ]).
 
--type state()::#{}. 
+-type state()::#{}.
 
 %% client functions
 

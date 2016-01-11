@@ -153,10 +153,20 @@ compute_rows(FractalEts
 
 compute_row( CallingPid, FractalEts, ConfigMap, YP, YI, XP, XR, DeltaX ) ->
   %% this is spawned worker process
-  %%  initialize row data to empty and kickoff recursion thru all the points in the row
+  %%  initialize row data to empty
+  %%  and kickoff recursion thru all the points in the row
   compute_row( CallingPid, FractalEts, ConfigMap, YP, YI, XP, XR, DeltaX, [] ).
 
-compute_row( CallingPid, FractalEts, _ConfigMap, YP, _YI, XP, _XR, _DeltaX, RowData )
+compute_row( CallingPid
+           , FractalEts
+           , _ConfigMap
+           , YP
+           , _YI
+           , XP
+           , _XR
+           , _DeltaX
+           , RowData 
+           )
         when is_integer(YP), is_integer(XP), XP =< 0 ->
   %% done with row
   %%  save to ETS

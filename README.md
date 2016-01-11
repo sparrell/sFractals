@@ -92,6 +92,12 @@ Starting the sFractals app
 ## Colors and Png
 --------------
 
+# Status Use case
+--------------
+
+# Browsing Image Use Case
+--------------
+
 
 Module Relationships
 --------------

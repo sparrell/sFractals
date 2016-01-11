@@ -6,7 +6,7 @@
 
 -module(make_png).
 -author("Duncan Sparrell").
-%% given fractal data (in memory or in file), 
+%% given fractal data (in memory or in file),
 %% turn it into a fractal image using png
 
 %% public API
