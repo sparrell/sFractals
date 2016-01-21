@@ -19,9 +19,12 @@
 -spec start(_, _) -> { 'ok', pid() }.
 start(_StartType, _StartArgs) ->
     true = cxy_ctl:init([{cfp, unlimited, 1000, 100000}]),
-    {ok, SfPid} = 'sFractals_sup':start_link(),
-    start_webserver(),
-    {ok, SfPid}.
+    %% had separate server but it got depreciated.
+    %%   leaving in for future reinstantiation
+    %%{ok, SfPid} = 'sFractals_sup':start_link(),
+    WebServerReturn = start_webserver(),
+    %%{ok, SfPid}.
+    {ok, WebServerReturn}.
 
 %%--------------------------------------------------------------------
 -spec stop(_) -> 'ok'.
@@ -65,12 +68,13 @@ start_webserver() ->
                }
              ],
     Dispatch = cowboy_router:compile(Routes),
-    {ok, _} = cowboy:start_http( http
+    {ok, CowboyReturn} = cowboy:start_http( http
                                , ListenerCount
                                , [{port, Port}]
                                , [ {env, [{dispatch, Dispatch}]} ]
                                ),
-    ok.
+    lager:debug("Cowboy starting: ~p", [CowboyReturn] ),
+    CowboyReturn.
 
 
 

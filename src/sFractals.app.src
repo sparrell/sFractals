@@ -9,8 +9,8 @@
     , lager
     , cowboy
     , epocxy
-    , eper
-    , recon
+    %% , eper %% for debugging
+    %% , recon %% for debugging
     , jiffy
     , png
    ]},

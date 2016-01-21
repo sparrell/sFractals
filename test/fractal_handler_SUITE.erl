@@ -4,7 +4,7 @@
 %%%
 %%%-------------------------------------------------------------------
 
--module(fractal_server_SUITE).
+-module(fractal_handler_SUITE).
 -author("Duncan Sparrell").
 
 %% for test
@@ -15,8 +15,7 @@
 
 %% tests to run
 all() ->
-    [ test_status
-    , test_post
+    [ test_post
     ].
 
 %% timeout if no reply in a minute
@@ -29,17 +28,6 @@ init_per_suite(Config) ->
       {ok, _AppList2} = application:ensure_all_started(sFractals),
 
       Config.
-
-test_status(_Config) ->
-  %%Env = application:get_all_env(sFractals),
-  %%ct:pal("ENV: ~p", [Env]),
-  MyPort = application:get_env(sFractals, port, 8080),
-  {ok, Conn} = shotgun:open("localhost", MyPort),
-  {ok, Response} = shotgun:get(Conn, "/status"),
-  #{body := <<"<html><body>Status Works - needs more later</body></html>">>
-   , status_code := 200} = Response,
-  shotgun:close(Conn),
-  ok.
 
 test_post(_Config) ->
   MyPort = application:get_env(sFractals, port, 8080),
