@@ -19,6 +19,7 @@
 %% API functions
 %%====================================================================
 
+-spec start_link() -> 'ignore' | {'error',_} | {'ok',pid()}.
 start_link() ->
     supervisor:start_link({local, ?SERVER}, ?MODULE, []).
 
@@ -26,6 +27,7 @@ start_link() ->
 %% Supervisor callbacks
 %%====================================================================
 
+-spec init([]) -> {'ok',{#{},[#{},...]}}.
 %% Child :: {Id,StartFunc,Restart,Shutdown,Type,Modules}
 init([]) ->
     SupFlags = #{
