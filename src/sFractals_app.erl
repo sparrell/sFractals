@@ -16,6 +16,7 @@
 %% API
 %%====================================================================
 
+-spec start(_, _) -> { 'ok', pid() }.
 start(_StartType, _StartArgs) ->
     true = cxy_ctl:init([{cfp, unlimited, 1000, 100000}]),
     {ok, SfPid} = 'sFractals_sup':start_link(),
@@ -23,16 +24,19 @@ start(_StartType, _StartArgs) ->
     {ok, SfPid}.
 
 %%--------------------------------------------------------------------
+-spec stop(_) -> 'ok'.
 stop(_State) ->
     ok.
 
 %%--------------------------------------------------------------------
+-spec start() -> {'error',{atom(),_}} | {'ok',[atom()]}.
 start() ->
     application:ensure_all_started(sFractals).
 %%====================================================================
 %% Internal functions
 %%====================================================================
 
+-spec start_webserver() -> 'ok'.
 start_webserver() ->
     lager:info("cowboy webserver about to start"),
     Port = 8080,  % get this from config when clean this up
