@@ -21,3 +21,13 @@ example07b1.erl.txt
 *.trace
 outfile.cgrind
 outfile.fprof
+
+PastFuture/compute_fractal_data.erl
+
+PastFuture/cplx.erl
+
+PastFuture/data_file_svr.erl
+
+PastFuture/databox.erl
+
+PastFuture/fractal_server.erl
