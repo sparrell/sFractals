@@ -1,4 +1,4 @@
--module(fractal_handler).
+-module(form_handler).
 %%%-------------------------------------------------------------------
 %%% @author Duncan Sparrell
 %%% @copyright (C) 2015, sFractal Consulting LLC
@@ -41,7 +41,7 @@
         , allowed_methods/2
         , resource_exists/2
         , content_types_accepted/2
-        , handle_json/2
+        , handle_parms/2
         ]).
 
 init( {tcp, http}, _Req, _Opts) ->
@@ -51,6 +51,9 @@ rest_init(Req, _Opts) ->
     {Method, Req1} = cowboy_req:method(Req),
     {URL, Req2} = cowboy_req:url(Req1),
     lager:debug("~s ~s", [Method, URL]),
+    %%{ok, Body, Req3} = cowboy_req:body(Req2),
+    %%lager:debug("Body: ~p ", [Body]),
+    %%{ok, Req3, #{}}.
     {ok, Req2, #{}}.
 
 allowed_methods(Req, State) ->
@@ -63,30 +66,37 @@ resource_exists(Req, State) ->
 
 content_types_accepted(Req, State) ->
     %% header has content =application/json/whatever
-    { [{ { <<"application">>, <<"json">>, '*'} , handle_json}], Req, State}.
+    { [ { { <<"application">>, <<"x-www-form-urlencoded">>, '*'}, handle_parms}
+      ], Req, State}.
 
-handle_json(Req, State) ->
+handle_parms(Req, State) ->
     %% put stuff here for actually making fractal and returning it
-    { ok, Body, Req1} = cowboy_req:body(Req),
-    JsonConfigMap = jiffy:decode(Body, [return_maps]),
-    %%lager:debug("handle_json JsonConfigMap ~p", [JsonConfigMap] ),
-    ConfigMap = config_utils:json2atom(JsonConfigMap),
-    %% concat WhereRunning, images, filename
-    WhereRunning = code:priv_dir(sFractals),
-    UserFileName = maps:get(imageFileName, ConfigMap),
-    SysFileName = filename:join( [WhereRunning, "images", UserFileName] ),
-    SysConfigMap = maps:update(imageFileName, SysFileName, ConfigMap),
-
-    %% calc data and make png
-    lager:info("Starting fractal"),
-    sf_controller:make_data( SysConfigMap ),
-    lager:info("Image created at: ~p", [SysFileName]),
+    %%{ ok, Body, Req1} = cowboy_req:body(Req),
+    %%lager:debug("body ~p", [Body] ),
+    {ok, KeyValues, Req1} = cowboy_req:body_qs(Req),
+    lager:debug("parms ~p", [KeyValues] ),
+    ConfigMap = maps:from_list(KeyValues),
+    lager:debug("configmap ~p", [ConfigMap] ),
+    %%WhereRunning = code:priv_dir(sFractals),
+    %%UserFileName = maps:get(imageFileName, ConfigMap),
+    UserFileName = "tempUserFileName",
+    %%SysFileName = filename:join( [WhereRunning, "images", UserFileName] ),
+    %%SysConfigMap = maps:update(imageFileName, SysFileName, ConfigMap),
 
     %% decide what to return
     {Host, Req2} = cowboy_req:header(<<"host">>, Req1),
     BinUserFileName = list_to_binary(UserFileName),
     Path = <<"/images/", BinUserFileName/binary>>,
     Location = <<"http://", Host/binary, Path/binary>>,
-    { {true, Location}, Req2, State}.
-
+    %{ {true, Location}, Req2, State}.
+    RespBody = io_lib:format("~p", [KeyValues] ),
+    {ok, Req3} = cowboy_req:reply(200
+                                 , [ {<<"content-type">>
+                                     , <<"text/plain">>
+                                     }
+                                   ]
+                                 , RespBody
+                                 , Req2
+                                 ),
+    { true, Req3, State}.
 
