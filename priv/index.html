@@ -10,55 +10,69 @@ made it to index.html file
 <hr>
 for now putting input form here
 <hr>
-<form action="sFractal" method="post">
-  fractalAlg:<br>
-  <input type="radio" name="fractalAlg" value="julian" checked> Julian
+<form action="inputform" method="post">
+  fractalAlg:  
+<select name="fractalAlg">
+  <option value="julian" selected>Julian</option>
+  <option value="mandlebrot">Mandlebrot</option>
+  <option value="addmore">Need to add more fractal algs</option>
+</select>
   <br>
-  <input type="radio" name="fractalAlg" value="mandlebrot"> Mandlebrot
   <br>
-  imageFileName (only valid chars = [a-zA-Z.-_]):<br>
-  <input type="text" name="image_file">
+  name your fractal (only valid chars = [a-zA-Z.-_]): 
+  <input type="text" name="basefilename" value="changeThisToSomethingUnique">
   <br>
-  dataFileName (not used yet):<br>
-  <input type="text" name="dataFileName">
   <br>
-  colorAlg:<br>
-  <input type="radio" name="colorAlg" value="simplest" checked> Simplest
-  <input type="radio" name="colorAlg" value="simplest2" > Simplest2
-  <input type="radio" name="colorAlg" value="need to add more" > Need to add more
+  colorAlg:
+<select name="colorAlg">
+  <option value="simplest" selected>Simplest</option>
+  <option value="simplest2">Simplest2</option>
+  <option value="addmore">Need to add more color algs</option>
+</select>
   <br>
-  width:<br>
-  <input type="text" name="width">
   <br>
-  height:<br>
-  <input type="text" name="height">
+  width:
+  <input type="text" name="width" value=10>
   <br>
-  cReal:<br>
-  <input type="text" name="cReal">
   <br>
-  cImaginary:<br>
-  <input type="text" name="cImaginary">
+  height:
+  <input type="text" name="height" value=10>
   <br>
-  zReal:<br>
-  <input type="text" name="zReal">
   <br>
-  xRealRight:<br>
-  <input type="text" name="xRealRight">
+  cReal:
+  <input type="text" name="cReal" value=1.0>
   <br>
-  xRealLeft:<br>
-  <input type="text" name="xRealLeft">
   <br>
-  yImaginaryLow:<br>
-  <input type="text" name="yImaginaryLow">
+  cImaginary:
+  <input type="text" name="cImaginary" value=1.0>
   <br>
-  yImaginaryHigh:<br>
-  <input type="text" name="yImaginaryHigh">
   <br>
-  bailoutThreshold:<br>
-  <input type="text" name="bailoutThreshold">
+  zReal:
+  <input type="text" name="zReal" value=1.0>
   <br>
-  maxIterationThreshold:<br>
-  <input type="text" name="maxIterationThreshold">
+  <br>
+  xRealRight:
+  <input type="text" name="xRealRight" value=1.0>
+  <br>
+  <br>
+  xRealLeft:
+  <input type="text" name="xRealLeft" value=0.0>
+  <br>
+  <br>
+  yImaginaryLow:
+  <input type="text" name="yImaginaryLow" value=-1.0>
+  <br>
+  <br>
+  yImaginaryHigh:
+  <input type="text" name="yImaginaryHigh" value=1.0>
+  <br>
+  <br>
+  bailoutThreshold:
+  <input type="text" name="bailoutThreshold" value=4.0>
+  <br>
+  <br>
+  maxIterationThreshold:
+  <input type="text" name="maxIterationThreshold" value=10>
   <br>
   <hr>
   <input type="submit" value="Submit">
