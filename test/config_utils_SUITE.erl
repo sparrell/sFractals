@@ -373,5 +373,6 @@ test_bad_param(Param, Value, Error, ErrorMsg)
   try config_utils:json2atom(JsonMap2) of
     _ -> ct:fail(ErrorMsg)
   catch
-    error:Error -> ok
+    error:Error -> ok;
+    throw:Error -> ok
   end.

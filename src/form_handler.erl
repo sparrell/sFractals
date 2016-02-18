@@ -77,6 +77,22 @@ handle_parms(Req, State) ->
     lager:debug("parms ~p", [KeyValues] ),
     ConfigMap = maps:from_list(KeyValues),
     lager:debug("configmap ~p", [ConfigMap] ),
+
+    %% set value if no exceptions or set to exception reason
+    JsonConfigMap = try config_utils:json2atom(ConfigMap)
+    catch
+      throw:Reason ->
+        %% caught an input error
+        lager:error("Input Error: ~p", [Reason]),
+        Reason;
+      error:ErrReason ->
+        %% caught unanticipted error
+        lager:error("Unknown Error: ~p", [ErrReason]),
+        ErrReason
+    after
+      lager:debug("got to after, need to figure what to do")
+    end,
+    lager:debug("jsonconfigmap ~p", [JsonConfigMap] ),
     %%WhereRunning = code:priv_dir(sFractals),
     %%UserFileName = maps:get(imageFileName, ConfigMap),
     UserFileName = "tempUserFileName",

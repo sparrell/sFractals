@@ -88,9 +88,25 @@ check_width(Width)
         ->
   %% passed checks so return Width
   Width;
+check_width(Width)
+        when is_list(Width)
+        ->
+  %% list so see if string rep of number
+  %%    if yes recurse for in range checks
+  check_width(string_to_integer(Width) );
+
 check_width(_Width) ->
   %% failed checks so fail with atom indicating issue
-  erlang:error(width_must_be_integer_1_to_9999).
+  throw(width_must_be_integer_1_to_9999).
+
+string_to_integer(L)
+        when is_list(L)
+        ->
+  case string:to_integer(L) of
+    {error,_Error} -> throw(width_must_be_integer_1_to_9999);
+    {Num, [] } -> Num;
+    _ -> throw(width_must_be_integer_1_to_9999)
+  end.
 
 get_height(BinaryMap) ->
   %% mandatory parameter
