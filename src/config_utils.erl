@@ -82,9 +82,9 @@ get_width(BinaryMap) ->
   check_width(Width).
 
 check_width(Width)
-        when is_integer(Width),
-             Width > 0,
-             Width < 10000
+        when is_integer(Width)
+           , Width > 0
+           , Width < 10000
         ->
   %% passed checks so return Width
   Width;
@@ -93,19 +93,20 @@ check_width(Width)
         ->
   %% list so see if string rep of number
   %%    if yes recurse for in range checks
-  check_width(string_to_integer(Width) );
+  check_width(string_to_integer(Width, width_must_be_integer_1_to_9999) );
 
 check_width(_Width) ->
   %% failed checks so fail with atom indicating issue
   throw(width_must_be_integer_1_to_9999).
 
-string_to_integer(L)
+string_to_integer(L, ThrowThisErrorOnFail)
         when is_list(L)
+           , is_atom(ThrowThisErrorOnFail)
         ->
   case string:to_integer(L) of
-    {error,_Error} -> throw(width_must_be_integer_1_to_9999);
+    {error,_Error} -> throw(ThrowThisErrorOnFail);
     {Num, [] } -> Num;
-    _ -> throw(width_must_be_integer_1_to_9999)
+    _ -> throw(ThrowThisErrorOnFail)
   end.
 
 get_height(BinaryMap) ->
@@ -120,9 +121,16 @@ check_height(Height)
         ->
   %% passed checks so return Height
   Height;
+check_height(Height)
+        when is_list(Height)
+        ->
+  %% list so see if string rep of number
+  %%    if yes recurse for in range checks
+  check_height(string_to_integer(Height, height_must_be_integer_1_to_9999) );
+
 check_height(_Height) ->
   %% failed checks so fail with atom indicating issue
-  erlang:error(height_must_be_integer_1_to_9999).
+  throw(height_must_be_integer_1_to_9999).
 
 get_fractal_alg(BinaryMap) ->
   %% mandatory parameter
@@ -139,7 +147,7 @@ check_fractal_alg(FractalAlg)
   julian;
 %% add other valid fractal algorithms here as they are created
 check_fractal_alg(_FractalAlg) ->
-  erlang:error(this_fractal_algorithm_not_implemented).
+  throw(this_fractal_algorithm_not_implemented).
 
 %% get and validate image file name
 get_image_file(BinaryMap) ->
@@ -156,7 +164,7 @@ check_image_file(ImageFile) when is_list(ImageFile) ->
   %% all good so return string
   ImageFile;
 check_image_file(_ImageFile) ->
-  erlang:error(imageFile_is_not_binary_nor_list).
+  throw(imageFile_is_not_binary_nor_list).
 
 check_illegal_filename_chars( [] ) ->
   %% done and all fine if got this far
@@ -178,7 +186,7 @@ check_illegal_filename_chars( [H | T] ) ->
 %%       a-z (ascii 97-122)
 is_good_char(C)
         when not is_integer(C) ->
-  erlang:error(input_has_bad_char);
+  throw(input_has_bad_char);
 is_good_char(C)
         when C =:= 45 % dash
            ; C =:= 46 % dot
@@ -190,12 +198,11 @@ is_good_char(C)
   ok; % valid characters
 is_good_char(_C) ->
   %% anything else is bad
-  erlang:error(input_has_bad_char).
+  throw(input_has_bad_char).
 
 get_color_alg(BinaryMap) ->
-  InitalColorAlg  = maps:get(<<"colorAlg">>, BinaryMap),
-  %% check validity and return if valid
-  check_color_alg(InitalColorAlg).
+  InitialColorAlg  = maps:get(<<"colorAlg">>, BinaryMap),
+  check_color_alg(InitialColorAlg).
 
 check_color_alg(InitialColorAlg) when InitialColorAlg =:= "simplest" ->
   simplest;
@@ -222,10 +229,10 @@ check_color_alg(InitialColorAlg) when InitialColorAlg =:= <<"simple64">> ->
 check_color_alg(InitialColorAlg) when InitialColorAlg =:= "simple64" ->
   simple64;
 check_color_alg(_) ->
-  erlang:error(unknown_color_alg).
+  throw(unknown_color_alg).
 
 check_is_float(_ParamName, Num) when not is_float(Num) ->
-  erlang:error(must_be_floating_point_number);
+  throw(must_be_floating_point_number);
 check_is_float(_ParamName, Num) ->
   Num.
 
@@ -235,7 +242,7 @@ check_postive_float(_ParamName, Num)
      ->
   Num;
 check_postive_float(_ParamName, _Num) ->
-  erlang:error(must_be_positive_floating_point_number).
+  throw(must_be_positive_floating_point_number).
 
 check_positive_int(_ParamName, Num)
     when is_integer(Num)
@@ -243,7 +250,7 @@ check_positive_int(_ParamName, Num)
     ->
   Num;
 check_positive_int(_ParamName, _Num) ->
-  erlang:error(must_be_positive_integer).
+  throw(must_be_positive_integer).
 
 get_c_real(BinaryMap) ->
   CReal = maps:get(<<"cReal">>, BinaryMap),
@@ -277,7 +284,7 @@ check_x_real(XRealLeft, XRealRight )
     ->
   ok;
 check_x_real(_XRealLeft, _XRealRight ) ->
-  erlang:error( xreals_must_be_floats_and_right_must_be_greater_than_left).
+  throw( xreals_must_be_floats_and_right_must_be_greater_than_left).
 
 get_y_imaginary_low(BinaryMap) ->
   YImaginaryLow = maps:get(<<"yImaginaryLow">>, BinaryMap),
@@ -295,7 +302,7 @@ check_y_imaginary(YImaginaryLow, YImaginaryHigh)
     ->
   ok;
 check_y_imaginary(_YImaginaryLow, _YImaginaryHigh) ->
-  erlang:error( yi_must_be_floats_and_high_must_be_greater_than_low).
+  throw( yi_must_be_floats_and_high_must_be_greater_than_low).
 
 get_bailout(BinaryMap) ->
   Bailout = maps:get(<<"bailoutThreshold">>, BinaryMap),
