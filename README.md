@@ -3,7 +3,7 @@
 
 An OTP application to make and return fractals.
 This is more an exercise to learn erlang, OTP, rebar,
-common test,  git, github but hopefuly a useful program comes drom it
+common test,  git, github but hopefuly a useful program comes from it
 
 Build
 -----
